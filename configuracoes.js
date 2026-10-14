@@ -1,8 +1,7 @@
 /* ==========================================================================
-   NEXORA STOCK — Tela: Configurações
-   Tema, preferências de exibição, empresa e perfil da demonstração,
-   informações e limites da demonstração, conferência dos saldos e
-   restauração dos dados originais (com confirmação explícita).
+   NEXORA CRM — Tela: Configurações
+   Tema, preferências de visualização, perfil demonstrativo, nome da
+   empresa, meta mensal e restauração dos dados de demonstração.
    ========================================================================== */
 window.NX = window.NX || {};
 NX.telas = NX.telas || {};
@@ -11,106 +10,104 @@ NX.telas = NX.telas || {};
   "use strict";
   const U = NX.util;
   const L = NX.loja;
-  const E = NX.estoque;
   const { el, icone } = U;
   const C = () => NX.componentes;
-  let p = null;
+  let partes = null;
 
-  function grupoOpcoes(legenda, nome, opcoes, atual, aoMudar) {
-    return el("fieldset", { class: "opcoes" }, el("legend", { texto: legenda }),
-      el("div", { class: "opcoes__lista" }, ...opcoes.map(([valor, rotulo, nomeIcone]) => {
-        const id = `cfg-${nome}-${valor}`;
-        const input = el("input", { type: "radio", name: `cfg-${nome}`, id, value: valor, checked: String(atual) === String(valor), "data-foco": id });
-        input.addEventListener("change", () => aoMudar(valor));
-        return el("div", { class: "opcao" }, input, el("label", { for: id }, nomeIcone ? icone(nomeIcone, 16) : null, rotulo));
-      })));
+  function grupoOpcoes({ nome, legenda, opcoes, valor, aoMudar, ajuda }) {
+    const fs = el("fieldset", { class: "opcoes" }, el("legend", { texto: legenda }));
+    const caixa = el("div", { class: "opcoes__lista" });
+    opcoes.forEach(([v, rotulo, nomeIcone]) => {
+      const id = `${nome}-${v}`;
+      const input = el("input", { type: "radio", name: nome, id, value: v, "data-foco": id });
+      input.checked = v === valor;
+      input.addEventListener("change", () => aoMudar(v));
+      caixa.append(el("div", { class: "opcao" }, input, el("label", { for: id }, nomeIcone ? icone(nomeIcone, 16) : null, rotulo)));
+    });
+    fs.append(caixa);
+    if (ajuda) fs.append(el("p", { class: "campo__ajuda", texto: ajuda }));
+    return fs;
+  }
+
+  function campo(id, rotulo, tipo, valor, extra = {}) {
+    const input = el("input", { id, name: id, type: tipo, ...extra });
+    input.value = valor;
+    return el("div", { class: "campo" }, el("label", { for: id, texto: rotulo }), input, el("p", { class: "campo__erro", id: `${id}-erro` }));
   }
 
   function montar(secao) {
-    p = { aparencia: el("div"), form: el("form", { class: "cartao config", novalidate: true }), sobre: el("div"), perigo: el("div") };
-    p.form.addEventListener("submit", salvarPerfil);
+    partes = { aparencia: el("div"), form: el("form", { class: "cartao config", novalidate: true }), dados: el("div") };
+    partes.form.addEventListener("submit", salvarPerfil);
     secao.replaceChildren(
       C().cabecalho({ id: "configuracoes", titulo: "Configurações", sub: "Preferências desta demonstração, salvas só neste navegador" }),
-      el("div", { class: "config-grade" },
-        el("div", { class: "config-coluna" }, p.aparencia, p.sobre),
-        el("div", { class: "config-coluna" }, p.form, p.perigo)));
+      el("div", { class: "config-grade" }, partes.aparencia, el("div", { class: "config-coluna" }, partes.form, partes.dados)),
+    );
   }
 
   function atualizar() {
-    const pref = NX.preferencias;
-    const tema = Comum.temaSalvo ? Comum.temaSalvo() : null;
-    p.aparencia.replaceChildren(el("section", { class: "cartao config" },
-      el("h2", { class: "cartao__titulo", texto: "Aparência e exibição" }),
-      grupoOpcoes("Tema", "tema", [["light", "Claro", "sun"], ["dark", "Escuro", "moon"], ["sistema", "Seguir o sistema", "monitor"]], tema || "sistema", (v) => {
-        Comum.definirTema(v === "sistema" ? null : v);
-        U.aviso(v === "sistema" ? "O tema vai seguir o seu sistema." : `Tema ${v === "light" ? "claro" : "escuro"} aplicado e salvo.`);
-        atualizar();
-      }),
-      grupoOpcoes("Densidade das tabelas", "densidade", [["confortavel", "Confortável"], ["compacta", "Compacta"]], pref.densidade, (v) => NX.salvarPreferencias({ densidade: v }, "Densidade atualizada.")),
-      grupoOpcoes("Valores em reais", "valores", [["false", "Completos (R$ 12.500,00)"], ["true", "Compactos (R$ 12,5 mil)"]], String(pref.valoresCompactos), (v) => NX.salvarPreferencias({ valoresCompactos: v === "true" }, "Formato dos valores atualizado.")),
-      grupoOpcoes("Itens por página nas listas", "pagina", [["10", "10"], ["20", "20"], ["50", "50"]], String(pref.porPagina), (v) => NX.salvarPreferencias({ porPagina: Number(v) }, "Itens por página atualizados.")),
-      (() => {
-        const sel = el("select", { class: "seletor", id: "cfg-inicial", "data-foco": "cfg-inicial" }, ...[["painel", "Dashboard"], ["produtos", "Produtos"], ["movimentacoes", "Movimentações"], ["pedidos", "Pedidos de compra"]].map(([v, t]) => el("option", { value: v, texto: t })));
-        sel.value = pref.paginaInicial;
-        sel.addEventListener("change", () => NX.salvarPreferencias({ paginaInicial: sel.value }, "Página inicial atualizada."));
-        return el("div", { class: "campo" }, el("label", { for: "cfg-inicial", texto: "Página inicial ao abrir o sistema" }), sel);
-      })()));
-
+    const p = NX.preferencias;
     const d = L.dados;
-    if (!p.form.dataset.montado) {
-      const campo = (id, rotulo, valor, extra = {}) => el("div", { class: "campo" }, el("label", { for: id }, rotulo, extra.opcional ? el("span", { class: "campo__opc", texto: " (opcional)" }) : null), el("input", { id, type: extra.tipo || "text", value: valor, maxlength: extra.max || 60, autocomplete: "off", "aria-describedby": `${id}-erro` }), el("p", { class: "campo__erro", id: `${id}-erro` }));
-      p.form.replaceChildren(
-        el("h2", { class: "cartao__titulo", texto: "Empresa e perfil (demonstração)" }),
-        el("p", { class: "cartao__sub", texto: "Não existe login: este perfil é só um nome de exemplo, usado como responsável padrão nas operações." }),
-        el("div", { class: "campos" }, campo("cfg-empresa", "Nome da empresa", d.empresa, { max: 50 }), campo("cfg-nome", "Seu nome", d.perfil.nome), campo("cfg-cargo", "Cargo", d.perfil.cargo, { opcional: true }), campo("cfg-email", "E-mail", d.perfil.email, { tipo: "email", max: 90, opcional: true })),
-        el("div", { class: "config__botoes" }, el("button", { class: "btn btn--primario", type: "submit", texto: "Salvar alterações" })));
-      p.form.dataset.montado = "1";
-    }
+    const tema = Comum.temaSalvo() || "auto";
 
-    const tamanho = L.tamanhoSalvo();
-    const ativos = d.produtos.filter((x) => x.status === "ativo").length;
-    p.sobre.replaceChildren(el("section", { class: "cartao config" },
-      el("h2", { class: "cartao__titulo", texto: "Sobre esta demonstração" }),
-      el("div", { class: "numeros", style: { marginTop: 0 } },
-        el("div", {}, el("span", { texto: "Produtos" }), el("b", { texto: `${U.numero(ativos)} ativos · ${U.numero(d.produtos.length - ativos)} arquivados` })),
-        el("div", {}, el("span", { texto: "Movimentações" }), el("b", { texto: U.numero(d.movimentos.length) })),
-        el("div", {}, el("span", { texto: "Fornecedores e categorias" }), el("b", { texto: `${U.numero(d.fornecedores.length)} · ${U.numero(d.categorias.length)}` })),
-        el("div", {}, el("span", { texto: "Espaço usado no navegador" }), el("b", { texto: tamanho ? `${U.decimal(tamanho / 1024)} KB` : "não foi possível medir" }))),
-      el("ul", { class: "lista-limites" },
-        ...[
-          ["hard-drive", "Os dados ficam só neste navegador (localStorage). Outra pessoa ou outro aparelho vê os dados originais."],
-          ["lock-open", "Não há login, senhas, permissões nem servidor. O \"responsável\" de cada operação é escolhido no formulário."],
-          ["bell", "Os alertas aparecem só dentro do sistema. Nada é enviado por e-mail ou celular."],
-          ["wallet", "O valor do estoque é uma estimativa (saldo × preço de custo), não o valor contábil."],
-          ["database", "Para uso real com uma equipe seria preciso servidor, banco de dados, login e cópias de segurança."],
-        ].map(([ic, t]) => el("li", {}, icone(ic, 16), el("span", { texto: t })))),
+    partes.aparencia.replaceChildren(el("section", { class: "cartao config" },
+      el("h2", { class: "cartao__titulo", texto: "Aparência e visualização" }),
+      grupoOpcoes({ nome: "tema", legenda: "Tema", valor: tema, opcoes: [["light", "Claro", "sun"], ["dark", "Escuro", "moon"], ["auto", "Automático", "monitor"]],
+        ajuda: "Automático acompanha o tema do seu aparelho.", aoMudar: (v) => { Comum.definirTema(v === "auto" ? null : v); U.aviso("Tema atualizado."); } }),
+      grupoOpcoes({ nome: "densidade", legenda: "Densidade das tabelas", valor: p.densidade, opcoes: [["confortavel", "Confortável"], ["compacta", "Compacta"]],
+        aoMudar: (v) => NX.salvarPreferencias({ densidade: v }, "Densidade atualizada.") }),
+      grupoOpcoes({ nome: "valores", legenda: "Formato dos valores", valor: p.valoresCompactos ? "compacto" : "completo", opcoes: [["completo", "R$ 12.500,00"], ["compacto", "R$ 12,5 mil"]],
+        ajuda: "Vale para cartões e tabelas. Os detalhes sempre mostram o valor completo.",
+        aoMudar: (v) => NX.salvarPreferencias({ valoresCompactos: v === "compacto" }, "Formato dos valores atualizado.") }),
+      grupoOpcoes({ nome: "menu", legenda: "Menu lateral (no computador)", valor: p.menuRecolhido ? "recolhido" : "expandido", opcoes: [["expandido", "Expandido"], ["recolhido", "Só ícones"]],
+        aoMudar: (v) => NX.salvarPreferencias({ menuRecolhido: v === "recolhido" }, "Menu lateral atualizado.") }),
+      el("div", { class: "campo" },
+        el("label", { for: "pagina-inicial", texto: "Página inicial" }),
+        (() => {
+          const s = el("select", { id: "pagina-inicial", "data-foco": "pagina-inicial" }, ...[["visao-geral", "Visão geral"], ["pipeline", "Pipeline de vendas"], ["tarefas", "Tarefas"], ["leads", "Leads"]].map(([v, t]) => el("option", { value: v, texto: t })));
+          s.value = p.paginaInicial;
+          s.addEventListener("change", () => NX.salvarPreferencias({ paginaInicial: s.value }, "Página inicial atualizada."));
+          return s;
+        })()),
+    ));
+
+    partes.form.replaceChildren(
+      el("h2", { class: "cartao__titulo", texto: "Perfil e empresa" }),
+      el("p", { class: "cartao__sub", texto: "Não há login nesta demonstração: estes dados só personalizam as telas." }),
+      el("div", { class: "campos" },
+        campo("cfg-nome", "Seu nome", "text", d.perfil.nome, { autocomplete: "name", maxlength: 60 }),
+        campo("cfg-cargo", "Cargo", "text", d.perfil.cargo, { maxlength: 60 }),
+        campo("cfg-email", "E-mail", "email", d.perfil.email, { maxlength: 80 }),
+        campo("cfg-empresa", "Nome da empresa", "text", d.empresa, { maxlength: 50 }),
+        campo("cfg-meta", "Meta comercial mensal (R$)", "text", String(d.metaMensal).replace(".", ","), { inputmode: "decimal" })),
+      el("div", { class: "config__botoes" }, el("button", { class: "btn btn--primario", type: "submit", texto: "Salvar alterações" })),
+    );
+
+    const k = { leads: d.leads.length, clientes: d.clientes.length, negocios: d.negocios.length, tarefas: d.tarefas.length };
+    partes.dados.replaceChildren(el("section", { class: "cartao config" },
+      el("h2", { class: "cartao__titulo", texto: "Dados da demonstração" }),
+      el("p", { class: "cartao__sub", texto: `Hoje há ${U.plural(k.leads, "lead", "leads")}, ${U.plural(k.clientes, "cliente", "clientes")}, ${U.plural(k.negocios, "oportunidade", "oportunidades")} e ${U.plural(k.tarefas, "tarefa", "tarefas")} salvos neste navegador.` }),
+      L.persistente ? null : el("p", { class: "alerta-texto" }, icone("triangle-alert", 16), "Este navegador não permite salvar: as mudanças somem ao recarregar."),
       el("div", { class: "config__botoes" },
-        C().botao("Conferir saldos com o histórico", "btn--linha", () => {
-          const r = E.conferirIntegridade();
-          if (r.ok) U.aviso(`Tudo confere: o saldo de cada produto bate com as ${U.numero(r.movimentos)} movimentações e com os recebimentos dos pedidos.`);
-          else U.aviso(`Encontradas ${r.problemas.length} divergências. Primeira: ${r.problemas[0]}`, "erro");
-        }, "list-checks"),
-        NX.preferencias.avisoDemoFechado ? C().botao("Mostrar aviso da demonstração", "btn--fantasma", () => { NX.salvarPreferencias({ avisoDemoFechado: false }); NX.ir("painel"); }, "info") : null)));
-
-    p.perigo.replaceChildren(el("section", { class: "cartao config zona-perigo" },
-      el("h2", { class: "cartao__titulo", texto: "Restaurar dados originais" }),
-      el("p", { class: "cartao__sub", texto: "Apaga tudo o que foi feito nesta demonstração (produtos, movimentações, pedidos, fornecedores e categorias) e volta aos dados fictícios iniciais. As preferências de aparência são mantidas." }),
-      el("div", { class: "config__botoes" }, C().botao("Restaurar dados originais…", "btn--perigo", () => NX.restaurarDados(), "rotate-ccw"))));
+        C().botao("Restaurar dados originais", "btn--perigo", () => NX.restaurarDados(), "rotate-ccw"),
+        C().botao("Mostrar boas-vindas", "btn--linha", () => NX.mostrarBoasVindas(), "house")),
+    ));
   }
 
   function salvarPerfil(e) {
     e.preventDefault();
-    const val = (id) => p.form.querySelector(`#${id}`).value.trim();
-    const r = L.salvarConfiguracoes({ empresa: val("cfg-empresa"), nome: val("cfg-nome"), cargo: val("cfg-cargo"), email: val("cfg-email") });
-    const mapa = { empresa: "cfg-empresa", nome: "cfg-nome", email: "cfg-email" };
-    Object.entries(mapa).forEach(([campo, id]) => {
-      const msg = (r.erros || {})[campo] || "";
-      p.form.querySelector(`#${id}-erro`).textContent = msg;
-      p.form.querySelector(`#${id}`).setAttribute("aria-invalid", String(!!msg));
+    const val = (id) => partes.form.querySelector(`#${id}`).value.trim();
+    const r = L.salvarConfiguracoes({ nome: val("cfg-nome"), cargo: val("cfg-cargo"), email: val("cfg-email"), empresa: val("cfg-empresa"), metaMensal: val("cfg-meta") });
+    const mapa = { nome: "cfg-nome", email: "cfg-email", empresa: "cfg-empresa", metaMensal: "cfg-meta" };
+    Object.entries(mapa).forEach(([chave, id]) => {
+      const msg = (r.erros || {})[chave] || "";
+      const erro = partes.form.querySelector(`#${id}-erro`);
+      if (erro) erro.textContent = msg;
+      const input = partes.form.querySelector(`#${id}`);
+      if (input) input.setAttribute("aria-invalid", String(!!msg));
     });
-    if (r.ok) U.aviso("Empresa e perfil atualizados.");
-    else { U.aviso("Confira os campos destacados.", "erro"); const alvo = p.form.querySelector('[aria-invalid="true"]'); if (alvo) alvo.focus(); }
+    if (r.ok) U.aviso("Perfil e empresa atualizados.");
+    else { U.aviso("Confira os campos destacados.", "erro"); const primeiro = partes.form.querySelector('[aria-invalid="true"]'); if (primeiro) primeiro.focus(); }
   }
 
-  NX.telas.configuracoes = { titulo: "Configurações", montar, atualizar, aoSairDados: () => { if (p) delete p.form.dataset.montado; } };
+  NX.telas.configuracoes = { titulo: "Configurações", montar, atualizar };
 })();

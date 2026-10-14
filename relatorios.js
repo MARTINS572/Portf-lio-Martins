@@ -1,7 +1,7 @@
 /* ==========================================================================
-   NEXORA STOCK — Tela: Relatórios
-   Nove relatórios calculados dos dados reais do sistema, com filtros de
-   período e categoria e exportação CSV de cada um.
+   NEXORA CRM — Tela: Relatórios comerciais
+   Um filtro de período no topo vale para todos os números, gráficos e
+   tabelas da página. Cada bloco pode ser exportado em CSV.
    ========================================================================== */
 window.NX = window.NX || {};
 NX.telas = NX.telas || {};
@@ -10,189 +10,183 @@ NX.telas = NX.telas || {};
   "use strict";
   const U = NX.util;
   const L = NX.loja;
-  const E = NX.estoque;
+  const G = NX.graficos;
   const { el, icone } = U;
   const C = () => NX.componentes;
-  const G = () => NX.graficos;
 
-  const filtro = { periodo: { id: "30d" }, categoriaId: "", relatorio: "posicao" };
-  let p = null;
-
-  const ativos = () => L.dados.produtos.filter((x) => x.status === "ativo" && (!filtro.categoriaId || x.categoriaId === filtro.categoriaId)).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-  const emPedido = (pid) => E.pedidosComProduto(pid).filter((pc) => pc.status !== "rascunho").map((pc) => pc.numero).join(", ");
-  const filtroCategoria = () => (filtro.categoriaId ? (m) => (L.produto(m.produtoId) || {}).categoriaId === filtro.categoriaId : () => true);
-
-  /* Cada relatório: colunas (rótulo e se é número), linhas para a tela e para o CSV */
-  const RELATORIOS = [
-    {
-      id: "posicao", titulo: "Posição atual do estoque", periodo: false,
-      descricao: "Saldo, mínimo e valor de cada produto ativo hoje.",
-      colunas: [["SKU"], ["Produto"], ["Categoria"], ["Saldo", 1], ["Mínimo", 1], ["Custo (R$)", 1], ["Valor (R$)", 1], ["Situação"]],
-      dados: () => ativos().map((x) => [x.sku, x.nome, L.nomeCategoria(x.categoriaId), E.saldo(x.id), x.minimo, x.custo, E.valorDoProduto(x), E.nomeSituacao(E.situacao(x))]),
-      total: (ls) => ["Total", "", "", ls.reduce((t, l) => t + l[3], 0), "", "", U.arredondar(ls.reduce((t, l) => t + l[6], 0)), ""],
-      formato: [null, null, null, "n", "n", "m", "m", null],
-    },
-    {
-      id: "valor", titulo: "Valor do estoque por categoria", periodo: false,
-      descricao: "Estimativa pelo preço de custo cadastrado (saldo × custo).",
-      colunas: [["Categoria"], ["Produtos ativos", 1], ["Unidades", 1], ["Valor (R$)", 1], ["% do total", 1]],
-      dados: () => {
-        const lista = E.porCategoria().filter((c) => c.produtos > 0 && (!filtro.categoriaId || c.categoria.id === filtro.categoriaId));
-        const soma = lista.reduce((t, c) => t + c.valor, 0) || 1;
-        return lista.sort((a, b) => b.valor - a.valor).map((c) => [c.categoria.nome, c.produtos, c.unidades, c.valor, U.arredondar((c.valor / soma) * 100)]);
-      },
-      total: (ls) => ["Total", ls.reduce((t, l) => t + l[1], 0), ls.reduce((t, l) => t + l[2], 0), U.arredondar(ls.reduce((t, l) => t + l[3], 0)), 100],
-      formato: [null, "n", "n", "m", "%"],
-    },
-    {
-      id: "abaixo", titulo: "Produtos abaixo do mínimo", periodo: false,
-      descricao: "Saldo igual ou menor que o estoque mínimo (inclui os sem estoque).",
-      colunas: [["SKU"], ["Produto"], ["Saldo", 1], ["Mínimo", 1], ["Falta para o mínimo", 1], ["Fornecedor"], ["Em pedido"]],
-      dados: () => ativos().filter((x) => ["baixo", "zerado"].includes(E.situacao(x))).sort((a, b) => E.saldo(a.id) - E.saldo(b.id)).map((x) => [x.sku, x.nome, E.saldo(x.id), x.minimo, Math.max(0, x.minimo - E.saldo(x.id)), L.nomeFornecedor(x.fornecedorId), emPedido(x.id) || "—"]),
-      formato: [null, null, "n", "n", "n", null, null],
-    },
-    {
-      id: "zerado", titulo: "Produtos sem estoque", periodo: false,
-      descricao: "Produtos ativos com saldo zero.",
-      colunas: [["SKU"], ["Produto"], ["Categoria"], ["Última saída"], ["Fornecedor"], ["Em pedido"]],
-      dados: () => ativos().filter((x) => E.situacao(x) === "zerado").map((x) => {
-        const ult = [...E.movimentosDoProduto(x.id)].reverse().find((m) => m.quantidade < 0);
-        return [x.sku, x.nome, L.nomeCategoria(x.categoriaId), ult ? U.dataHora(ult.data) : "—", L.nomeFornecedor(x.fornecedorId), emPedido(x.id) || "—"];
-      }),
-      formato: [],
-    },
-    {
-      id: "entradas-saidas", titulo: "Entradas e saídas por período", periodo: true,
-      descricao: "Unidades e valores pelo custo, agrupados por dia, semana ou mês conforme o tamanho do período.",
-      colunas: [["Período"], ["Entradas (un.)", 1], ["Saídas (un.)", 1], ["Saldo líquido (un.)", 1], ["Entradas (R$)", 1], ["Saídas (R$)", 1]],
-      dados: () => {
-        const { de, ate } = C().intervaloDe(filtro.periodo);
-        return E.serieMovimentos(de, ate, { categoriaId: filtro.categoriaId }).map((b) => [b.inicio === b.fim ? U.dataCompleta(b.inicio) : `${U.dataCompleta(b.inicio)} a ${U.dataCompleta(b.fim)}`, b.entradas, b.saidas, b.entradas - b.saidas, b.valorEntradas, b.valorSaidas]);
-      },
-      total: (ls) => ["Total", ...[1, 2, 3].map((i) => ls.reduce((t, l) => t + l[i], 0)), ...[4, 5].map((i) => U.arredondar(ls.reduce((t, l) => t + l[i], 0)))],
-      formato: [null, "n", "n", "s", "m", "m"],
-    },
-    {
-      id: "maior", titulo: "Produtos com maior movimentação", periodo: true,
-      descricao: "Os 20 produtos que mais entraram e saíram no período (estornos descontados).",
-      colunas: [["Produto"], ["Entradas (un.)", 1], ["Saídas (un.)", 1], ["Total (un.)", 1], ["Movimentações", 1]],
-      dados: () => { const { de, ate } = C().intervaloDe(filtro.periodo); return E.maisMovimentados(de, ate, { categoriaId: filtro.categoriaId, limite: 20 }).map((r) => [r.produto.nome, r.entradas, r.saidas, r.total, r.movimentos]); },
-      formato: [null, "n", "n", "n", "n"],
-    },
-    {
-      id: "sem-mov", titulo: "Produtos sem movimentação no período", periodo: true,
-      descricao: "Produtos ativos que não tiveram nenhuma entrada, saída ou ajuste no período (estoque parado).",
-      colunas: [["SKU"], ["Produto"], ["Saldo", 1], ["Valor parado (R$)", 1], ["Última movimentação"]],
-      dados: () => { const { de, ate } = C().intervaloDe(filtro.periodo); return E.semMovimentacao(de, ate, { categoriaId: filtro.categoriaId }).map((r) => [r.produto.sku, r.produto.nome, r.saldo, E.valorDoProduto(r.produto), r.ultima ? U.dataHora(r.ultima) : "—"]); },
-      formato: [null, null, "n", "m", null],
-    },
-    {
-      id: "ajustes", titulo: "Histórico de ajustes", periodo: true,
-      descricao: "Ajustes de inventário com contagem, diferença, motivo e responsável.",
-      colunas: [["Data e hora"], ["Produto"], ["Sistema", 1], ["Contado", 1], ["Diferença", 1], ["Motivo"], ["Responsável"], ["Observação"]],
-      dados: () => {
-        const { de, ate } = C().intervaloDe(filtro.periodo);
-        const f = filtroCategoria();
-        return E.movimentosOrdenados().filter((m) => m.tipo === "ajuste" && E.noPeriodo(m, de, ate) && f(m)).reverse()
-          .map((m) => [U.dataHora(m.data), L.produto(m.produtoId)?.nome || "", m.saldoAnterior, m.contada ?? m.saldoApos, m.quantidade, m.motivo, L.membro(m.responsavelId).nome, m.observacao]);
-      },
-      formato: [null, null, "n", "n", "s", null, null, null],
-    },
-    {
-      id: "pedidos", titulo: "Pedidos de compra pendentes", periodo: false,
-      descricao: "Pendentes de envio, enviados e parcialmente recebidos (rascunhos ficam de fora).",
-      colunas: [["Pedido"], ["Fornecedor"], ["Status"], ["Previsão"], ["A receber (un.)", 1], ["Valor a receber (R$)", 1]],
-      dados: () => L.dados.pedidos.filter(E.pedidoAberto)
-        .filter((pc) => !filtro.categoriaId || pc.itens.some((it) => L.produto(it.produtoId)?.categoriaId === filtro.categoriaId))
-        .sort((a, b) => a.previsao.localeCompare(b.previsao))
-        .map((pc) => { const t = E.totaisPedido(pc); return [pc.numero, L.nomeFornecedor(pc.fornecedorId), `${E.statusPedido(pc.status).nome}${E.pedidoAtrasado(pc) ? " (atrasado)" : ""}`, U.dataCompleta(pc.previsao), t.pendenteUn, t.pendenteValor]; }),
-      total: (ls) => ["Total", "", "", "", ls.reduce((t, l) => t + l[4], 0), U.arredondar(ls.reduce((t, l) => t + l[5], 0))],
-      formato: [null, null, null, null, "n", "m"],
-    },
+  const PERIODOS = [
+    { id: "30d", rotulo: "Últimos 30 dias" },
+    { id: "90d", rotulo: "Últimos 90 dias" },
+    { id: "mes", rotulo: "Este mês" },
+    { id: "mes-anterior", rotulo: "Mês passado" },
+    { id: "6m", rotulo: "Últimos 6 meses" },
+    { id: "personalizado", rotulo: "Personalizado" },
   ];
+  const estado = { periodo: "6m", de: "", ate: "" };
+  let partes = null;
+  let rel = null;
 
-  const mostrar = (v, f) => (f === "n" ? U.numero(v) : f === "m" ? U.moeda(v) : f === "s" ? U.comSinal(v) : f === "%" ? `${U.decimal(v)}%` : v);
-
-  function montar(secao) {
-    const cat = el("select", { class: "seletor", "aria-label": "Filtrar por categoria", "data-foco": "rel-cat" });
-    cat.addEventListener("change", () => { filtro.categoriaId = cat.value; atualizar(); });
-    p = {
-      cat, periodo: el("div"), descricao: el("p", { class: "periodo-descricao", "aria-live": "polite" }),
-      indicadores: el("div", { class: "indicadores indicadores--relatorio" }),
-      grafico: C().cartaoGrafico({ titulo: "Entradas e saídas", sub: "", legenda: C().legenda([["", "Entradas"], ["chave--2", "Saídas"]]) }),
-      escolha: el("div", { class: "relatorio-escolha", role: "tablist", "aria-label": "Relatórios" }),
-      relatorio: el("div"),
-    };
-    secao.replaceChildren(
-      C().cabecalho({ id: "relatorios", titulo: "Relatórios", sub: "Calculados a partir das movimentações e dos cadastros" }),
-      p.periodo,
-      el("div", { class: "barra-filtros" }, cat),
-      p.descricao,
-      el("p", { class: "nota-info aviso-valor" }, icone("info", 16), el("span", {}, el("b", { texto: "Sobre o valor do estoque: " }), "é uma estimativa operacional (saldo × preço de custo cadastrado). Não equivale necessariamente ao valor contábil da empresa, que depende de critérios fiscais e contábeis.")),
-      p.indicadores,
-      el("div", { style: { marginBottom: "16px" } }, p.grafico.cartao),
-      p.escolha,
-      p.relatorio);
+  function intervalo() {
+    const hoje = U.hoje();
+    switch (estado.periodo) {
+      case "30d": return [U.somarDias(hoje, -29), hoje];
+      case "90d": return [U.somarDias(hoje, -89), hoje];
+      case "mes": return [U.inicioDoMes(hoje), hoje];
+      case "mes-anterior": { const ini = U.somarMeses(U.inicioDoMes(hoje), -1); return [ini, U.fimDoMes(ini)]; }
+      case "6m": return [U.somarMeses(U.inicioDoMes(hoje), -5), hoje];
+      default: return [estado.de, estado.ate];
+    }
   }
 
-  function indicador(rotulo, nomeIcone, valor, nota) {
-    return el("div", { class: "indicador" }, el("span", { class: "indicador__rotulo" }, icone(nomeIcone, 16), rotulo), el("span", { class: "indicador__valor", texto: valor }), el("span", { class: "indicador__nota", texto: nota }));
+  function montar(secao) {
+    const presets = el("div", { class: "segmentado", role: "group", "aria-label": "Período do relatório" });
+    const de = el("input", { type: "date", id: "rel-de", "aria-label": "Data inicial" });
+    const ate = el("input", { type: "date", id: "rel-ate", "aria-label": "Data final" });
+    const erro = el("p", { class: "campo__erro", role: "alert" });
+    const personalizado = el("form", { class: "periodo-personalizado", hidden: true, novalidate: true },
+      el("label", { for: "rel-de", texto: "De" }), de, el("label", { for: "rel-ate", texto: "até" }), ate,
+      el("button", { class: "btn btn--linha btn--pequeno", type: "submit", texto: "Aplicar" }), erro);
+    personalizado.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!U.dataValida(de.value) || !U.dataValida(ate.value)) { erro.textContent = "Informe as duas datas."; return; }
+      if (de.value > ate.value) { erro.textContent = "A data inicial precisa ser antes da final."; return; }
+      erro.textContent = "";
+      estado.de = de.value; estado.ate = ate.value;
+      atualizar();
+      U.aviso(`Relatório de ${U.dataCompleta(de.value)} a ${U.dataCompleta(ate.value)}.`, "info");
+    });
+
+    const csv = (rotulo, fn) => el("button", { class: "link-btn", type: "button", onclick: fn }, icone("download", 14), rotulo);
+    const vendas = C().cartaoGrafico({ titulo: "Vendas por período", sub: "", classe: "grafico--largo", acoes: [csv("CSV", exportarVendas)] });
+    const resultado = C().cartaoGrafico({ titulo: "Oportunidades ganhas e perdidas", sub: "Quantidade de oportunidades fechadas", acoes: [csv("CSV", exportarFechadas)] });
+    const origens = C().cartaoGrafico({ titulo: "Leads por origem", sub: "Leads com primeiro contato no período", acoes: [csv("CSV", exportarOrigens)] });
+    const motivos = C().cartaoGrafico({ titulo: "Motivos de perda", sub: "Por que as oportunidades foram perdidas" });
+
+    partes = {
+      presets, personalizado, de, ate,
+      descricao: el("p", { class: "periodo-descricao", "aria-live": "polite" }),
+      indicadores: el("div", { class: "indicadores indicadores--relatorio" }),
+      vendas, resultado, origens, motivos,
+      desempenho: el("tbody"),
+    };
+
+    secao.replaceChildren(
+      C().cabecalho({ id: "relatorios", titulo: "Relatórios", sub: "Resultados calculados a partir dos registros do CRM", acoes: [C().botao("Exportar resumo", "btn--linha", exportarResumo, "download")] }),
+      el("div", { class: "barra-periodo" }, presets, personalizado),
+      partes.descricao,
+      partes.indicadores,
+      el("div", { class: "painel-grade" }, vendas.cartao, resultado.cartao, origens.cartao, motivos.cartao),
+      el("article", { class: "cartao cartao--tabela" },
+        el("div", { class: "cartao__cabeca" },
+          el("div", {}, el("h2", { class: "cartao__titulo", texto: "Desempenho por responsável" }), el("p", { class: "cartao__sub", texto: "Vendas, perdas e tarefas concluídas no período; oportunidades em aberto hoje" })),
+          el("div", { class: "cartao__acoes" }, csv("CSV", exportarDesempenho))),
+        el("div", { class: "tabela-rolagem" },
+          el("table", { class: "tabela tabela--desempenho" },
+            el("caption", { class: "vh", texto: "Desempenho por responsável" }),
+            el("thead", {}, el("tr", {}, ...["Responsável", "Vendas", "Valor vendido", "Perdidas", "Conversão", "Em aberto", "Tarefas concluídas"].map((t, i) => el("th", { scope: "col", class: i ? "num" : "", texto: t })))),
+            partes.desempenho))),
+    );
+  }
+
+  function indicador(rotulo, valor, nota) {
+    return el("article", { class: "indicador" }, el("p", { class: "indicador__rotulo", texto: rotulo }), el("p", { class: "indicador__valor", texto: valor }), nota ? el("p", { class: "indicador__nota", texto: nota }) : null);
   }
 
   function atualizar() {
-    const { de, ate } = C().intervaloDe(filtro.periodo);
-    p.periodo.replaceChildren(C().seletorPeriodo(filtro.periodo, atualizar, { nome: "rel-periodo" }));
-    p.cat.replaceChildren(el("option", { value: "", texto: "Todas as categorias" }), ...L.dados.categorias.map((c) => el("option", { value: c.id, texto: c.status === "ativa" ? c.nome : `${c.nome} (arquivada)` })));
-    p.cat.value = filtro.categoriaId;
-    const nomeCat = filtro.categoriaId ? L.nomeCategoria(filtro.categoriaId) : "todas";
-    p.descricao.textContent = `Período: ${C().descreverPeriodo({ de, ate })} · Categoria: ${nomeCat}`;
+    partes.presets.replaceChildren(...PERIODOS.map((p) => el("button", { type: "button", "aria-pressed": String(estado.periodo === p.id), "data-foco": `periodo-${p.id}`,
+      onclick: () => {
+        estado.periodo = p.id;
+        if (p.id === "personalizado" && !estado.de) { const [a, b] = [U.somarDias(U.hoje(), -59), U.hoje()]; estado.de = a; estado.ate = b; }
+        atualizar();
+      } }, p.rotulo)));
+    partes.personalizado.hidden = estado.periodo !== "personalizado";
+    if (estado.periodo === "personalizado") { partes.de.value = estado.de; partes.ate.value = estado.ate; }
 
-    // Indicadores
-    const lista = ativos();
-    const valor = lista.reduce((t, x) => t + E.valorDoProduto(x), 0);
-    const mov = E.totaisMovimento(de, ate, filtroCategoria());
-    const abaixo = lista.filter((x) => ["baixo", "zerado"].includes(E.situacao(x)));
-    const pend = RELATORIOS.find((r) => r.id === "pedidos").dados();
-    p.indicadores.replaceChildren(
-      indicador("Valor estimado do estoque", "wallet", U.moeda(valor, { compacto: valor >= 100000 }), `${U.unidades(lista.reduce((t, x) => t + E.saldo(x.id), 0))} em ${U.plural(lista.length, "produto", "produtos")} · hoje`),
-      indicador("Entradas no período", "arrow-down-to-line", `+${U.numero(mov.entradas)}`, `${U.moeda(mov.valorEntradas)} pelo custo`),
-      indicador("Saídas no período", "arrow-up-from-line", `−${U.numero(mov.saidas)}`, `${U.moeda(mov.valorSaidas)} pelo custo`),
-      indicador("Ajustes no período", "sliders-horizontal", U.comSinal(mov.ajustes), `${U.plural(mov.qtdAjustes, "ajuste", "ajustes")} · ${U.moeda(mov.ajustesValor)}`),
-      indicador("Abaixo do mínimo", "triangle-alert", U.numero(abaixo.length), `${U.numero(abaixo.filter((x) => E.situacao(x) === "zerado").length)} sem estoque · hoje`),
-      indicador("Pedidos pendentes", "clipboard-list", U.numero(pend.length), `${U.moeda(pend.reduce((t, l) => t + l[5], 0))} a receber`),
+    const [de, ate] = intervalo();
+    rel = L.relatorio(de, ate);
+    partes.descricao.textContent = `${U.dataCompleta(de)} a ${U.dataCompleta(ate)} · ${U.plural(U.diasEntre(de, ate) + 1, "dia", "dias")}`;
+
+    partes.indicadores.replaceChildren(
+      indicador("Vendas no período", U.moeda(rel.valorGanho, { compacto: rel.valorGanho >= 100000 || undefined }), `${U.plural(rel.ganhos.length, "venda concluída", "vendas concluídas")} · ${U.moeda(rel.valorGanho, { compacto: false })}`),
+      indicador("Valor médio das vendas", rel.ganhos.length ? U.moeda(rel.ticketMedio) : "—", "valor vendido ÷ número de vendas"),
+      indicador("Conversão de oportunidades", rel.conversaoOportunidades == null ? "—" : U.percentual(rel.conversaoOportunidades), `${rel.ganhos.length} ganhas de ${rel.fechados.length} fechadas`),
+      indicador("Conversão de leads", rel.conversaoLeads == null ? "—" : U.percentual(rel.conversaoLeads), `${rel.leadsConvertidos} de ${U.plural(rel.leadsNoPeriodo, "lead", "leads")} viraram clientes`),
+      indicador("Ganhas × perdidas", `${rel.ganhos.length} × ${rel.perdidos.length}`, `${U.moeda(rel.valorPerdido, { compacto: false })} em oportunidades perdidas`),
     );
 
-    // Gráfico
-    const serie = E.serieMovimentos(de, ate, { categoriaId: filtro.categoriaId });
-    const tipo = E.agrupamentoPara(de, ate);
-    p.grafico.definirSub(`${{ dia: "Por dia", semana: "Por semana", mes: "Por mês" }[tipo]} · unidades`);
-    const rotuloBloco = (b) => (b.inicio === b.fim ? U.dataCompleta(b.inicio) : `${U.dataCurta(b.inicio)} a ${U.dataCurta(b.fim)}`);
-    if (serie.some((b) => b.entradas || b.saidas)) G().colunas(p.grafico.cartao, { rotulos: serie.map((b) => b.rotulo), series: [{ nome: "entradas", valores: serie.map((b) => Math.max(0, b.entradas)) }, { nome: "saídas", valores: serie.map((b) => Math.max(0, b.saidas)) }], formatar: (v) => `${U.numero(v)} un.`, detalheRotulo: (i) => rotuloBloco(serie[i]) });
-    else p.grafico.area.replaceChildren(el("p", { class: "grafico__vazio", texto: "Nenhuma entrada ou saída neste período e categoria." }));
-    G().tabela(p.grafico.cartao, ["Período", "Entradas (un.)", "Saídas (un.)"], serie.map((b) => [rotuloBloco(b), U.numero(b.entradas), U.numero(b.saidas)]));
+    // Vendas por período
+    partes.vendas.definirSub(rel.porSemana ? "Valor das vendas concluídas por semana" : "Valor das vendas concluídas por mês");
+    if (rel.serie.length) {
+      G.area(partes.vendas.cartao, {
+        rotulos: rel.serie.map((s) => s.rotulo), valores: rel.serie.map((s) => s.valor), nome: "Vendas por período",
+        formatar: (v) => U.moeda(v, { compacto: true }), detalhes: (i) => [U.plural(rel.serie[i].ganhos, "venda", "vendas")],
+      });
+    }
+    G.tabela(partes.vendas.cartao, ["Período", "Vendas", "Valor"], rel.serie.map((s) => [rel.porSemana ? `${U.dataCurta(s.ini)} a ${U.dataCurta(s.fim)}` : U.mesAno(s.ini), U.numero(s.ganhos), U.moeda(s.valor, { compacto: false })]));
 
-    // Escolha do relatório
-    p.escolha.replaceChildren(...RELATORIOS.map((r) => el("button", { class: "chip", type: "button", role: "tab", "aria-selected": String(filtro.relatorio === r.id), "aria-pressed": String(filtro.relatorio === r.id), "data-foco": `rel-${r.id}`, texto: r.titulo, onclick: () => { filtro.relatorio = r.id; atualizar(); } })));
+    // Ganhas e perdidas
+    G.colunas(partes.resultado.cartao, {
+      rotulos: rel.serie.map((s) => s.rotulo),
+      series: [{ nome: "Ganhas", valores: rel.serie.map((s) => s.ganhos) }, { nome: "Perdidas", valores: rel.serie.map((s) => s.perdidos) }],
+    });
+    const legenda = partes.resultado.cartao.querySelector(".legenda") || el("ul", { class: "legenda" });
+    legenda.replaceChildren(el("li", {}, el("i", { class: "chave chave--1" }), "Ganhas"), el("li", {}, el("i", { class: "chave chave--2" }), "Perdidas"));
+    partes.resultado.area.before(legenda);
+    G.tabela(partes.resultado.cartao, ["Período", "Ganhas", "Perdidas"], rel.serie.map((s) => [rel.porSemana ? `${U.dataCurta(s.ini)} a ${U.dataCurta(s.fim)}` : U.mesAno(s.ini), U.numero(s.ganhos), U.numero(s.perdidos)]));
 
-    // Relatório escolhido
-    const r = RELATORIOS.find((x) => x.id === filtro.relatorio) || RELATORIOS[0];
-    const linhas = r.dados();
-    const total = r.total && linhas.length ? r.total(linhas) : null;
-    const exportar = () => {
-      if (!linhas.length) { U.aviso("Este relatório está vazio com os filtros atuais.", "info"); return; }
-      U.baixarCSV(U.nomeArquivo(`relatorio-${r.id}`), r.colunas.map((c) => c[0]), total ? [...linhas, total] : linhas);
-    };
-    p.relatorio.replaceChildren(el("article", { class: "cartao cartao--tabela", role: "tabpanel", "aria-label": r.titulo },
-      el("div", { class: "cartao__cabeca" },
-        el("div", {}, el("h2", { class: "cartao__titulo", texto: r.titulo }), el("p", { class: "cartao__sub", texto: `${r.descricao} ${r.periodo ? `Período: ${C().descreverPeriodo({ de, ate })}.` : "Posição de hoje (não depende do período)."}` })),
-        C().botao("Exportar CSV", "btn--linha btn--pequeno", exportar, "download", { "aria-label": `Exportar ${r.titulo} em CSV` })),
-      linhas.length ? el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--cartoes" },
-        el("thead", {}, el("tr", {}, ...r.colunas.map(([t, num]) => el("th", { scope: "col", class: num ? "num" : "", texto: t })))),
-        el("tbody", {}, ...linhas.map((l) => el("tr", {}, ...l.map((v, i) => C().td(r.colunas[i][0], mostrar(v, r.formato[i]), `${r.colunas[i][1] ? "num" : ""}${["SKU", "Pedido", "Situação", "Data e hora"].includes(r.colunas[i][0]) ? " nowrap" : ""}${r.colunas[i][0] === "SKU" || r.colunas[i][0] === "Pedido" ? " mono" : ""}${i === (r.colunas[0][0] === "SKU" ? 1 : 0) ? " principal-celula" : ""}`))))),
-        total ? el("tfoot", {}, el("tr", {}, ...total.map((v, i) => el("td", { class: r.colunas[i][1] ? "num" : "", texto: v === "" ? "" : mostrar(v, r.formato[i]) })))) : null))
-        : C().vazio({ icone: "circle-check", titulo: "Nada neste relatório", texto: "Com o período e a categoria escolhidos, não há registros." }),
-      linhas.length ? el("p", { class: "contagem", style: { padding: "10px 16px 6px" }, texto: U.plural(linhas.length, "linha", "linhas") }) : null));
+    // Leads por origem
+    G.barras(partes.origens.cartao, { itens: rel.origens, formatar: (v) => U.plural(v, "lead", "leads"), vazio: "Nenhum lead no período." });
+    G.tabela(partes.origens.cartao, ["Origem", "Leads"], rel.origens.map((o) => [o.rotulo, U.numero(o.valor)]));
+
+    // Motivos de perda
+    G.barras(partes.motivos.cartao, { itens: rel.motivos, formatar: (v) => U.plural(v, "oportunidade", "oportunidades"), vazio: "Nenhuma oportunidade perdida no período." });
+    G.tabela(partes.motivos.cartao, ["Motivo", "Oportunidades"], rel.motivos.map((m) => [m.rotulo, U.numero(m.valor)]));
+
+    // Desempenho
+    const maior = Math.max(1, ...rel.desempenho.map((p) => p.valor));
+    partes.desempenho.replaceChildren(...rel.desempenho.sort((a, b) => b.valor - a.valor).map((p) => el("tr", {},
+      el("th", { scope: "row", "data-rotulo": "Responsável" }, C().pessoaComAvatar(p.id), el("span", { class: "suave bloco", texto: p.cargo })),
+      el("td", { class: "num", "data-rotulo": "Vendas", texto: U.numero(p.ganhos) }),
+      el("td", { class: "num", "data-rotulo": "Valor vendido" },
+        el("span", { class: "barra-celula" }, el("span", { class: "barra-celula__barra", style: { width: `${(p.valor / maior) * 100}%` } })),
+        el("b", { texto: U.moeda(p.valor, { compacto: false }) })),
+      el("td", { class: "num", "data-rotulo": "Perdidas", texto: U.numero(p.perdidos) }),
+      el("td", { class: "num", "data-rotulo": "Conversão", texto: p.conversao == null ? "—" : U.percentual(p.conversao) }),
+      el("td", { class: "num", "data-rotulo": "Em aberto", texto: `${p.abertos} · ${U.moeda(p.valorAberto)}` }),
+      el("td", { class: "num", "data-rotulo": "Tarefas concluídas", texto: U.numero(p.tarefasConcluidas) }))));
   }
 
-  NX.telas.relatorios = { titulo: "Relatórios", montar, atualizar };
+  /* ---------- Exportações (dados do período escolhido) ---------- */
+  const sufixo = () => `${rel.de}_a_${rel.ate}`;
+  function exportarVendas() {
+    U.baixarCSV(`nexora-vendas-${sufixo()}.csv`, ["Início", "Fim", "Vendas", "Valor vendido (R$)", "Perdidas"],
+      rel.serie.map((s) => [U.dataCompleta(s.ini), U.dataCompleta(s.fim), s.ganhos, s.valor, s.perdidos]));
+  }
+  function exportarFechadas() {
+    U.baixarCSV(`nexora-oportunidades-fechadas-${sufixo()}.csv`, ["Data", "Resultado", "Empresa", "Contato", "Serviço", "Valor (R$)", "Responsável", "Motivo da perda"],
+      rel.fechados.sort((a, b) => a.fechadoEm.localeCompare(b.fechadoEm)).map((n) => [U.dataCompleta(n.fechadoEm), n.etapa === "ganho" ? "Ganha" : "Perdida", n.empresa, n.contato, n.titulo, n.valor, L.membro(n.responsavelId).nome, n.motivoPerda || ""]));
+  }
+  function exportarOrigens() {
+    U.baixarCSV(`nexora-leads-por-origem-${sufixo()}.csv`, ["Origem", "Leads"], rel.origens.map((o) => [o.rotulo, o.valor]));
+  }
+  function exportarDesempenho() {
+    U.baixarCSV(`nexora-desempenho-${sufixo()}.csv`, ["Responsável", "Cargo", "Vendas", "Valor vendido (R$)", "Perdidas", "Conversão (%)", "Em aberto", "Valor em aberto (R$)", "Tarefas concluídas"],
+      rel.desempenho.map((p) => [p.rotulo, p.cargo, p.ganhos, p.valor, p.perdidos, p.conversao == null ? "" : Math.round(p.conversao * 1000) / 10, p.abertos, p.valorAberto, p.tarefasConcluidas]));
+  }
+  function exportarResumo() {
+    U.baixarCSV(`nexora-resumo-${sufixo()}.csv`, ["Indicador", "Valor"], [
+      ["Período", `${U.dataCompleta(rel.de)} a ${U.dataCompleta(rel.ate)}`],
+      ["Vendas concluídas", rel.ganhos.length],
+      ["Valor vendido (R$)", rel.valorGanho],
+      ["Valor médio das vendas (R$)", Math.round(rel.ticketMedio * 100) / 100],
+      ["Oportunidades perdidas", rel.perdidos.length],
+      ["Valor perdido (R$)", rel.valorPerdido],
+      ["Conversão de oportunidades (%)", rel.conversaoOportunidades == null ? "" : Math.round(rel.conversaoOportunidades * 1000) / 10],
+      ["Leads no período", rel.leadsNoPeriodo],
+      ["Leads convertidos", rel.leadsConvertidos],
+      ["Conversão de leads (%)", rel.conversaoLeads == null ? "" : Math.round(rel.conversaoLeads * 1000) / 10],
+    ]);
+  }
+
+  NX.telas.relatorios = { titulo: "Relatórios", montar, atualizar, estado };
 })();

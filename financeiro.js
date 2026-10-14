@@ -1,8 +1,8 @@
 /* ==========================================================================
-   NEXORA BOOKING — Tela: Financeiro
-   Receita REGISTRADA (pagamentos lançados à mão) separada do faturamento
-   PREVISTO (reservas marcadas). O sistema não cobra nem processa
-   pagamentos: concluir um atendimento não marca como pago.
+   NEXORA AUTO — Tela: Financeiro
+   Orçamento aprovado, serviço executado, valor faturado e valor recebido
+   são números diferentes e aparecem separados. Encerrar a ordem fatura;
+   o pagamento é registrado à parte. Nenhum pagamento é processado aqui.
    ========================================================================== */
 window.NX = window.NX || {};
 NX.telas = NX.telas || {};
@@ -11,110 +11,173 @@ NX.telas = NX.telas || {};
   "use strict";
   const U = NX.util;
   const L = NX.loja;
-  const M = NX.metricas;
+  const O = NX.oficina;
   const { el, icone } = U;
   const C = () => NX.componentes;
   const G = () => NX.graficos;
 
-  const estado = { periodo: { id: "mes" }, aba: "receber", pagina: 1 };
+  const PADRAO = () => ({ periodo: { id: "30d" }, aba: "ordens", situacao: "", despStatus: "", despCat: "", pagina: 1 });
+  const estado = PADRAO();
   let p = null;
+  const ABAS = [["ordens", "Situação das ordens"], ["recebimentos", "Recebimentos"], ["despesas", "Despesas"]];
 
-  function aoEntrar(params) {
-    if (params.de && params.ate && U.dataValida(params.de) && U.dataValida(params.ate)) estado.periodo = { id: "personalizado", de: params.de, ate: params.ate };
-    if (params.aba && ["receber", "pagamentos"].includes(params.aba)) estado.aba = params.aba;
-  }
   function montar(secao) {
-    const grafico = C().cartaoGrafico({ titulo: "Registrado × previsto", sub: "", legenda: C().legenda([["", "Receita registrada"], ["chave--2", "Faturamento previsto"]]) });
-    const formas = C().cartaoGrafico({ titulo: "Formas de pagamento", sub: "Pagamentos registrados no período" });
-    p = { grafico, formas, periodo: el("div"), resumo: el("div"), abas: el("div", { class: "chips", role: "group", "aria-label": "Lista" }), lista: el("div"), porProf: el("div"), porServico: el("div") };
-    U.trocar(secao, 
-      C().cabecalho({ id: "financeiro", titulo: "Financeiro", sub: "Controle do que foi recebido no balcão e do que está previsto na agenda.", acoes: [C().botao("Exportar pagamentos (CSV)", "btn--linha", exportar, "download")] }),
-      el("p", { class: "nota-info", style: { marginBottom: "16px" } }, icone("shield-check", 16), el("span", {}, el("b", { texto: "Nenhum pagamento real é processado. " }), "Os valores recebidos são registrados manualmente na reserva (Pix, dinheiro ou cartão na maquininha do estabelecimento). Não há cobrança, link de pagamento nem integração bancária.")),
-      p.periodo, p.resumo,
-      el("div", { class: "painel-grade" }, grafico.cartao, formas.cartao),
-      el("div", { class: "painel-grade painel-grade--financeiro" },
-        el("article", { class: "cartao cartao--tabela" }, el("div", { class: "cartao__cabeca" }, el("div", {}, el("h2", { class: "cartao__titulo", texto: "Desempenho por profissional" }), el("p", { class: "cartao__sub", texto: "Atendimentos, cancelamentos e valores no período" }))), p.porProf),
-        el("article", { class: "cartao cartao--tabela" }, el("div", { class: "cartao__cabeca" }, el("div", {}, el("h2", { class: "cartao__titulo", texto: "Serviços realizados" }), el("p", { class: "cartao__sub", texto: "Atendimentos concluídos no período, pelo preço registrado" }))), p.porServico)),
-      p.abas, p.lista);
+    const grafico = C().cartaoGrafico({ titulo: "Recebido e despesas pagas", sub: "", legenda: C().legenda([["", "Recebido"], ["chave--2", "Despesas pagas"]]) });
+    p = { grafico, periodo: el("div", { style: { minWidth: "0", maxWidth: "100%" } }), texto: el("p", { class: "periodo-descricao" }), resumo: el("div"), resumo2: el("div"), abas: el("div"), filtros: el("div", { class: "barra-filtros" }), conteudo: el("div", { class: "cartao cartao--tabela" }) };
+    U.trocar(secao,
+      C().cabecalho({ id: "financeiro", titulo: "Financeiro", sub: "Valores calculados a partir das ordens, dos recebimentos e das despesas registrados. Nenhum pagamento é cobrado ou processado pelo sistema.", acoes: [
+        C().botao("Exportar CSV", "btn--linha", exportar, "download"),
+        C().botaoSe("despesas", "Nova despesa", "btn--primario", () => NX.form.despesa(null), "plus"),
+      ] }),
+      el("div", { class: "barra-periodo" }, p.periodo), p.texto, p.resumo, p.resumo2,
+      el("div", { class: "painel-grade painel-grade--financeiro" }, grafico.cartao),
+      p.abas, p.filtros, p.conteudo);
+  }
+
+  function faixa(itens) {
+    return el("div", { class: "faixa-resumo" }, ...itens.map(([rotulo, valor, sub, classe]) => el("div", {}, el("span", { texto: rotulo }), el("b", { class: classe || "", texto: valor }), sub ? el("small", { class: "suave", texto: sub }) : null)));
   }
 
   function desenhar() {
-    const { de, ate } = C().intervaloDe(estado.periodo);
-    U.trocar(p.periodo, C().seletorPeriodo(estado.periodo, () => { estado.pagina = 1; atualizar(); }, { ids: ["7d", "30d", "mes", "mes-anterior", "90d", "personalizado"], nome: "fin" }), el("p", { class: "periodo-descricao", texto: `Período: ${C().descreverPeriodo({ de, ate })}. Previsto conta reservas com data no período (exceto canceladas e faltas).` }));
-    const r = M.resumo(de, ate);
-    U.trocar(p.resumo, el("div", { class: "faixa-resumo" },
-      el("div", {}, el("span", { texto: "Receita registrada" }), el("b", { texto: U.moeda(r.receita) }), el("small", { class: "suave", texto: U.plural(r.pagos, "pagamento", "pagamentos") })),
-      el("div", {}, el("span", { texto: "Faturamento previsto" }), el("b", { texto: U.moeda(r.previsto) }), el("small", { class: "suave", texto: "reservas do período" })),
-      el("div", {}, el("span", { texto: "A receber no período" }), el("b", { texto: U.moeda(r.aReceber) }), el("small", { class: "suave", texto: U.plural(r.aReceberQtd, "concluído sem pagamento", "concluídos sem pagamento") })),
-      el("div", {}, el("span", { texto: "Ticket médio" }), el("b", { texto: U.moeda(r.ticket) }), el("small", { class: "suave", texto: `${U.moeda(r.valorCancelado)} em reservas canceladas` }))));
+    const intervalo = C().intervaloDe(estado.periodo);
+    const { de, ate } = intervalo;
+    U.trocar(p.periodo, C().seletorPeriodo(estado.periodo, () => { estado.pagina = 1; atualizar(); }, { ids: ["hoje", "7d", "30d", "90d", "mes", "mes-anterior", "personalizado"], nome: "fin" }));
+    p.texto.textContent = `Período: ${C().descreverPeriodo(intervalo)}.`;
+    const r = O.resumoFinanceiro(de, ate);
+    const caixa = U.arredondar(r.recebido - r.despesasPagas);
+    U.trocar(p.resumo, faixa([
+      ["Orçamentos aprovados", U.moeda(r.aprovado), U.plural(r.aprovadosQtd, "aprovação", "aprovações")],
+      ["Serviços executados", U.moeda(r.executado), U.plural(r.executadasQtd, "ordem finalizada", "ordens finalizadas")],
+      ["Faturado", U.moeda(r.faturado), U.plural(r.faturadasQtd, "ordem encerrada", "ordens encerradas")],
+      ["Recebido", U.moeda(r.recebido), U.plural(r.recebimentosQtd, "pagamento registrado", "pagamentos registrados"), "positivo"],
+    ]));
+    U.trocar(p.resumo2, faixa([
+      ["Despesas pagas", U.moeda(r.despesasPagas), r.despesasAPagar ? `${U.moeda(r.despesasAPagar)} a pagar no período` : "Nenhuma a pagar no período"],
+      ["Caixa do período", U.moeda(caixa), "recebido − despesas pagas", caixa < 0 ? "negativo" : ""],
+      ["A receber (em aberto)", U.moeda(r.aReceberTotal), "ordens faturadas ainda não pagas", r.aReceberTotal > 0 ? "texto-alerta" : ""],
+      ["A faturar", U.moeda(r.aFaturar), `serviços prontos · peças aplicadas a custo: ${U.moeda(r.custoPecas)}`],
+    ]));
 
-    const s = M.serie(de, ate);
-    p.grafico.definirSub(`Por ${s.tipo === "dia" ? "dia" : s.tipo === "semana" ? "semana" : "mês"}`);
-    G().colunas(p.grafico.cartao, { rotulos: s.pontos.map((x) => x.rotulo), series: [{ nome: "registrada", valores: s.pontos.map((x) => x.receita) }, { nome: "prevista", valores: s.pontos.map((x) => x.previsto) }], formatar: U.moeda, detalheRotulo: (i) => (s.pontos[i].inicio === s.pontos[i].fim ? U.dataCompleta(s.pontos[i].inicio) : `${U.dataCurta(s.pontos[i].inicio)} a ${U.dataCurta(s.pontos[i].fim)}`) });
-    G().tabela(p.grafico.cartao, ["Período", "Registrada", "Prevista"], s.pontos.map((x) => [x.inicio === x.fim ? U.dataCompleta(x.inicio) : `${U.dataCurta(x.inicio)} a ${U.dataCurta(x.fim)}`, U.moeda(x.receita), U.moeda(x.previsto)]));
-    // Desempenho por profissional e serviços realizados (atendimentos com data no período)
-    const des = M.desempenho(de, ate);
-    const soma = (f) => des.reduce((t, x) => t + f(x), 0);
-    const tabelaResumo = (cab, linhas, rodape) => el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--cartoes" },
-      el("thead", {}, el("tr", {}, ...cab.map((c, i) => el("th", { scope: "col", class: i ? "num" : "", texto: c })))),
-      el("tbody", {}, ...linhas.map((l) => el("tr", {}, ...l.map((c, i) => C().td(i ? cab[i] : "", c, i ? "num" : "principal-celula"))))),
-      rodape ? el("tfoot", {}, el("tr", {}, ...rodape.map((c, i) => el(i ? "td" : "th", { scope: i ? null : "row", class: i ? "num" : "", "data-rotulo": i ? cab[i] : null, texto: c })))) : null));
-    U.trocar(p.porProf, des.length ? tabelaResumo(["Profissional", "Concluídos", "Cancel. e faltas", "Recebido", "Previsto", "A receber"],
-      des.map((x) => [C().nomeProf(x.profissional.id), U.numero(x.por.concluido), U.numero(x.por.cancelado + x.por.nao_compareceu), U.moeda(x.receita), U.moeda(x.previsto), U.moeda(x.aReceber)]),
-      ["Total", U.numero(soma((x) => x.por.concluido)), U.numero(soma((x) => x.por.cancelado + x.por.nao_compareceu)), U.moeda(soma((x) => x.receita)), U.moeda(soma((x) => x.previsto)), U.moeda(soma((x) => x.aReceber))]) : C().vazio({ icone: "users", titulo: "Sem atendimentos no período" }));
-    const mapa = new Map();
-    L.dados.agendamentos.forEach((a) => {
-      if (a.status !== "concluido" || !M.noPeriodo(a.data, de, ate)) return;
-      const x = mapa.get(a.servicoId) || { nome: a.servicoNome, qtd: 0, valor: 0 };
-      x.qtd += 1; x.valor = U.arredondar(x.valor + a.preco);
-      mapa.set(a.servicoId, x);
-    });
-    const servs = [...mapa.values()].sort((x, y) => y.qtd - x.qtd || x.nome.localeCompare(y.nome, "pt-BR"));
-    U.trocar(p.porServico, servs.length ? tabelaResumo(["Serviço", "Concluídos", "Valor dos atendimentos"], servs.map((x) => [x.nome, U.numero(x.qtd), U.moeda(x.valor)]),
-      ["Total", U.numero(servs.reduce((t, x) => t + x.qtd, 0)), U.moeda(servs.reduce((t, x) => t + x.valor, 0))]) : C().vazio({ icone: "scissors", titulo: "Nenhum atendimento concluído no período" }));
+    const { lista: baldes, unidade } = C().baldes(intervalo);
+    const ordens = L.dados.ordens;
+    const rec = baldes.map((b) => U.arredondar(ordens.reduce((t, os) => t + os.recebimentos.filter((x) => !x.estorno && O.noPeriodo(x.data, b.de, b.ate)).reduce((a, x) => a + x.valor, 0), 0)));
+    const desp = baldes.map((b) => U.arredondar(L.dados.despesas.filter((x) => x.status === "pago" && O.noPeriodo(x.pagoEm, b.de, b.ate)).reduce((t, x) => t + x.valor, 0)));
+    p.grafico.definirSub(`Por ${unidade} · data do pagamento`);
+    G().colunas(p.grafico.cartao, { rotulos: baldes.map((b) => b.rotulo), series: [{ nome: "recebido", valores: rec }, { nome: "despesas pagas", valores: desp }], formatar: U.moeda, detalheRotulo: (i) => (baldes[i].de === baldes[i].ate ? U.dataCompleta(baldes[i].de) : `${U.dataCurta(baldes[i].de)} a ${U.dataCurta(baldes[i].ate)}`) });
+    G().tabela(p.grafico.cartao, ["Período", "Recebido", "Despesas pagas"], baldes.map((b, i) => [b.de === b.ate ? U.dataCompleta(b.de) : `${U.dataCurta(b.de)} a ${U.dataCurta(b.ate)}`, U.moeda(rec[i]), U.moeda(desp[i])]));
 
-    const fp = M.formasPagamento(de, ate);
-    G().barras(p.formas.cartao, { itens: fp.map((f) => ({ rotulo: f.forma, valor: f.valor, sub: U.plural(f.quantidade, "pagamento", "pagamentos") })), formatar: U.moeda, vazio: "Nenhum pagamento registrado no período." });
-    G().tabela(p.formas.cartao, ["Forma", "Pagamentos", "Valor"], fp.map((f) => [f.forma, U.numero(f.quantidade), U.moeda(f.valor)]));
-
-    // Listas
-    const aReceber = L.dados.agendamentos.filter((a) => a.status === "concluido" && !a.pagamento).sort((a, b) => (b.data + b.inicio).localeCompare(a.data + a.inicio));
-    const pagos = L.dados.agendamentos.filter((a) => a.pagamento && M.noPeriodo(a.pagamento.em.slice(0, 10), de, ate)).sort((a, b) => b.pagamento.em.localeCompare(a.pagamento.em));
-    U.trocar(p.abas, 
-      el("button", { class: "chip", type: "button", "aria-pressed": String(estado.aba === "receber"), "data-foco": "fin-receber", onclick: () => { estado.aba = "receber"; estado.pagina = 1; atualizar(); } }, "A receber (todos)", el("span", { class: "chip__n", texto: U.numero(aReceber.length) })),
-      el("button", { class: "chip", type: "button", "aria-pressed": String(estado.aba === "pagamentos"), "data-foco": "fin-pagos", onclick: () => { estado.aba = "pagamentos"; estado.pagina = 1; atualizar(); } }, "Pagamentos do período", el("span", { class: "chip__n", texto: U.numero(pagos.length) })));
-    const lista = estado.aba === "receber" ? aReceber : pagos;
-    if (!lista.length) {
-      U.trocar(p.lista, el("div", { class: "cartao" }, C().vazio({ icone: "wallet", titulo: estado.aba === "receber" ? "Nada a receber" : "Nenhum pagamento no período", texto: estado.aba === "receber" ? "Todos os atendimentos concluídos têm pagamento registrado." : "Mude o período para ver outros pagamentos." })));
-      return;
-    }
-    const pag = C().paginar(lista, estado.pagina, NX.preferencias.porPagina);
-    estado.pagina = pag.pagina;
-    const tabela = el("table", { class: "tabela tabela--cartoes" },
-      el("thead", {}, el("tr", {}, ...(estado.aba === "receber" ? ["Atendimento", "Cliente", "Serviço", "Profissional", "Valor", ""] : ["Pago em", "Cliente", "Serviço", "Forma", "Valor", ""]).map((t, i) => el("th", { scope: "col", class: i === 4 ? "num" : "" }, t || el("span", { class: "vh", texto: "Ações" }))))),
-      el("tbody", {}, ...pag.itens.map((a) => el("tr", {},
-        C().td(estado.aba === "receber" ? "Atendimento" : "Pago em", el("span", {}, el("b", { texto: estado.aba === "receber" ? U.dataCurta(a.data) : U.dataCompleta(a.pagamento.em) }), el("span", { class: "sub", texto: estado.aba === "receber" ? `${a.inicio} · ${U.relativo(a.data)}` : a.codigo }))),
-        C().td("", C().nomeCliente(a.clienteId), "principal-celula"),
-        C().td("Serviço", a.servicoNome),
-        estado.aba === "receber" ? C().td("Profissional", C().nomeProf(a.profissionalId, { curto: true })) : C().td("Forma", a.pagamento.forma),
-        C().td("Valor", el("span", {}, U.moeda(estado.aba === "receber" ? a.preco : a.pagamento.valor), estado.aba === "pagamentos" && a.pagamento.valor !== a.preco ? el("span", { class: "sub", texto: `preço ${U.moeda(a.preco)}` }) : null), "num"),
-        C().td("", estado.aba === "receber"
-          ? el("button", { class: "btn btn--linha btn--pequeno", type: "button", "data-foco": `pagar-${a.id}`, onclick: () => NX.reservas.pagamento(a.id) }, icone("circle-dollar-sign", 15), "Registrar")
-          : el("button", { class: "icone-btn icone-btn--sutil", type: "button", "aria-label": `Abrir reserva ${a.codigo}`, onclick: () => NX.reservas.detalhe(a.id) }, icone("panel-right-open", 16)), "acoes-linha")))));
-    U.trocar(p.lista, el("div", { class: "cartao cartao--tabela" },
-      el("p", { class: "contagem", texto: estado.aba === "receber" ? `${U.plural(lista.length, "atendimento", "atendimentos")} · ${U.moeda(lista.reduce((t, a) => t + a.preco, 0))} a receber` : `${U.plural(lista.length, "pagamento", "pagamentos")} · ${U.moeda(lista.reduce((t, a) => t + a.pagamento.valor, 0))}` }),
-      el("div", { class: "tabela-rolagem" }, tabela),
-      C().paginacao(pag, { porPagina: NX.preferencias.porPagina, nome: "financeiro", aoMudar: (n) => { estado.pagina = n; atualizar(); }, aoMudarTamanho: (n) => NX.salvarPreferencias({ porPagina: n }) })));
+    U.trocar(p.abas, el("div", { class: "segmentado segmentado--abas", role: "group", "aria-label": "Detalhamento" }, ...ABAS.map(([id, nome]) => el("button", { type: "button", "aria-pressed": String(estado.aba === id), "data-foco": `fin-aba-${id}`, texto: nome, onclick: () => { estado.aba = id; estado.pagina = 1; atualizar(); } }))));
+    if (estado.aba === "ordens") abaOrdens(de, ate);
+    else if (estado.aba === "recebimentos") abaRecebimentos(de, ate);
+    else abaDespesas(de, ate);
   }
-  const atualizar = C().comFoco(desenhar);
+
+  /* ---------- Situação das ordens ---------- */
+  const relevantes = (de, ate) => L.dados.ordens.filter((os) => os.status !== "cancelada" && (O.noPeriodo(os.finalizadaEm, de, ate) || (os.faturamento && O.noPeriodo(os.faturamento.em, de, ate)) || os.recebimentos.some((x) => O.noPeriodo(x.data, de, ate)) || O.aReceber(os) > 0 || O.situacaoFinanceira(os) === "a_faturar"));
+  function ordensRelevantes(de, ate) {
+    return relevantes(de, ate)
+      .filter((os) => !estado.situacao || O.situacaoFinanceira(os) === estado.situacao)
+      .sort((a, b) => ({ a_faturar: 0, a_receber: 1, parcial: 1, pago: 2 }[O.situacaoFinanceira(a)] ?? 3) - ({ a_faturar: 0, a_receber: 1, parcial: 1, pago: 2 }[O.situacaoFinanceira(b)] ?? 3) || (b.finalizadaEm || "").localeCompare(a.finalizadaEm || ""));
+  }
+  function abaOrdens(de, ate) {
+    const base = relevantes(de, ate);
+    U.trocar(p.filtros, C().chips([["", "Todas"], ["a_faturar", "A faturar"], ["a_receber", "A receber"], ["parcial", "Recebido em parte"], ["pago", "Recebidas"]].map(([v, r]) => ({ valor: v, rotulo: r, n: v ? base.filter((os) => O.situacaoFinanceira(os) === v).length : base.length })), estado.situacao, (v) => { estado.situacao = v; estado.pagina = 1; atualizar(); }, { rotulo: "Situação financeira", nome: "fin-sit" }));
+    const lista = ordensRelevantes(de, ate);
+    const { res, nav } = C().blocoPaginado(estado, lista, "financeiro", atualizar);
+    const titulo = el("p", { class: "contagem", texto: `${U.plural(res.total, "ordem", "ordens")} · inclui todas as que ainda têm valor em aberto, de qualquer data` });
+    if (!res.total) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "receipt", titulo: "Nenhuma ordem nesta situação" })); return; }
+    U.trocar(p.conteudo, titulo, el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+      el("caption", { class: "vh", texto: "Situação financeira das ordens" }),
+      el("thead", {}, el("tr", {}, ...["OS", "Cliente", "Aprovado", "Executado", "Faturado", "Recebido", "Em aberto", "Situação", ""].map((c) => el("th", { scope: "col", class: ["Aprovado", "Executado", "Faturado", "Recebido", "Em aberto"].includes(c) ? "num" : "", texto: c })))),
+      el("tbody", {}, ...res.itens.map((os) => {
+        const orc = O.orcamentoAprovado(os);
+        const sit = O.situacaoFinanceira(os);
+        return el("tr", {},
+          C().td("", el("span", {}, el("a", { class: "link-texto mono", href: `#/ordens/${os.id}`, texto: os.numero }), el("small", { class: "sub", texto: `${C().textoVeiculo(os.veiculoId)} · ${O.nomeStatus(os.status)}` })), "principal-celula"),
+          C().td("Cliente", C().nomeDoCliente(os.clienteId)),
+          C().td("Aprovado", orc ? U.moeda(O.totaisOrc(orc).total) : "—", "num"),
+          C().td("Executado", os.finalizadaEm ? U.moeda(O.totaisOS(os).total) : "—", "num"),
+          C().td("Faturado", os.faturamento ? U.moeda(os.faturamento.valor) : "—", "num"),
+          C().td("Recebido", U.moeda(O.recebido(os)), "num"),
+          C().td("Em aberto", el("b", { class: O.aReceber(os) > 0 ? "texto-alerta" : "", texto: os.faturamento ? U.moeda(O.aReceber(os)) : "—" }), "num"),
+          C().td("Situação", C().pilulaFin(os)),
+          C().td("", sit === "a_faturar" && O.pode("os_encerrar") ? C().botao("Encerrar e faturar", "btn--linha btn--pequeno", () => NX.form.mudarStatus(os, "concluida"), "receipt")
+            : ["a_receber", "parcial"].includes(sit) && O.pode("recebimento") ? C().botao("Registrar recebimento", "btn--primario btn--pequeno", () => NX.form.recebimento(os), "circle-dollar-sign") : null, "acoes-linha"));
+      })))), nav);
+  }
+
+  /* ---------- Recebimentos ---------- */
+  function recebimentos(de, ate) {
+    return L.dados.ordens.flatMap((os) => os.recebimentos.filter((x) => O.noPeriodo(x.data, de, ate)).map((x) => ({ ...x, os }))).sort((a, b) => b.data.localeCompare(a.data) || b.em.localeCompare(a.em));
+  }
+  function abaRecebimentos(de, ate) {
+    U.trocar(p.filtros);
+    const lista = recebimentos(de, ate);
+    const validos = lista.filter((x) => !x.estorno);
+    const porForma = NX.FORMAS_PAGAMENTO.map((f) => [f, validos.filter((x) => x.forma === f).reduce((t, x) => t + x.valor, 0)]).filter(([, v]) => v > 0);
+    const { res, nav } = C().blocoPaginado(estado, lista, "recebimentos", atualizar);
+    const titulo = el("p", { class: "contagem", texto: `${U.plural(validos.length, "recebimento", "recebimentos")} · ${U.moeda(validos.reduce((t, x) => t + x.valor, 0))}${porForma.length ? ` · ${porForma.map(([f, v]) => `${f}: ${U.moeda(v)}`).join(" · ")}` : ""}` });
+    if (!res.total) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "circle-dollar-sign", titulo: "Nenhum recebimento no período", texto: "Os recebimentos são registrados na ordem de serviço depois de faturada." })); return; }
+    U.trocar(p.conteudo, titulo, el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+      el("caption", { class: "vh", texto: "Recebimentos" }),
+      el("thead", {}, el("tr", {}, ...["Data", "OS", "Cliente", "Forma", "Valor", "Registrado por", "Situação"].map((c) => el("th", { scope: "col", class: c === "Valor" ? "num" : "", texto: c })))),
+      el("tbody", {}, ...res.itens.map((x) => el("tr", { class: x.estorno ? "is-inativo" : "" },
+        C().td("Data", U.dataCompleta(x.data)),
+        C().td("", el("a", { class: "link-texto mono", href: `#/ordens/${x.os.id}`, texto: x.os.numero }), "principal-celula"),
+        C().td("Cliente", C().nomeDoCliente(x.os.clienteId)),
+        C().td("Forma", x.forma),
+        C().td("Valor", el("b", { texto: U.moeda(x.valor) }), "num"),
+        C().td("Registrado por", `${x.por} · ${U.dataHoraCurta(x.em)}`),
+        C().td("Situação", x.estorno ? C().pilulaTom(`Desfeito: ${x.estorno.motivo}`, "fim") : C().pilulaTom("Válido", "ok"))))))), nav);
+  }
+
+  /* ---------- Despesas ---------- */
+  function despesas(de, ate) {
+    return L.dados.despesas.filter((x) => O.noPeriodo(x.data, de, ate) && (!estado.despStatus || x.status === estado.despStatus) && (!estado.despCat || x.categoria === estado.despCat)).sort((a, b) => b.data.localeCompare(a.data));
+  }
+  function abaDespesas(de, ate) {
+    U.trocar(p.filtros,
+      C().seletor([{ valor: "", rotulo: "Todas as situações" }, { valor: "a_pagar", rotulo: "A pagar" }, { valor: "pago", rotulo: "Pagas" }, { valor: "cancelada", rotulo: "Canceladas" }], estado.despStatus, (v) => { estado.despStatus = v; estado.pagina = 1; atualizar(); }, { rotulo: "Situação da despesa", foco: "desp-status" }),
+      C().seletor([{ valor: "", rotulo: "Todas as categorias" }, ...NX.CATEGORIAS_DESPESA.map((c) => ({ valor: c, rotulo: c }))], estado.despCat, (v) => { estado.despCat = v; estado.pagina = 1; atualizar(); }, { rotulo: "Categoria", foco: "desp-cat" }));
+    const lista = despesas(de, ate);
+    const { res, nav } = C().blocoPaginado(estado, lista, "despesas", atualizar);
+    const ativas = lista.filter((x) => x.status !== "cancelada");
+    const titulo = el("p", { class: "contagem", texto: `${U.plural(lista.length, "despesa", "despesas")} · ${U.moeda(ativas.reduce((t, x) => t + x.valor, 0))} (sem as canceladas) · data = vencimento ou competência` });
+    if (!res.total) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "wallet", titulo: "Nenhuma despesa no período", acao: O.pode("despesas") ? C().botao("Nova despesa", "btn--primario btn--pequeno", () => NX.form.despesa(null), "plus") : null })); return; }
+    const pode = O.pode("despesas");
+    U.trocar(p.conteudo, titulo, el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+      el("caption", { class: "vh", texto: "Despesas" }),
+      el("thead", {}, el("tr", {}, ...["Data", "Despesa", "Categoria", "Fornecedor", "Valor", "Situação", pode ? "" : null].filter((x) => x !== null).map((c) => el("th", { scope: "col", class: c === "Valor" ? "num" : "", texto: c })))),
+      el("tbody", {}, ...res.itens.map((x) => el("tr", { class: x.status === "cancelada" ? "is-inativo" : "" },
+        C().td("Data", U.dataCompleta(x.data)),
+        C().td("", el("span", {}, el("b", { texto: x.descricao }), " ", C().pilulaExemplo(x), x.observacao ? el("small", { class: "sub", texto: x.observacao }) : null), "principal-celula"),
+        C().td("Categoria", x.categoria),
+        C().td("Fornecedor", x.fornecedorId ? (L.fornecedor(x.fornecedorId) || {}).nome : "—"),
+        C().td("Valor", el("b", { texto: U.moeda(x.valor) }), "num"),
+        C().td("Situação", x.status === "pago" ? C().pilulaTom(`Paga em ${U.dataCurta(x.pagoEm)}`, "ok") : x.status === "a_pagar" ? C().pilulaTom(x.data < U.hoje() ? "Vencida" : "A pagar", x.data < U.hoje() ? "perigo" : "atencao") : C().pilulaTom("Cancelada", "fim", null, x.cancelamento ? x.cancelamento.motivo : "")),
+        pode ? C().td("", x.status === "cancelada" ? null : el("span", { class: "acoes-linha__botoes" },
+          x.status === "a_pagar" ? el("button", { class: "icone-btn icone-btn--sutil icone-btn--p", type: "button", title: "Marcar como paga", "aria-label": `Marcar ${x.descricao} como paga`, onclick: () => NX.form.pagarDespesa(x) }, icone("check", 15)) : null,
+          el("button", { class: "icone-btn icone-btn--sutil icone-btn--p", type: "button", title: "Editar", "aria-label": `Editar ${x.descricao}`, onclick: () => NX.form.despesa(x.id) }, icone("pencil", 15)),
+          el("button", { class: "icone-btn icone-btn--sutil icone-btn--perigo icone-btn--p", type: "button", title: "Cancelar", "aria-label": `Cancelar ${x.descricao}`, onclick: () => NX.form.cancelarDespesa(x) }, icone("circle-x", 15))), "acoes-linha") : null))))), nav);
+  }
 
   function exportar() {
     const { de, ate } = C().intervaloDe(estado.periodo);
-    const pagos = L.dados.agendamentos.filter((a) => a.pagamento && M.noPeriodo(a.pagamento.em.slice(0, 10), de, ate)).sort((a, b) => a.pagamento.em.localeCompare(b.pagamento.em));
-    if (!pagos.length) { U.aviso("Nenhum pagamento registrado no período.", "info"); return; }
-    U.baixarCSV(U.nomeArquivo("pagamentos"), ["Data do pagamento", "Código", "Data do atendimento", "Cliente", "Serviço", "Profissional", "Preço registrado", "Valor recebido", "Forma", "Observação", "Registrado por"],
-      pagos.map((a) => [U.dataCompleta(a.pagamento.em), a.codigo, U.dataCompleta(a.data), C().nomeDoCliente(a.clienteId), a.servicoNome, C().nomeDoProf(a.profissionalId), a.preco, a.pagamento.valor, a.pagamento.forma, a.pagamento.observacao, a.pagamento.por]));
+    if (estado.aba === "ordens") {
+      U.baixarCSV(U.nomeArquivo("financeiro-ordens"), ["OS", "Cliente", "Status", "Aprovado", "Executado", "Faturado", "Recebido", "Em aberto", "Situação"], ordensRelevantes(de, ate).map((os) => { const orc = O.orcamentoAprovado(os); return [os.numero, C().nomeDoCliente(os.clienteId), O.nomeStatus(os.status), orc ? O.totaisOrc(orc).total : "", os.finalizadaEm ? O.totaisOS(os).total : "", os.faturamento ? os.faturamento.valor : "", O.recebido(os), O.aReceber(os), NX.SITUACOES_FINANCEIRAS.find((s) => s.id === O.situacaoFinanceira(os)).nome]; }));
+    } else if (estado.aba === "recebimentos") {
+      U.baixarCSV(U.nomeArquivo("recebimentos"), ["Data", "OS", "Cliente", "Forma", "Valor", "Registrado por", "Desfeito"], recebimentos(de, ate).map((x) => [U.dataCompleta(x.data), x.os.numero, C().nomeDoCliente(x.os.clienteId), x.forma, x.valor, x.por, x.estorno ? x.estorno.motivo : ""]));
+    } else {
+      U.baixarCSV(U.nomeArquivo("despesas"), ["Data", "Descrição", "Categoria", "Fornecedor", "Valor", "Situação", "Pago em"], despesas(de, ate).map((x) => [U.dataCompleta(x.data), x.descricao, x.categoria, x.fornecedorId ? (L.fornecedor(x.fornecedorId) || {}).nome : "", x.valor, { pago: "Paga", a_pagar: "A pagar", cancelada: "Cancelada" }[x.status], x.pagoEm ? U.dataCompleta(x.pagoEm) : ""]));
+    }
   }
 
-  NX.telas.financeiro = { titulo: "Financeiro", montar, atualizar, aoEntrar };
+  function aoEntrar(params) {
+    if (params.aba === "receber") { estado.aba = "ordens"; estado.situacao = "a_receber"; }
+    else if (params.aba && ABAS.some(([id]) => id === params.aba)) estado.aba = params.aba;
+    if (params.de && params.ate && U.dataValida(params.de) && U.dataValida(params.ate)) Object.assign(estado.periodo, { id: "personalizado", de: params.de, ate: params.ate });
+    estado.pagina = 1;
+  }
+  const atualizar = C().comFoco(desenhar);
+  NX.telas.financeiro = { titulo: "Financeiro", montar, atualizar, aoEntrar, reiniciar: () => Object.assign(estado, PADRAO()) };
 })();

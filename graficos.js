@@ -1,7 +1,7 @@
 /* ==========================================================================
-   NEXORA STOCK — graficos.js
+   NEXORA CRM — graficos.js
    Gráficos em SVG/HTML feitos à mão (sem biblioteca), sempre desenhados a
-   partir dos dados do estoque. Cada gráfico tem:
+   partir dos dados do CRM. Cada gráfico tem:
      • dica (tooltip) ao passar o mouse ou navegar com as setas do teclado;
      • uma tabela equivalente (botão "Tabela" no cartão);
      • cores da paleta validada para daltonismo (variáveis --serie-* no CSS).
@@ -63,7 +63,7 @@ window.NX = window.NX || {};
   }
 
   /* ---------- 1. Linha com área (evolução no tempo) ---------- */
-  function area(caixa, { rotulos, valores, formatar = U.moeda, eixo = eixoMoeda, inteiro = false, referencia, nome = "Valor", detalhes }) {
+  function area(caixa, { rotulos, valores, formatar = U.moeda, referencia, nome = "Valor", detalhes }) {
     const desenhar = () => {
       const area = caixa.querySelector(".grafico__area") || caixa;
       area.querySelectorAll("svg.grafico__svg").forEach((s) => s.remove());
@@ -72,7 +72,7 @@ window.NX = window.NX || {};
       const m = { t: 18, r: 18, b: 30, l: 52 };
       const iw = W - m.l - m.r;
       const ih = H - m.t - m.b;
-      const { max, passo } = escala(Math.max(...valores, referencia ? referencia.valor : 0) * 1.08, 4, inteiro);
+      const { max, passo } = escala(Math.max(...valores, referencia ? referencia.valor : 0) * 1.08);
       const x = (i) => m.l + (valores.length === 1 ? iw / 2 : (i / (valores.length - 1)) * iw);
       const y = (v) => m.t + ih - (v / max) * ih;
 
@@ -81,21 +81,19 @@ window.NX = window.NX || {};
       for (let v = 0; v <= max + 0.001; v += passo) {
         svg.append(svgEl("line", { class: v === 0 ? "eixo" : "grade", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
         const t = svgEl("text", { class: "rotulo-eixo", x: m.l - 8, y: y(v) + 4, "text-anchor": "end" });
-        t.textContent = eixo(v);
+        t.textContent = eixoMoeda(v);
         svg.append(t);
       }
-      // Eixo X (pula rótulos quando não cabem)
-      const pulo = Math.max(1, Math.ceil((rotulos.length * 58) / iw));
+      // Eixo X
       rotulos.forEach((r, i) => {
-        if ((rotulos.length - 1 - i) % pulo !== 0) return;
-        const t = svgEl("text", { class: "rotulo-eixo", x: x(i), y: H - 8, "text-anchor": i === 0 ? "start" : i === rotulos.length - 1 ? "end" : "middle" });
+        const t = svgEl("text", { class: "rotulo-eixo", x: x(i), y: H - 8, "text-anchor": "middle" });
         t.textContent = r;
         svg.append(t);
       });
       // Linha de referência (meta)
       if (referencia) {
         svg.append(svgEl("line", { class: "referencia", x1: m.l, x2: W - m.r, y1: y(referencia.valor), y2: y(referencia.valor) }));
-        const t = svgEl("text", { class: "rotulo-ref", x: m.l + 6, y: y(referencia.valor) - 6, "text-anchor": "start" });
+        const t = svgEl("text", { class: "rotulo-ref", x: W - m.r, y: y(referencia.valor) - 6, "text-anchor": "end" });
         t.textContent = referencia.rotulo;
         svg.append(t);
       }
@@ -104,8 +102,7 @@ window.NX = window.NX || {};
       const caminho = pontos.map(([a, b], i) => `${i ? "L" : "M"}${a.toFixed(1)} ${b.toFixed(1)}`).join(" ");
       svg.append(svgEl("path", { class: "serie-area", d: `${caminho} L${x(valores.length - 1)} ${y(0)} L${x(0)} ${y(0)} Z` }));
       svg.append(svgEl("path", { class: "serie-linha", d: caminho }));
-      // Muitos pontos: só a linha (o ponto aparece ao passar o mouse); poucos: marca cada ponto
-      pontos.forEach(([a, b], i) => { if (valores.length <= 24 || i === valores.length - 1) svg.append(svgEl("circle", { class: `serie-ponto${i === valores.length - 1 ? " serie-ponto--fim" : ""}`, cx: a, cy: b, r: 4 })); });
+      pontos.forEach(([a, b], i) => svg.append(svgEl("circle", { class: `serie-ponto${i === valores.length - 1 ? " serie-ponto--fim" : ""}`, cx: a, cy: b, r: 4 })));
       // Rótulo só no último ponto
       const ult = pontos[pontos.length - 1];
       const tf = svgEl("text", { class: "rotulo-valor", x: ult[0] - 6, y: ult[1] - 12, "text-anchor": "end" });
@@ -183,7 +180,7 @@ window.NX = window.NX || {};
   }
 
   /* ---------- 3. Colunas agrupadas (duas séries, mesma unidade) ---------- */
-  function colunas(caixa, { rotulos, series, formatar = U.numero, detalheRotulo }) {
+  function colunas(caixa, { rotulos, series, formatar = U.numero }) {
     const desenhar = () => {
       const area = caixa.querySelector(".grafico__area") || caixa;
       area.querySelectorAll("svg.grafico__svg").forEach((s) => s.remove());
@@ -218,18 +215,15 @@ window.NX = window.NX || {};
           const d = `M${x0} ${y(0)} V${y(0) - h + raio} Q${x0} ${y(0) - h} ${x0 + raio} ${y(0) - h} H${x0 + larg - raio} Q${x0 + larg} ${y(0) - h} ${x0 + larg} ${y(0) - h + raio} V${y(0)} Z`;
           if (v) grupo.append(svgEl("path", { class: `col-barra col-barra--${k + 1}`, d }));
         });
-        const pulo = Math.max(1, Math.ceil((rotulos.length * 44) / iw));
-        if ((rotulos.length - 1 - i) % pulo === 0) {
-          const t = svgEl("text", { class: "rotulo-eixo", x: cx, y: H - 8, "text-anchor": "middle" });
-          t.textContent = r;
-          grupo.append(t);
-        }
+        const t = svgEl("text", { class: "rotulo-eixo", x: cx, y: H - 8, "text-anchor": "middle" });
+        t.textContent = r;
+        grupo.append(t);
         const mostrar = () => {
           const rs = svg.getBoundingClientRect();
           const c = caixa.getBoundingClientRect();
           const esc = rs.width / W || 1;
           const topo = y(Math.max(...series.map((s) => s.valores[i])));
-          dica.mostrar(cx * esc + rs.left - c.left, topo * esc + rs.top - c.top, detalheRotulo ? detalheRotulo(i) : r, "", series.map((s) => U.el("span", { class: "dica__linha" }, U.el("i", { class: `chave chave--${series.indexOf(s) + 1}` }), U.el("b", { texto: formatar(s.valores[i]) }), ` ${s.nome}`)));
+          dica.mostrar(cx * esc + rs.left - c.left, topo * esc + rs.top - c.top, r, "", series.map((s) => U.el("span", { class: "dica__linha" }, U.el("i", { class: `chave chave--${series.indexOf(s) + 1}` }), U.el("b", { texto: formatar(s.valores[i]) }), ` ${s.nome}`)));
           grupo.classList.add("is-ativo");
         };
         const esconder = () => { dica.esconder(); grupo.classList.remove("is-ativo"); };

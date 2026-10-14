@@ -1,609 +1,233 @@
 /* ==========================================================================
-   NEXORA STOCK — estoque.js
-   TODAS as regras de estoque ficam aqui, num lugar só. As telas apenas
-   chamam estas funções e mostram o resultado.
-
-   Regras principais
-   • O saldo de um produto é a soma das suas movimentações (entradas menos
-     saídas, mais ou menos ajustes). Não existe "editar quantidade".
-   • Estoque baixo: saldo menor ou igual ao mínimo. Sem estoque: saldo zero.
-   • Nenhuma saída pode deixar o saldo negativo.
-   • Ajuste de inventário registra a diferença (com motivo e observação),
-     sem apagar nada do histórico.
-   • Movimentação confirmada nunca é apagada: para corrigir, faz-se um estorno
-     (nova movimentação ao contrário, ligada à original) ou um ajuste.
-   • Pedido de compra só mexe no estoque quando o recebimento é confirmado.
-     Recebimento parcial soma só o que chegou; o mesmo recebimento não pode
-     ser lançado duas vezes.
+   NEXORA AUTO — Telas: Estoque e Peça (detalhe)
+   Saldo = soma das movimentações (entradas, saídas, ajustes e baixas de
+   OS). Disponível = saldo − reservado para ordens aprovadas. Toda
+   movimentação guarda saldo antes e depois, motivo, documento e quem fez;
+   nenhuma deixa o saldo negativo.
    ========================================================================== */
 window.NX = window.NX || {};
+NX.telas = NX.telas || {};
 
 (function () {
   "use strict";
   const U = NX.util;
   const L = NX.loja;
-  const d = () => L.dados;
+  const O = NX.oficina;
+  const { el, icone } = U;
+  const C = () => NX.componentes;
 
-  /* ---------- Saldos (calculados do histórico, com cache) ---------- */
-  const ordemMov = (a, b) => a.data.localeCompare(b.data) || a.numero - b.numero;
-  let cache = { versao: -1 };
-  function preparar() {
-    if (cache.versao === L.versao()) return cache;
-    const saldos = new Map();
-    const ultimo = new Map();
-    const porProduto = new Map();
-    const ordenados = [...d().movimentos].sort(ordemMov);
-    ordenados.forEach((m) => {
-      saldos.set(m.produtoId, (saldos.get(m.produtoId) || 0) + m.quantidade);
-      ultimo.set(m.produtoId, m);
-      if (!porProduto.has(m.produtoId)) porProduto.set(m.produtoId, []);
-      porProduto.get(m.produtoId).push(m);
-    });
-    cache = { versao: L.versao(), saldos, ultimo, porProduto, ordenados, memo: new Map() };
-    return cache;
-  }
-  // Guarda resultados de cálculos até a próxima alteração dos dados
-  function memo(chave, calcular) {
-    const c = preparar();
-    if (!c.memo.has(chave)) c.memo.set(chave, calcular());
-    return c.memo.get(chave);
-  }
-  const saldo = (pid) => preparar().saldos.get(pid) || 0;
-  const ultimaMovimentacao = (pid) => preparar().ultimo.get(pid) || null;
-  const movimentosDoProduto = (pid) => preparar().porProduto.get(pid) || [];
-  const movimentosOrdenados = () => preparar().ordenados;
+  const PADRAO = () => ({ aba: "saldos", situacao: "", busca: "", tipo: "", peca: "", de: "", ate: "", pagina: 1, paginaMov: 1 });
+  const estado = PADRAO();
+  let p = null;
+  const nomeTipo = (t) => (NX.TIPOS_MOVIMENTO.find((x) => x.id === t) || { nome: t }).nome;
+  const iconeTipo = (t) => (NX.TIPOS_MOVIMENTO.find((x) => x.id === t) || { icone: "dot" }).icone;
 
-  function situacao(p) {
-    if (!p) return "normal";
-    if (p.status === "arquivado") return "arquivado";
-    const s = saldo(p.id);
-    if (s <= 0) return "zerado";
-    if (s <= p.minimo) return "baixo";
-    return "normal";
+  function origem(m) {
+    const partes = [];
+    if (m.osId) { const os = L.ordem(m.osId); partes.push(os ? el("a", { class: "link-texto mono", href: `#/ordens/${os.id}`, texto: os.numero }) : "OS removida"); }
+    else partes.push(m.motivo);
+    if (m.fornecedorId) partes.push(` · ${(L.fornecedor(m.fornecedorId) || {}).nome || "fornecedor"}`);
+    if (m.documento) partes.push(` · ${m.documento}`);
+    return el("span", {}, ...partes, m.observacao ? el("small", { class: "sub", texto: m.observacao }) : null);
   }
-  const nomeSituacao = (id) => (NX.SITUACOES.find((s) => s.id === id) || {}).nome || id;
-  const valorDoProduto = (p) => U.arredondar(saldo(p.id) * p.custo);
-  // Classe da movimentação para os totais: estorno conta junto do tipo que ele desfaz
-  const classe = (m) => (m.tipo === "estorno" ? m.tipoOriginal : m.tipo);
-
-  /* ---------- Lançamento interno (único lugar que cria movimentações) ---------- */
-  function lancar(m) {
-    const dados = d();
-    const anterior = saldo(m.produtoId);
-    const apos = anterior + m.quantidade;
-    if (apos < 0) throw new Error("Saldo negativo bloqueado");
-    dados.sequencias.movimento += 1;
-    const registro = {
-      id: L.novoId("m"), numero: dados.sequencias.movimento, registradoEm: U.agora(),
-      custoUnitario: null, fornecedorId: null, documento: "", observacao: "", ...m,
-      saldoAnterior: anterior, saldoApos: apos,
-    };
-    dados.movimentos.push(registro);
-    // atualiza o cache sem recalcular tudo
-    const c = preparar();
-    c.saldos.set(m.produtoId, apos);
-    c.versao = -1;
-    return registro;
+  function linhaMov(m, { mostrarPeca = true } = {}) {
+    const pc = L.peca(m.pecaId);
+    return el("tr", {},
+      C().td("Nº", el("span", { class: "codigo", texto: `#${m.numero}` })),
+      C().td("Data", el("span", { class: "nowrap", texto: U.dataHora(m.data) })),
+      mostrarPeca ? C().td("", el("span", {}, el("b", { texto: pc ? pc.nome : m.pecaId }), el("small", { class: "sub", texto: pc ? pc.sku : "" })), "principal-celula") : null,
+      C().td("Tipo", el("span", { class: `mov-tipo mov-tipo--${m.tipo}` }, icone(iconeTipo(m.tipo), 13), nomeTipo(m.tipo))),
+      C().td("Quantidade", el("b", { class: m.quantidade > 0 ? "positivo" : "negativo", texto: U.comSinal(m.quantidade) }), "num"),
+      C().td("Saldo", el("span", { class: "nowrap mono", texto: `${m.saldoAnterior} → ${m.saldoApos}` }), "num"),
+      C().td("Origem / motivo", origem(m), "inteira"),
+      C().td("Por", m.por));
   }
 
-  /* ---------- Validações comuns ---------- */
-  function validarProdutoMovel(pid, erros, campo = "produtoId") {
-    const p = L.produto(pid);
-    if (!p) { erros[campo] = "Escolha o produto."; return null; }
-    if (p.status === "arquivado") { erros[campo] = "Este produto está arquivado. Reative-o para movimentar o estoque."; return null; }
-    return p;
-  }
-  function validarQuantidade(v, erros, campo = "quantidade") {
-    const q = U.lerInteiro(v);
-    if (String(v ?? "").trim() === "") erros[campo] = "Informe a quantidade.";
-    else if (!Number.isFinite(q)) erros[campo] = "Use um número inteiro, sem vírgula.";
-    else if (q <= 0) erros[campo] = "A quantidade precisa ser maior que zero.";
-    else if (q > 1000000) erros[campo] = "Quantidade alta demais para um lançamento.";
-    return q;
-  }
-  // Data e hora: não pode estar no futuro, nem antes da última movimentação do produto
-  function validarData(m, produtos, erros, campo = "data") {
-    if (!U.momentoValido(m)) { erros[campo] = "Informe data e hora válidas."; return; }
-    if (m > U.agora()) { erros[campo] = "A data não pode estar no futuro."; return; }
-    for (const p of produtos) {
-      if (!p) continue;
-      const ult = ultimaMovimentacao(p.id);
-      if (ult && m < ult.data) { erros[campo] = `${produtos.length > 1 ? `${p.nome}: ` : ""}a data não pode ser anterior à última movimentação deste produto (${U.dataHora(ult.data)}).`; return; }
-      if (m.slice(0, 10) < p.criadoEm) { erros[campo] = `A data não pode ser anterior ao cadastro do produto (${U.dataCompleta(p.criadoEm)}).`; return; }
-    }
-  }
-  const responsavelValido = (id) => d().equipe.some((u) => u.id === id);
-
-  /* ---------- Entrada ---------- */
-  function registrarEntrada(v) {
-    const erros = {};
-    const p = validarProdutoMovel(v.produtoId, erros);
-    const q = validarQuantidade(v.quantidade, erros);
-    let custo = p ? p.custo : null;
-    if (String(v.custoUnitario ?? "").trim() !== "") {
-      custo = U.lerValor(v.custoUnitario);
-      if (!Number.isFinite(custo) || custo < 0) erros.custoUnitario = "Digite um valor válido, como 12,90 (ou deixe em branco para usar o custo cadastrado).";
-      else if (custo > 1e6) erros.custoUnitario = "Valor alto demais para esta demonstração.";
-    }
-    let forn = null;
-    if (v.fornecedorId) {
-      forn = L.fornecedor(v.fornecedorId);
-      if (!forn) erros.fornecedorId = "Fornecedor não encontrado.";
-      else if (forn.status !== "ativo") erros.fornecedorId = "Este fornecedor está inativo.";
-    }
-    const obs = String(v.observacao || "").trim();
-    if (!v.fornecedorId && obs.length < 5) erros.observacao = "Sem fornecedor, explique a origem da entrada (ex.: devolução de cliente).";
-    if (String(v.documento || "").length > 40) erros.documento = "Use no máximo 40 caracteres.";
-    if (!responsavelValido(v.responsavelId)) erros.responsavelId = "Escolha quem está registrando.";
-    if (p) validarData(v.data, [p], erros);
-    if (Object.keys(erros).length) return { ok: false, erros };
-
-    const custoFinal = U.arredondar(custo);
-    const mudarCusto = !!v.atualizarCusto && custoFinal !== p.custo && custoFinal > 0;
-    const registro = lancar({
-      produtoId: p.id, tipo: "entrada", quantidade: q, data: v.data, custoUnitario: custoFinal, fornecedorId: forn ? forn.id : null,
-      motivo: forn ? "Entrada avulsa (sem pedido de compra)" : "Devolução ou outra origem", documento: String(v.documento || "").trim(),
-      observacao: obs, responsavelId: v.responsavelId, origem: "manual", ...(mudarCusto ? { custoAnteriorProduto: p.custo } : {}),
-    });
-    if (mudarCusto) p.custo = custoFinal;
-    L.salvar();
-    return { ok: true, movimento: registro };
+  function montar(secao) {
+    const busca = C().campoBusca({ placeholder: "Peça ou código", rotulo: "Buscar no estoque", foco: "est-busca", valor: estado.busca, aoMudar: (v) => { estado.busca = v; estado.pagina = 1; estado.paginaMov = 1; atualizar(); } });
+    p = { busca, atalhos: el("div", { class: "atalhos" }), resumo: el("div"), abas: el("div"), filtros: el("div", { class: "barra-filtros" }), conteudo: el("div", { class: "cartao cartao--tabela" }) };
+    U.trocar(secao,
+      C().cabecalho({ id: "estoque", titulo: "Estoque", sub: "Colocar peça no orçamento não mexe no estoque; a aprovação reserva; a baixa acontece uma única vez, quando o serviço é finalizado. Não há saldo negativo.", acoes: [C().botao("Exportar movimentações", "btn--linha", exportar, "download")] }),
+      p.atalhos, p.resumo, p.abas, p.filtros, p.conteudo);
   }
 
-  /* ---------- Saída ---------- */
-  function registrarSaida(v) {
-    const erros = {};
-    const p = validarProdutoMovel(v.produtoId, erros);
-    const q = validarQuantidade(v.quantidade, erros);
-    if (!NX.MOTIVOS_SAIDA.includes(v.motivo)) erros.motivo = "Escolha o motivo da saída.";
-    const obs = String(v.observacao || "").trim();
-    if (v.motivo && v.motivo !== "Venda" && obs.length < 5) erros.observacao = "Explique o que aconteceu (obrigatório para saídas que não são venda).";
-    if (String(v.documento || "").length > 40) erros.documento = "Use no máximo 40 caracteres.";
-    if (!responsavelValido(v.responsavelId)) erros.responsavelId = "Escolha quem está registrando.";
-    if (p && Number.isFinite(q) && q > 0) {
-      const s = saldo(p.id);
-      if (q > s) erros.quantidade = s === 0 ? "Este produto está sem estoque. Não é possível registrar a saída." : `Saldo disponível: ${U.unidades(s)} A saída deixaria o estoque negativo.`;
-    }
-    if (p) validarData(v.data, [p], erros);
-    if (Object.keys(erros).length) return { ok: false, erros, erro: erros.quantidade && erros.quantidade.startsWith("Saldo") ? "Saída não registrada: quantidade maior que o saldo." : undefined };
-    const registro = lancar({
-      produtoId: p.id, tipo: "saida", quantidade: -q, data: v.data, motivo: v.motivo, documento: String(v.documento || "").trim(),
-      observacao: obs, responsavelId: v.responsavelId, origem: "manual",
-    });
-    L.salvar();
-    return { ok: true, movimento: registro };
+  function desenhar() {
+    const d = L.dados;
+    const verCusto = O.podeVer("financeiro") || O.pode("catalogo");
+    U.trocar(p.atalhos,
+      O.pode("estoque_mov") ? el("button", { class: "atalho atalho--entrada", type: "button", onclick: () => NX.form.movimento("entrada") }, el("span", { class: "atalho__icone" }, icone("arrow-down-to-line", 18)), el("span", {}, "Entrada", el("small", { texto: "Compra ou devolução" }))) : null,
+      O.pode("estoque_mov") ? el("button", { class: "atalho atalho--saida", type: "button", onclick: () => NX.form.movimento("saida") }, el("span", { class: "atalho__icone" }, icone("arrow-up-from-line", 18)), el("span", {}, "Saída avulsa", el("small", { texto: "Fora de ordem de serviço" }))) : null,
+      O.pode("estoque_ajuste") ? el("button", { class: "atalho atalho--ajuste", type: "button", onclick: () => NX.form.movimento("ajuste") }, el("span", { class: "atalho__icone" }, icone("scale", 18)), el("span", {}, "Ajuste de inventário", el("small", { texto: "Contagem física" }))) : null,
+      O.pode("catalogo") ? el("button", { class: "atalho", type: "button", onclick: () => NX.form.peca(null) }, el("span", { class: "atalho__icone" }, icone("package-plus", 18)), el("span", {}, "Nova peça", el("small", { texto: "Cadastro" }))) : null);
+    p.atalhos.hidden = !p.atalhos.children.length;
+
+    const ativas = d.pecas.filter((x) => x.status === "ativo");
+    const valor = ativas.reduce((t, x) => t + O.saldo(x.id) * x.custo, 0);
+    const reservadas = ativas.reduce((t, x) => t + O.reservado(x.id), 0);
+    const baixo = ativas.filter((x) => O.situacaoPeca(x) === "baixo").length;
+    const zerado = ativas.filter((x) => O.situacaoPeca(x) === "zerado").length;
+    U.trocar(p.resumo, el("div", { class: "faixa-resumo" },
+      el("div", {}, el("span", { texto: "Peças ativas" }), el("b", { texto: U.numero(ativas.length) })),
+      verCusto ? el("div", {}, el("span", { texto: "Valor em estoque (custo)" }), el("b", { texto: U.moeda(valor) })) : el("div", {}, el("span", { texto: "Unidades em estoque" }), el("b", { texto: U.numero(ativas.reduce((t, x) => t + O.saldo(x.id), 0)) })),
+      el("div", {}, el("span", { texto: "Reservadas para OS" }), el("b", { texto: U.unidades(reservadas) })),
+      el("div", {}, el("span", { texto: "Estoque baixo / sem estoque" }), el("b", { class: baixo + zerado ? "texto-alerta" : "", texto: `${baixo} / ${zerado}` }))));
+
+    U.trocar(p.abas, el("div", { class: "segmentado segmentado--abas", role: "group", "aria-label": "Visão do estoque" },
+      ...[["saldos", "Saldos"], ["movimentos", "Movimentações"], ["reservas", "Reservas e faltas"]].map(([id, nome]) => el("button", { type: "button", "aria-pressed": String(estado.aba === id), "data-foco": `est-aba-${id}`, texto: nome, onclick: () => { estado.aba = id; atualizar(); } }))));
+
+    if (estado.aba === "saldos") desenharSaldos(verCusto);
+    else if (estado.aba === "movimentos") desenharMovimentos();
+    else desenharReservas();
   }
 
-  /* ---------- Ajuste de inventário ---------- */
-  function registrarAjuste(v) {
-    const erros = {};
-    const p = validarProdutoMovel(v.produtoId, erros);
-    const t = String(v.contada ?? "").trim();
-    const contada = U.lerInteiro(t);
-    if (t === "") erros.contada = "Informe a quantidade contada (pode ser 0).";
-    else if (!Number.isFinite(contada)) erros.contada = "Use um número inteiro, sem vírgula.";
-    if (!NX.MOTIVOS_AJUSTE.includes(v.motivo)) erros.motivo = "Escolha o motivo do ajuste.";
-    const obs = String(v.observacao || "").trim();
-    if (obs.length < 5) erros.observacao = "Descreva a contagem ou a correção (obrigatório para ajustes).";
-    if (!responsavelValido(v.responsavelId)) erros.responsavelId = "Escolha quem fez a contagem.";
-    if (p && Number.isFinite(contada) && contada === saldo(p.id)) erros.contada = `A contagem é igual ao saldo registrado (${U.unidades(contada)}). Não há diferença para ajustar.`;
-    if (p) validarData(v.data, [p], erros);
-    if (Object.keys(erros).length) return { ok: false, erros };
-    const registro = lancar({
-      produtoId: p.id, tipo: "ajuste", quantidade: contada - saldo(p.id), contada, data: v.data, motivo: v.motivo,
-      documento: String(v.documento || "").trim(), observacao: obs, responsavelId: v.responsavelId, origem: "manual",
-    });
-    L.salvar();
-    return { ok: true, movimento: registro };
+  function desenharSaldos(verCusto) {
+    const d = L.dados;
+    U.trocar(p.filtros, p.busca.caixa, C().seletor([{ valor: "", rotulo: "Todas as situações" }, { valor: "baixo", rotulo: "Baixo ou sem estoque" }, { valor: "normal", rotulo: "Normal" }, { valor: "inativo", rotulo: "Inativas" }], estado.situacao, (v) => { estado.situacao = v; estado.pagina = 1; atualizar(); }, { rotulo: "Situação", foco: "est-sit" }));
+    const lista = d.pecas.filter((x) => {
+      const s = O.situacaoPeca(x);
+      if (estado.situacao === "baixo" && !["baixo", "zerado"].includes(s)) return false;
+      if (estado.situacao === "normal" && s !== "normal") return false;
+      if (estado.situacao === "inativo" && s !== "inativo") return false;
+      if (!estado.situacao && s === "inativo") return false;
+      return !estado.busca || U.contem(x.nome, estado.busca) || U.contem(x.sku, estado.busca);
+    }).sort((a, b) => ({ zerado: 0, baixo: 1, normal: 2, inativo: 3 }[O.situacaoPeca(a)] - { zerado: 0, baixo: 1, normal: 2, inativo: 3 }[O.situacaoPeca(b)]) || a.sku.localeCompare(b.sku));
+    const { res, nav } = C().blocoPaginado(estado, lista, "saldos", atualizar);
+    const titulo = el("p", { class: "contagem", texto: U.plural(res.total, "peça", "peças") });
+    if (!res.total) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "package", titulo: "Nenhuma peça nesta situação" })); return; }
+    const podeMov = O.pode("estoque_mov");
+    U.trocar(p.conteudo, titulo, el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+      el("caption", { class: "vh", texto: "Saldos do estoque" }),
+      el("thead", {}, el("tr", {}, ...["Peça", "Saldo", "Reservado", "Disponível", "Mínimo", "Nível", "Situação", verCusto ? "Valor (custo)" : null, ""].filter((x) => x !== null).map((c) => el("th", { scope: "col", class: ["Saldo", "Reservado", "Disponível", "Mínimo", "Valor (custo)"].includes(c) ? "num" : "", texto: c })))),
+      el("tbody", {}, ...res.itens.map((x) => {
+        const s = O.saldo(x.id);
+        const nivel = Math.min(1, x.minimo ? s / (x.minimo * 2) : s > 0 ? 1 : 0);
+        return el("tr", { class: x.status !== "ativo" ? "is-inativo" : "" },
+          C().td("", el("span", {}, el("a", { class: "link-texto", href: `#/estoque/${x.id}` }, el("b", { texto: x.nome })), el("small", { class: "sub", texto: `${x.sku} · ${x.local || "sem local"}` })), "principal-celula"),
+          C().td("Saldo", el("b", { texto: U.numero(s) }), "num"),
+          C().td("Reservado", O.reservado(x.id) ? U.numero(O.reservado(x.id)) : el("span", { class: "suave", texto: "0" }), "num"),
+          C().td("Disponível", el("b", { class: O.disponivel(x.id) <= 0 ? "negativo" : "", texto: U.numero(O.disponivel(x.id)) }), "num"),
+          C().td("Mínimo", U.numero(x.minimo), "num"),
+          C().td("Nível", el("span", { class: `progresso progresso--${O.situacaoPeca(x)}`, role: "img", "aria-label": `Saldo ${s} para mínimo ${x.minimo}` }, el("span", { class: "progresso__barra", style: { width: `${Math.round(nivel * 100)}%` } }))),
+          C().td("Situação", C().pilulaSituacaoPeca(x)),
+          verCusto ? C().td("Valor (custo)", U.moeda(s * x.custo), "num") : null,
+          C().td("", podeMov && x.status === "ativo" ? el("span", { class: "acoes-linha__botoes" },
+            el("button", { class: "icone-btn icone-btn--sutil icone-btn--p", type: "button", title: "Entrada", "aria-label": `Entrada de ${x.nome}`, onclick: () => NX.form.movimento("entrada", x.id) }, icone("arrow-down-to-line", 15)),
+            el("button", { class: "icone-btn icone-btn--sutil icone-btn--p", type: "button", title: "Saída avulsa", "aria-label": `Saída de ${x.nome}`, onclick: () => NX.form.movimento("saida", x.id) }, icone("arrow-up-from-line", 15)),
+            O.pode("estoque_ajuste") ? el("button", { class: "icone-btn icone-btn--sutil icone-btn--p", type: "button", title: "Ajuste", "aria-label": `Ajuste de ${x.nome}`, onclick: () => NX.form.movimento("ajuste", x.id) }, icone("scale", 15)) : null) : null, "acoes-linha"));
+      })))), nav);
   }
 
-  /* ---------- Estorno (desfaz uma entrada ou saída sem apagar) ---------- */
-  function podeEstornar(m) {
-    if (!m) return { pode: false, motivo: "Movimentação não encontrada." };
-    if (m.tipo === "estorno") return { pode: false, motivo: "Um estorno não pode ser estornado. Se precisar, registre um ajuste de inventário." };
-    if (m.tipo === "ajuste") return { pode: false, motivo: "Ajustes não são estornados: registre um novo ajuste com a contagem correta." };
-    if (m.estornadoPor) return { pode: false, motivo: "Esta movimentação já foi estornada." };
-    if (m.origem === "pedido") return { pode: false, motivo: "Recebimentos de pedido não são estornados aqui. Se a mercadoria voltou ao fornecedor, registre uma saída ou um ajuste explicando o motivo." };
-    const p = L.produto(m.produtoId);
-    if (!p || p.status === "arquivado") return { pode: false, motivo: "O produto está arquivado. Reative-o para estornar." };
-    if (m.tipo === "entrada" && saldo(p.id) < m.quantidade) return { pode: false, motivo: `O saldo atual (${U.unidades(saldo(p.id))}) é menor que a entrada (${U.unidades(m.quantidade)}). Estornar deixaria o estoque negativo; use um ajuste de inventário.` };
-    return { pode: true };
+  function movimentosFiltrados() {
+    return L.dados.movimentos.filter((m) => (!estado.tipo || m.tipo === estado.tipo) && (!estado.peca || m.pecaId === estado.peca)
+      && (!estado.de || m.data.slice(0, 10) >= estado.de) && (!estado.ate || m.data.slice(0, 10) <= estado.ate)
+      && (!estado.busca || (() => { const pc = L.peca(m.pecaId); return pc && (U.contem(pc.nome, estado.busca) || U.contem(pc.sku, estado.busca)); })())).sort((a, b) => b.numero - a.numero);
   }
-  function estornar(movId, { motivo, responsavelId }) {
-    const m = L.movimento(movId);
-    const pode = podeEstornar(m);
-    if (!pode.pode) return { ok: false, erro: pode.motivo };
-    const erros = {};
-    const texto = String(motivo || "").trim();
-    if (texto.length < 5) erros.motivo = "Explique por que esta movimentação está sendo estornada.";
-    if (!responsavelValido(responsavelId)) erros.responsavelId = "Escolha quem está estornando.";
-    if (Object.keys(erros).length) return { ok: false, erros };
-    const registro = lancar({
-      produtoId: m.produtoId, tipo: "estorno", tipoOriginal: m.tipo, quantidade: -m.quantidade, data: U.agora(),
-      motivo: texto, documento: `Estorno da mov. nº ${m.numero}`, responsavelId, origem: "estorno", estornoDe: m.id,
-      custoUnitario: m.custoUnitario, fornecedorId: m.fornecedorId,
-    });
-    m.estornadoPor = registro.id;
-    L.salvar();
-    return { ok: true, movimento: registro };
+  function desenharMovimentos() {
+    U.trocar(p.filtros, p.busca.caixa,
+      C().seletor([{ valor: "", rotulo: "Todos os tipos" }, ...NX.TIPOS_MOVIMENTO.map((t) => ({ valor: t.id, rotulo: t.nome }))], estado.tipo, (v) => { estado.tipo = v; estado.paginaMov = 1; atualizar(); }, { rotulo: "Tipo de movimentação", foco: "est-tipo" }),
+      el("label", { class: "filtro-data" }, "De", el("input", { type: "date", value: estado.de, "data-foco": "est-de", onchange: (e) => { estado.de = e.target.value; estado.paginaMov = 1; atualizar(); } })),
+      el("label", { class: "filtro-data" }, "até", el("input", { type: "date", value: estado.ate, "data-foco": "est-ate", onchange: (e) => { estado.ate = e.target.value; estado.paginaMov = 1; atualizar(); } })));
+    const lista = movimentosFiltrados();
+    const est = { pagina: estado.paginaMov };
+    const { res, nav } = C().blocoPaginado(est, lista, "movimentos", () => { estado.paginaMov = est.pagina; atualizar(); });
+    estado.paginaMov = res.pagina;
+    const entradas = lista.filter((m) => m.quantidade > 0).reduce((t, m) => t + m.quantidade, 0);
+    const saidas = lista.filter((m) => m.quantidade < 0).reduce((t, m) => t - m.quantidade, 0);
+    const titulo = el("p", { class: "contagem", texto: `${U.plural(res.total, "movimentação", "movimentações")} · ${U.numero(entradas)} unidades entraram · ${U.numero(saidas)} saíram` });
+    if (!res.total) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "arrow-left-right", titulo: "Nenhuma movimentação com estes filtros" })); return; }
+    U.trocar(p.conteudo, titulo, el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+      el("caption", { class: "vh", texto: "Movimentações de estoque" }),
+      el("thead", {}, el("tr", {}, ...["Nº", "Data", "Peça", "Tipo", "Quantidade", "Saldo", "Origem / motivo", "Por"].map((c) => el("th", { scope: "col", class: ["Quantidade", "Saldo"].includes(c) ? "num" : "", texto: c })))),
+      el("tbody", {}, ...res.itens.map((m) => linhaMov(m))))), nav);
   }
 
-  /* ---------- Pedidos de compra ---------- */
-  const statusPedido = (id) => NX.STATUS_PEDIDO.find((s) => s.id === id) || { id, nome: id, icone: "circle" };
-  const ABERTOS = ["pendente", "enviado", "parcial"];
-  const pedidoAberto = (pc) => ABERTOS.includes(pc.status);
-  const pedidoAtrasado = (pc) => (pc.status === "enviado" || pc.status === "parcial") && pc.previsao < U.hoje();
-  function totaisPedido(pc) {
-    let total = 0, recebidoValor = 0, pendenteUn = 0, pendenteValor = 0, pedidoUn = 0, recebidoUn = 0;
-    pc.itens.forEach((it) => {
-      total += it.quantidade * it.custo;
-      recebidoValor += it.recebido * it.custo;
-      pedidoUn += it.quantidade;
-      recebidoUn += it.recebido;
-      const pend = pc.status === "cancelado" ? 0 : Math.max(0, it.quantidade - it.recebido);
-      pendenteUn += pend;
-      pendenteValor += pend * it.custo;
-    });
-    return { total: U.arredondar(total), recebidoValor: U.arredondar(recebidoValor), pendenteUn, pendenteValor: U.arredondar(pendenteValor), pedidoUn, recebidoUn };
-  }
-  // Pedidos ainda não concluídos que têm o produto com quantidade a receber
-  function pedidosComProduto(pid) {
-    return d().pedidos.filter((pc) => ["rascunho", "pendente", "enviado", "parcial"].includes(pc.status) && pc.itens.some((it) => it.produtoId === pid && it.recebido < it.quantidade));
+  function desenharReservas() {
+    U.trocar(p.filtros);
+    const linhas = [];
+    L.dados.ordens.forEach((os) => os.itens.forEach((i) => { if (i.tipo === "peca" && ["reservada", "falta"].includes(i.estado)) linhas.push({ os, i }); }));
+    linhas.sort((a, b) => (a.i.estado === "falta" ? -1 : 0) - (b.i.estado === "falta" ? -1 : 0) || a.os.abertaEm.localeCompare(b.os.abertaEm));
+    const titulo = el("p", { class: "contagem", texto: `${U.plural(linhas.filter((x) => x.i.estado === "reservada").length, "item reservado", "itens reservados")} · ${U.plural(linhas.filter((x) => x.i.estado === "falta").length, "item em falta", "itens em falta")}` });
+    if (!linhas.length) { U.trocar(p.conteudo, titulo, C().vazio({ icone: "package-check", titulo: "Nenhuma peça reservada ou em falta", texto: "As reservas aparecem quando um orçamento é aprovado." })); return; }
+    U.trocar(p.conteudo, titulo, el("p", { class: "nota-info nota-info--dentro" }, icone("info", 16), el("span", { texto: "Reservada: separada para a ordem, ainda no estoque. Em falta: a ordem aguarda a entrada da peça; a reserva acontece sozinha quando ela entrar (as ordens mais antigas primeiro)." })),
+      el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+        el("caption", { class: "vh", texto: "Reservas e faltas" }),
+        el("thead", {}, el("tr", {}, ...["Peça", "Quantidade", "Situação", "Ordem", "Status da ordem", "Disponível agora"].map((c) => el("th", { scope: "col", class: ["Quantidade", "Disponível agora"].includes(c) ? "num" : "", texto: c })))),
+        el("tbody", {}, ...linhas.map(({ os, i }) => el("tr", {},
+          C().td("", el("span", {}, el("a", { class: "link-texto", href: `#/estoque/${i.refId}` }, el("b", { texto: i.descricao }))), "principal-celula"),
+          C().td("Quantidade", U.numero(i.quantidade), "num"),
+          C().td("Situação", C().pilulaPeca(i.estado)),
+          C().td("Ordem", el("a", { class: "link-texto mono", href: `#/ordens/${os.id}`, texto: os.numero })),
+          C().td("Status da ordem", C().pilulaOS(os.status, { curto: true })),
+          C().td("Disponível agora", U.numero(O.disponivel(i.refId)), "num")))))));
   }
 
-  function validarPedido(v, id) {
-    const erros = {};
-    const itensErros = [];
-    const atual = id ? L.pedido(id) : null;
-    const forn = L.fornecedor(v.fornecedorId);
-    if (!forn) erros.fornecedorId = "Escolha o fornecedor.";
-    else if (forn.status !== "ativo") erros.fornecedorId = "Este fornecedor está inativo. Escolha outro.";
-    if (!U.dataValida(v.previsao)) erros.previsao = "Informe a previsão de entrega.";
-    else if (v.previsao < U.hoje()) erros.previsao = "A previsão de entrega não pode estar no passado.";
-    if (String(v.observacoes || "").length > 500) erros.observacoes = "Use no máximo 500 caracteres.";
-    const itens = [];
-    const vistos = new Set();
-    (v.itens || []).forEach((it, i) => {
-      const e = {};
-      const p = L.produto(it.produtoId);
-      if (!p) e.produtoId = "Escolha o produto.";
-      else if (p.status === "arquivado") e.produtoId = "Produto arquivado.";
-      else if (vistos.has(p.id)) e.produtoId = "Produto repetido no pedido: junte as quantidades em uma linha.";
-      const q = U.lerInteiro(it.quantidade);
-      if (!Number.isFinite(q) || q <= 0) e.quantidade = "Quantidade inteira maior que zero.";
-      else if (q > 100000) e.quantidade = "Quantidade alta demais.";
-      const c = U.lerValor(it.custo);
-      if (!Number.isFinite(c) || c < 0) e.custo = "Custo inválido.";
-      if (p) vistos.add(p.id);
-      itensErros[i] = e;
-      if (!Object.keys(e).length) itens.push({ produtoId: p.id, quantidade: q, custo: U.arredondar(c), recebido: 0 });
-    });
-    if (!(v.itens || []).length) erros.itens = "Adicione pelo menos um produto ao pedido.";
-    else if (itensErros.some((e) => Object.keys(e).length)) erros.itens = "Confira os itens destacados.";
-    if (atual && !["rascunho", "pendente"].includes(atual.status)) erros.geral = "Só é possível editar pedidos em rascunho ou pendentes de envio.";
-    return { erros, itensErros, itens, forn };
+  function exportar() {
+    const linhas = movimentosFiltrados().map((m) => { const pc = L.peca(m.pecaId) || {}; const os = m.osId ? L.ordem(m.osId) : null; return [m.numero, U.dataHora(m.data), pc.sku, pc.nome, nomeTipo(m.tipo), m.quantidade, m.saldoAnterior, m.saldoApos, m.motivo, os ? os.numero : "", m.fornecedorId ? (L.fornecedor(m.fornecedorId) || {}).nome : "", m.documento, m.custoUnitario ?? "", m.observacao, m.por]; });
+    U.baixarCSV(U.nomeArquivo("movimentacoes-estoque"), ["Nº", "Data", "SKU", "Peça", "Tipo", "Quantidade", "Saldo antes", "Saldo depois", "Motivo", "OS", "Fornecedor", "Documento", "Custo unitário", "Observação", "Por"], linhas);
   }
 
-  // status: "rascunho" (salvar rascunho) ou "pendente" (pronto para enviar)
-  function salvarPedido(v, id, status = "rascunho") {
-    const { erros, itensErros, itens } = validarPedido(v, id);
-    if (Object.keys(erros).length) return { ok: false, erros, itensErros, erro: erros.geral || erros.itens };
-    const dados = d();
-    if (id) {
-      const pc = L.pedido(id);
-      Object.assign(pc, { fornecedorId: v.fornecedorId, previsao: v.previsao, observacoes: String(v.observacoes || "").trim(), itens, status: status === "pendente" ? "pendente" : pc.status });
-      L.salvar();
-      return { ok: true, id };
-    }
-    dados.sequencias.pedido += 1;
-    const pc = {
-      id: L.novoId("pc"), numero: `PC-${String(dados.sequencias.pedido).padStart(4, "0")}`, fornecedorId: v.fornecedorId, status,
-      criadoEm: U.agora(), enviadoEm: null, previsao: v.previsao, observacoes: String(v.observacoes || "").trim(), responsavelId: dados.perfil.id,
-      itens, recebimentos: [],
-    };
-    dados.pedidos.push(pc);
-    L.salvar();
-    return { ok: true, id: pc.id, numero: pc.numero };
+  function aoEntrar(params) {
+    if (params.situacao !== undefined) { estado.aba = "saldos"; estado.situacao = params.situacao; estado.pagina = 1; }
+    if (params.aba) estado.aba = ["saldos", "movimentos", "reservas"].includes(params.aba) ? params.aba : "saldos";
+    if (params.tipo !== undefined) estado.tipo = params.tipo;
   }
-  function concluirRascunho(id) {
-    const pc = L.pedido(id);
-    if (!pc || pc.status !== "rascunho") return { ok: false, erro: "Só rascunhos podem ser concluídos." };
-    if (pc.previsao < U.hoje()) return { ok: false, erro: "A previsão de entrega já passou. Edite o pedido e atualize a data." };
-    const forn = L.fornecedor(pc.fornecedorId);
-    if (!forn || forn.status !== "ativo") return { ok: false, erro: "O fornecedor deste pedido está inativo. Edite o pedido e escolha outro." };
-    pc.status = "pendente";
-    L.salvar();
-    return { ok: true };
-  }
-  function marcarEnviado(id) {
-    const pc = L.pedido(id);
-    if (!pc || pc.status !== "pendente") return { ok: false, erro: "Só pedidos pendentes de envio podem ser marcados como enviados." };
-    if (pc.previsao < U.hoje()) return { ok: false, erro: "A previsão de entrega já passou. Edite o pedido e atualize a data antes de enviar." };
-    pc.status = "enviado";
-    pc.enviadoEm = U.agora();
-    L.salvar();
-    return { ok: true };
-  }
-  function excluirRascunho(id) {
-    const pc = L.pedido(id);
-    if (!pc || pc.status !== "rascunho") return { ok: false, erro: "Só rascunhos podem ser excluídos. Pedidos já enviados devem ser cancelados." };
-    d().pedidos = d().pedidos.filter((x) => x.id !== id);
-    L.salvar();
-    return { ok: true };
-  }
-  function cancelarPedido(id, motivo) {
-    const pc = L.pedido(id);
-    if (!pc || !["rascunho", "pendente", "enviado", "parcial"].includes(pc.status)) return { ok: false, erro: "Este pedido não pode ser cancelado." };
-    const texto = String(motivo || "").trim();
-    if (texto.length < 5) return { ok: false, erros: { motivo: "Explique o motivo do cancelamento." } };
-    pc.status = "cancelado";
-    pc.canceladoEm = U.agora();
-    pc.motivoCancelamento = texto;
-    L.salvar();
-    return { ok: true };
-  }
+  const atualizar = C().comFoco(desenhar);
+  NX.telas.estoque = { titulo: "Estoque", montar, atualizar, aoEntrar, reiniciar: () => Object.assign(estado, PADRAO()) };
 
-  // Cada janela de recebimento gera uma "senha" (token). Se o mesmo token chegar
-  // duas vezes (clique duplo, botão voltar, outra aba), nada é lançado de novo.
-  const novoTokenRecebimento = () => L.novoId("rc");
-  function registrarRecebimento(id, { token, quantidades, data, documento, responsavelId }) {
-    const pc = L.pedido(id);
-    if (!pc) return { ok: false, erro: "Pedido não encontrado." };
-    if (!token) return { ok: false, erro: "Recebimento sem identificação. Abra a janela de recebimento de novo." };
-    if (d().pedidos.some((x) => x.recebimentos.some((r) => r.id === token))) return { ok: false, duplicado: true, erro: "Este recebimento já foi registrado. Nada foi lançado de novo." };
-    if (!["enviado", "parcial"].includes(pc.status)) return { ok: false, erro: pc.status === "recebido" ? "Este pedido já foi recebido por completo." : "Só pedidos enviados podem ser recebidos. Marque o pedido como enviado primeiro." };
-    const erros = {};
-    const itensErros = {};
-    const lancamentos = [];
-    pc.itens.forEach((it) => {
-      const t = String((quantidades || {})[it.produtoId] ?? "").trim();
-      if (t === "" || t === "0") return;
-      const q = U.lerInteiro(t);
-      const pendente = it.quantidade - it.recebido;
-      const p = L.produto(it.produtoId);
-      if (!Number.isFinite(q)) itensErros[it.produtoId] = "Use um número inteiro.";
-      else if (q > pendente) itensErros[it.produtoId] = `Máximo a receber: ${U.unidades(pendente)}`;
-      else if (!p || p.status === "arquivado") itensErros[it.produtoId] = "Produto arquivado: reative para receber.";
-      else lancamentos.push({ it, q, p });
-    });
-    if (Object.keys(itensErros).length) erros.itens = "Confira as quantidades destacadas.";
-    else if (!lancamentos.length) erros.itens = "Informe a quantidade recebida de pelo menos um item.";
-    if (!responsavelValido(responsavelId)) erros.responsavelId = "Escolha quem conferiu a mercadoria.";
-    if (String(documento || "").length > 40) erros.documento = "Use no máximo 40 caracteres.";
-    validarData(data, lancamentos.map((l) => l.p), erros);
-    if (!erros.data && pc.enviadoEm && data < pc.enviadoEm) erros.data = `O recebimento não pode ser anterior ao envio do pedido (${U.dataHora(pc.enviadoEm)}).`;
-    if (Object.keys(erros).length) return { ok: false, erros, itensErros, erro: erros.itens };
-
-    const doc = String(documento || "").trim() || pc.numero;
-    const rec = { id: token, data, documento: doc, responsavelId, itens: [], movimentos: [] };
-    lancamentos.forEach(({ it, q, p }) => {
-      const m = lancar({
-        produtoId: p.id, tipo: "entrada", quantidade: q, data, custoUnitario: it.custo, fornecedorId: pc.fornecedorId,
-        motivo: "Recebimento de pedido de compra", documento: doc, observacao: "", responsavelId, origem: "pedido", pedidoId: pc.id, recebimentoId: token,
-      });
-      it.recebido += q;
-      rec.itens.push({ produtoId: p.id, quantidade: q });
-      rec.movimentos.push(m.id);
-    });
-    pc.recebimentos.push(rec);
-    pc.status = pc.itens.every((it) => it.recebido >= it.quantidade) ? "recebido" : "parcial";
-    if (pc.status === "recebido") pc.concluidoEm = data;
-    L.salvar();
-    return { ok: true, status: pc.status, unidades: rec.itens.reduce((t, x) => t + x.quantidade, 0) };
+  /* ---------- Peça (detalhe) ---------- */
+  let pecaId = null;
+  let secao = null;
+  function desenharPeca() {
+    const x = L.peca(pecaId);
+    if (!x) { U.trocar(secao, C().cabecalho({ id: "peca", titulo: "Peça não encontrada", antes: C().voltar("estoque", "Estoque") }), C().vazio({ icone: "search-x", titulo: "Esta peça não existe" })); return; }
+    const verCusto = O.podeVer("financeiro") || O.pode("catalogo");
+    const movs = O.movimentosDaPeca(x.id);
+    const reservas = [];
+    L.dados.ordens.forEach((os) => os.itens.forEach((i) => { if (i.tipo === "peca" && i.refId === x.id && ["reservada", "falta"].includes(i.estado)) reservas.push({ os, i }); }));
+    const ativo = x.status === "ativo";
+    U.trocar(secao,
+      C().cabecalho({
+        id: "peca", titulo: x.nome, antes: C().voltar("estoque", "Estoque"), sub: `${x.sku} · ${x.categoria}${x.fabricante ? ` · ${x.fabricante}` : ""}${x.local ? ` · ${x.local}` : ""}`,
+        etiquetas: [C().pilulaSituacaoPeca(x), C().pilulaExemplo(x)],
+        acoes: [
+          ativo && O.pode("estoque_mov") ? C().botao("Entrada", "btn--linha", () => NX.form.movimento("entrada", x.id), "arrow-down-to-line") : null,
+          ativo && O.pode("estoque_mov") ? C().botao("Saída avulsa", "btn--linha", () => NX.form.movimento("saida", x.id), "arrow-up-from-line") : null,
+          ativo && O.pode("estoque_ajuste") ? C().botao("Ajuste", "btn--linha", () => NX.form.movimento("ajuste", x.id), "scale") : null,
+          C().botaoSe("catalogo", "Editar cadastro", "btn--linha", () => NX.form.peca(x.id), "pencil"),
+        ],
+      }),
+      !ativo ? el("p", { class: "nota-alerta nota-alerta--bloco" }, icone("power-off", 16), "Peça desativada: não entra em novos orçamentos nem recebe movimentações até ser reativada.") : null,
+      el("div", { class: "faixa-resumo" },
+        el("div", {}, el("span", { texto: "Saldo" }), el("b", { texto: U.unidades(O.saldo(x.id)) })),
+        el("div", {}, el("span", { texto: "Reservado para OS" }), el("b", { texto: U.unidades(O.reservado(x.id)) })),
+        el("div", {}, el("span", { texto: "Disponível" }), el("b", { class: O.disponivel(x.id) <= 0 ? "negativo" : "", texto: U.unidades(O.disponivel(x.id)) })),
+        el("div", {}, el("span", { texto: verCusto ? "Custo · preço" : "Preço de venda" }), el("b", { texto: verCusto ? `${U.moeda(x.custo)} · ${U.moeda(x.preco)}` : U.moeda(x.preco) }))),
+      el("div", { class: "detalhe-grade detalhe-grade--lado" },
+        el("div", { class: "detalhe-grade__principal" },
+          el("section", { class: "cartao cartao--tabela" },
+            el("div", { class: "cartao__cabeca" }, el("div", {}, el("h2", { class: "cartao__titulo", texto: "Movimentações" }), el("p", { class: "cartao__sub", texto: `${U.plural(movs.length, "registro", "registros")} · mínimo ${x.minimo}` }))),
+            movs.length ? el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--larga" },
+              el("caption", { class: "vh", texto: `Movimentações de ${x.nome}` }),
+              el("thead", {}, el("tr", {}, ...["Nº", "Data", "Tipo", "Quantidade", "Saldo", "Origem / motivo", "Por"].map((c) => el("th", { scope: "col", class: ["Quantidade", "Saldo"].includes(c) ? "num" : "", texto: c })))),
+              el("tbody", {}, ...movs.map((m) => linhaMov(m, { mostrarPeca: false }))))) : el("p", { class: "vazio-pequeno", style: { padding: "0 16px 12px" }, texto: "Nenhuma movimentação ainda." }))),
+        el("div", { class: "detalhe-grade__lado" },
+          el("section", { class: "cartao" },
+            el("h2", { class: "cartao__titulo cartao__titulo--espaco", texto: "Reservas e faltas" }),
+            reservas.length ? el("ul", { class: "lista-simples" }, ...reservas.map(({ os, i }) => el("li", {},
+              el("span", { class: "mono", texto: `${i.quantidade}×` }),
+              el("span", { class: "lista-simples__texto" }, el("a", { class: "link-texto", href: `#/ordens/${os.id}`, texto: os.numero }), el("span", { class: "suave", texto: `${C().textoVeiculo(os.veiculoId)} · ${O.nomeStatus(os.status)}` })),
+              C().pilulaPeca(i.estado)))) : el("p", { class: "vazio-pequeno", texto: "Nenhuma ordem reservou esta peça." })),
+          el("section", { class: "cartao" },
+            el("h2", { class: "cartao__titulo cartao__titulo--espaco", texto: "Cadastro" }),
+            el("dl", { class: "ficha ficha--coluna" },
+              el("div", { class: "ficha__linha" }, el("dt", { texto: "Fornecedor principal" }), el("dd", { texto: x.fornecedorId ? (L.fornecedor(x.fornecedorId) || {}).nome : "Não informado" })),
+              verCusto ? el("div", { class: "ficha__linha" }, el("dt", { texto: "Margem" }), el("dd", { texto: `${U.percentual(x.preco ? (x.preco - x.custo) / x.preco : 0)} (${U.moeda(x.preco - x.custo)} por unidade)` })) : null),
+            el("h3", { class: "subtitulo-form", texto: "Histórico do cadastro" }),
+            el("ul", { class: "lista-itens" }, ...[...x.historico].reverse().map((h) => el("li", {}, el("span", { class: "lista-itens__texto" }, el("span", { texto: h.texto }), el("small", { texto: `${U.dataHora(h.em)} · ${h.por}` })))))))));
   }
-
-  /* ---------- Alertas internos ---------- */
-  const PESO = { atrasado: 0, zerado: 1, baixo: 2, receber: 3 };
-  function alertasAtivos() {
-    return memo("alertas", () => {
-      const lista = [];
-      d().produtos.filter((p) => p.status === "ativo").forEach((p) => {
-        const s = situacao(p);
-        if (s !== "zerado" && s !== "baixo") return;
-        const pcs = pedidosComProduto(p.id).filter((pc) => pc.status !== "rascunho");
-        const emPedido = pcs.length ? `em ${pcs.map((pc) => pc.numero).join(", ")}` : "sem pedido em aberto";
-        lista.push({
-          chave: `${s}:${p.id}`, tipo: s, titulo: `${s === "zerado" ? "Sem estoque" : "Estoque baixo"}: ${p.nome}`,
-          texto: s === "zerado" ? `Mínimo ${U.unidades(p.minimo)} · ${emPedido}` : `${U.unidades(saldo(p.id))} (mínimo ${p.minimo}) · ${emPedido}`,
-          rota: `produtos/${p.id}`, ordem: p.nome,
-        });
-      });
-      d().pedidos.filter((pc) => pc.status === "enviado" || pc.status === "parcial").forEach((pc) => {
-        const forn = L.nomeFornecedor(pc.fornecedorId);
-        const t = totaisPedido(pc);
-        if (pedidoAtrasado(pc)) lista.push({ chave: `atrasado:${pc.id}:${pc.previsao}`, tipo: "atrasado", titulo: `Pedido atrasado: ${pc.numero}`, texto: `Previsto para ${U.dataCompleta(pc.previsao)} · ${forn}`, rota: `pedidos/${pc.id}`, ordem: pc.previsao });
-        else lista.push({ chave: `receber:${pc.id}`, tipo: "receber", titulo: `Recebimento pendente: ${pc.numero}`, texto: `${U.unidades(t.pendenteUn)} a receber · previsão ${U.dataCompleta(pc.previsao)}`, rota: `pedidos/${pc.id}`, ordem: pc.previsao });
-      });
-      return lista.sort((a, b) => PESO[a.tipo] - PESO[b.tipo] || String(a.ordem).localeCompare(String(b.ordem), "pt-BR"));
-    });
-  }
-  function alertas() {
-    const vistos = new Set(d().alertasVistos || []);
-    return alertasAtivos().map((a) => ({ ...a, visto: vistos.has(a.chave) }));
-  }
-  function marcarAlertasVistos(chaves) {
-    const set = new Set(d().alertasVistos || []);
-    chaves.forEach((c) => set.add(c));
-    d().alertasVistos = [...set];
-    L.salvar();
-  }
-  // Remove marcas de "visto" de alertas que já não existem (se o problema voltar, o alerta volta a aparecer)
-  function limparAlertasVistos() {
-    const dados = d();
-    if (!dados || !dados.alertasVistos || !dados.alertasVistos.length) return;
-    cache.versao = -1;
-    const ativos = new Set(alertasAtivos().map((a) => a.chave));
-    dados.alertasVistos = dados.alertasVistos.filter((c) => ativos.has(c));
-  }
-
-  /* ---------- Indicadores e séries (sempre calculados do histórico) ---------- */
-  const noPeriodo = (m, de, ate) => { const dia = m.data.slice(0, 10); return dia >= de && dia <= ate; };
-  function totaisMovimento(de, ate, filtro = () => true) {
-    let entradas = 0, saidas = 0, ajustes = 0, valorEntradas = 0, valorSaidas = 0, ajustesValor = 0, qtdAjustes = 0;
-    movimentosOrdenados().forEach((m) => {
-      if (!noPeriodo(m, de, ate) || !filtro(m)) return;
-      const p = L.produto(m.produtoId);
-      const custo = p ? p.custo : 0;
-      const c = classe(m);
-      if (c === "entrada") { entradas += m.quantidade; valorEntradas += m.quantidade * (m.custoUnitario ?? custo); }
-      else if (c === "saida") { saidas += -m.quantidade; valorSaidas += -m.quantidade * custo; }
-      else if (c === "ajuste") { ajustes += m.quantidade; ajustesValor += m.quantidade * custo; qtdAjustes += 1; }
-    });
-    return { entradas, saidas, ajustes, qtdAjustes, valorEntradas: U.arredondar(valorEntradas), valorSaidas: U.arredondar(valorSaidas), ajustesValor: U.arredondar(ajustesValor) };
-  }
-
-  function indicadores(de, ate) {
-    return memo(`ind:${de}:${ate}`, () => {
-      const ativos = d().produtos.filter((p) => p.status === "ativo");
-      let unidades = 0, valor = 0, baixo = 0, zerado = 0;
-      d().produtos.forEach((p) => { unidades += saldo(p.id); valor += saldo(p.id) * p.custo; });
-      ativos.forEach((p) => { const s = situacao(p); if (s === "baixo") baixo += 1; if (s === "zerado") zerado += 1; });
-      const abertos = d().pedidos.filter(pedidoAberto);
-      return {
-        produtosAtivos: ativos.length, arquivados: d().produtos.length - ativos.length, unidades, valor: U.arredondar(valor), baixo, zerado,
-        movimento: totaisMovimento(de, ate),
-        pedidosPendentes: abertos.length, pedidosAtrasados: abertos.filter(pedidoAtrasado).length,
-        valorPendente: U.arredondar(abertos.reduce((t, pc) => t + totaisPedido(pc).pendenteValor, 0)),
-        rascunhos: d().pedidos.filter((pc) => pc.status === "rascunho").length,
-      };
-    });
-  }
-
-  // Divide o período em blocos (dia, semana ou mês) para os gráficos
-  function blocos(de, ate, tipo) {
-    const lista = [];
-    if (tipo === "dia") {
-      for (let c = de; c <= ate; c = U.somarDias(c, 1)) lista.push({ inicio: c, fim: c, rotulo: U.dataCurta(c) });
-    } else if (tipo === "semana") {
-      // semanas que terminam no último dia do período, de 7 em 7 dias para trás
-      for (let fim = ate; fim >= de; fim = U.somarDias(fim, -7)) {
-        const inicio = U.somarDias(fim, -6) < de ? de : U.somarDias(fim, -6);
-        lista.unshift({ inicio, fim, rotulo: U.dataCurta(inicio) });
-      }
-    } else {
-      for (let c = U.inicioDoMes(de); c <= ate; c = U.somarMeses(c, 1)) {
-        const inicio = c < de ? de : c;
-        const fim = U.fimDoMes(c) > ate ? ate : U.fimDoMes(c);
-        lista.push({ inicio, fim, rotulo: `${MESES[Number(c.slice(5, 7)) - 1]}/${c.slice(2, 4)}` });
-      }
-    }
-    return lista;
-  }
-  const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-  const agrupamentoPara = (de, ate) => { const n = U.diasEntre(de, ate) + 1; return n <= 14 ? "dia" : n <= 120 ? "semana" : "mes"; };
-
-  function serieMovimentos(de, ate, { categoriaId, agrupamento } = {}) {
-    const tipo = agrupamento || agrupamentoPara(de, ate);
-    return memo(`serie:${de}:${ate}:${categoriaId || ""}:${tipo}`, () => {
-      const filtro = categoriaId ? (m) => (L.produto(m.produtoId) || {}).categoriaId === categoriaId : () => true;
-      return blocos(de, ate, tipo).map((b) => ({ ...b, ...totaisMovimento(b.inicio, b.fim, filtro) }));
-    });
-  }
-
-  function porCategoria() {
-    return memo("porCategoria", () => d().categorias.map((c) => {
-      const lista = d().produtos.filter((p) => p.categoriaId === c.id && p.status === "ativo");
-      return {
-        categoria: c, produtos: lista.length,
-        unidades: lista.reduce((t, p) => t + saldo(p.id), 0),
-        valor: U.arredondar(lista.reduce((t, p) => t + valorDoProduto(p), 0)),
-        baixo: lista.filter((p) => ["baixo", "zerado"].includes(situacao(p))).length,
-      };
-    }).filter((x) => x.produtos > 0 || x.categoria.status === "ativa"));
-  }
-
-  function maisMovimentados(de, ate, { categoriaId, limite = 10 } = {}) {
-    return memo(`mais:${de}:${ate}:${categoriaId || ""}:${limite}`, () => {
-      const mapa = new Map();
-      movimentosOrdenados().forEach((m) => {
-        if (!noPeriodo(m, de, ate)) return;
-        const p = L.produto(m.produtoId);
-        if (!p || (categoriaId && p.categoriaId !== categoriaId)) return;
-        const c = classe(m);
-        if (c !== "entrada" && c !== "saida") return;
-        const reg = mapa.get(p.id) || { produto: p, entradas: 0, saidas: 0, movimentos: 0 };
-        if (c === "entrada") reg.entradas += m.quantidade; else reg.saidas += -m.quantidade;
-        reg.movimentos += 1;
-        mapa.set(p.id, reg);
-      });
-      return [...mapa.values()].map((r) => ({ ...r, total: r.entradas + r.saidas })).filter((r) => r.total > 0)
-        .sort((a, b) => b.total - a.total || a.produto.nome.localeCompare(b.produto.nome, "pt-BR")).slice(0, limite);
-    });
-  }
-
-  function semMovimentacao(de, ate, { categoriaId } = {}) {
-    const comMov = new Set(movimentosOrdenados().filter((m) => noPeriodo(m, de, ate)).map((m) => m.produtoId));
-    return d().produtos.filter((p) => p.status === "ativo" && !comMov.has(p.id) && (!categoriaId || p.categoriaId === categoriaId) && p.criadoEm <= ate)
-      .map((p) => ({ produto: p, saldo: saldo(p.id), ultima: (ultimaMovimentacao(p.id) || {}).data || null }))
-      .sort((a, b) => String(a.ultima).localeCompare(String(b.ultima)));
-  }
-
-  // Valor do estoque ao fim de cada ponto: parte do valor de hoje e "desfaz" as movimentações para trás.
-  // Usa o custo cadastrado de cada produto (estimativa operacional, não valor contábil).
-  function evolucaoValor(de, ate) {
-    return memo(`evol:${de}:${ate}`, () => {
-      const n = U.diasEntre(de, ate);
-      const passo = n <= 14 ? 1 : n <= 45 ? 3 : 7;
-      const pontos = [];
-      for (let c = ate; c >= de; c = U.somarDias(c, -passo)) pontos.unshift(c);
-      if (pontos[0] !== de && pontos.length < 20) pontos.unshift(de);
-      const custo = new Map(d().produtos.map((p) => [p.id, p.custo]));
-      let valor = d().produtos.reduce((t, p) => t + saldo(p.id) * p.custo, 0);
-      const desc = [...movimentosOrdenados()].reverse();
-      let i = 0;
-      const res = [];
-      for (let k = pontos.length - 1; k >= 0; k -= 1) {
-        const limite = `${pontos[k]}T23:59`;
-        while (i < desc.length && desc[i].data > limite) { valor -= desc[i].quantidade * (custo.get(desc[i].produtoId) || 0); i += 1; }
-        res.unshift({ data: pontos[k], valor: U.arredondar(valor) });
-      }
-      return res;
-    });
-  }
-
-  // Saldo de um produto ao fim de cada dia do período (para o gráfico da página do produto)
-  function saldoNoTempo(pid, de, ate) {
-    const movs = movimentosDoProduto(pid);
-    const res = [];
-    let s = 0;
-    let i = 0;
-    for (let c = de; c <= ate; c = U.somarDias(c, 1)) {
-      const limite = `${c}T23:59`;
-      while (i < movs.length && movs[i].data <= limite) { s = movs[i].saldoApos ?? s + movs[i].quantidade; i += 1; }
-      res.push({ data: c, saldo: s });
-    }
-    return res;
-  }
-
-  // Confere se o saldo de cada produto bate com o histórico, movimento a movimento
-  function conferirIntegridade() {
-    const problemas = [];
-    d().produtos.forEach((p) => {
-      let s = 0;
-      movimentosDoProduto(p.id).forEach((m) => {
-        if (m.saldoAnterior !== s) problemas.push(`${p.nome}: mov. nº ${m.numero} começa em ${m.saldoAnterior}, esperado ${s}`);
-        s += m.quantidade;
-        if (m.saldoApos !== s) problemas.push(`${p.nome}: mov. nº ${m.numero} termina em ${m.saldoApos}, esperado ${s}`);
-        if (s < 0) problemas.push(`${p.nome}: saldo negativo após mov. nº ${m.numero}`);
-      });
-    });
-    d().pedidos.forEach((pc) => {
-      pc.itens.forEach((it) => {
-        const recebido = pc.recebimentos.reduce((t, r) => t + r.itens.filter((x) => x.produtoId === it.produtoId).reduce((a, x) => a + x.quantidade, 0), 0);
-        if (recebido !== it.recebido) problemas.push(`${pc.numero}: recebido de ${L.produto(it.produtoId)?.nome} não confere`);
-        if (it.recebido > it.quantidade) problemas.push(`${pc.numero}: recebeu mais do que o pedido`);
-      });
-    });
-    return { ok: problemas.length === 0, problemas, movimentos: d().movimentos.length };
-  }
-
-  NX.estoque = {
-    saldo, situacao, nomeSituacao, valorDoProduto, ultimaMovimentacao, movimentosDoProduto, movimentosOrdenados, classe,
-    lancar, registrarEntrada, registrarSaida, registrarAjuste, podeEstornar, estornar,
-    statusPedido, pedidoAberto, pedidoAtrasado, totaisPedido, pedidosComProduto, validarPedido, salvarPedido, concluirRascunho, marcarEnviado,
-    excluirRascunho, cancelarPedido, novoTokenRecebimento, registrarRecebimento,
-    alertas, marcarAlertasVistos, limparAlertasVistos,
-    totaisMovimento, indicadores, blocos, agrupamentoPara, serieMovimentos, porCategoria, maisMovimentados, semMovimentacao, evolucaoValor, saldoNoTempo,
-    conferirIntegridade, noPeriodo,
+  NX.telas.peca = {
+    titulo: "Peça",
+    tituloDinamico: () => (L.peca(pecaId) || { nome: "Peça" }).nome,
+    abrir(id) { pecaId = id; }, montar(s) { secao = s; }, atualizar: C().comFoco(desenharPeca),
   };
 })();

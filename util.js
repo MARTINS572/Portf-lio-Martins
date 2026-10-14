@@ -1,8 +1,7 @@
 /* ==========================================================================
-   NEXORA STOCK — util.js
+   NEXORA CRM — util.js
    Funções pequenas usadas por todas as telas: criar elementos, formatar
-   datas, valores e quantidades, validar códigos, mensagens, janelas de
-   confirmação, formulários e CSV.
+   datas e valores, mensagens, janelas de confirmação, formulários e CSV.
    ========================================================================== */
 window.NX = window.NX || {};
 
@@ -20,7 +19,6 @@ window.NX = window.NX || {};
       else if (k === "style" && typeof v === "object") Object.entries(v).forEach(([prop, val]) => { if (val == null) return; if (prop.startsWith("--")) e.style.setProperty(prop, val); else e.style[prop] = val; });
       else if (k.startsWith("on") && typeof v === "function") e.addEventListener(k.slice(2), v);
       else if (k === "texto") e.textContent = v;
-      else if (k === "value") e.value = v;
       else if (v === true) e.setAttribute(k, "");
       else e.setAttribute(k, v);
     });
@@ -49,39 +47,30 @@ window.NX = window.NX || {};
   const $ = (seletor, raiz = document) => raiz.querySelector(seletor);
   const $$ = (seletor, raiz = document) => [...raiz.querySelectorAll(seletor)];
 
-  /* ---------- Datas ----------
-     Dia: "AAAA-MM-DD". Momento: "AAAA-MM-DDTHH:MM" (mesmo formato do campo
-     datetime-local). Tudo no fuso do navegador; comparar textos = comparar datas. */
+  /* ---------- Datas (sempre "AAAA-MM-DD", no fuso do navegador) ---------- */
   const dd = (n) => String(n).padStart(2, "0");
   const chave = (d) => `${d.getFullYear()}-${dd(d.getMonth() + 1)}-${dd(d.getDate())}`;
   const deChave = (c) => { const [a, m, d] = String(c).slice(0, 10).split("-").map(Number); return new Date(a, m - 1, d); };
   const hoje = () => chave(new Date());
-  const agora = () => { const d = new Date(); return `${chave(d)}T${dd(d.getHours())}:${dd(d.getMinutes())}`; };
   const somarDias = (c, n) => { const d = deChave(c); d.setDate(d.getDate() + n); return chave(d); };
   const diasEntre = (a, b) => Math.round((deChave(b) - deChave(a)) / 86400000);
   const inicioDoMes = (c) => `${String(c).slice(0, 7)}-01`;
   const fimDoMes = (c) => { const d = deChave(inicioDoMes(c)); d.setMonth(d.getMonth() + 1); d.setDate(0); return chave(d); };
   const somarMeses = (c, n) => { const d = deChave(inicioDoMes(c)); d.setMonth(d.getMonth() + n); return chave(d); };
-  const dataValida = (c) => /^\d{4}-\d{2}-\d{2}$/.test(c || "") && !Number.isNaN(deChave(c).getTime()) && chave(deChave(c)) === c;
-  const momentoValido = (m) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(m || "") && dataValida(m.slice(0, 10)) && Number(m.slice(11, 13)) < 24 && Number(m.slice(14, 16)) < 60;
-  const diaDaSemana = (c) => deChave(c).getDay(); // 0 = domingo
+  const dataValida = (c) => /^\d{4}-\d{2}-\d{2}$/.test(c || "") && !Number.isNaN(deChave(c).getTime());
 
   const fmtCurta = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
   const fmtCompleta = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
   const fmtLonga = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  const fmtMes = new Intl.DateTimeFormat("pt-BR", { month: "short" });
   const fmtMesAno = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" });
   const limpar = (t) => t.replace(/\./g, "").replace(" de ", " ");
   const dataCurta = (c) => limpar(fmtCurta.format(deChave(c)));            // "12 out"
   const dataCompleta = (c) => fmtCompleta.format(deChave(c));             // "12/10/2026"
   const dataLonga = (c) => fmtLonga.format(deChave(c));                   // "segunda-feira, 12 de outubro"
+  const nomeDoMes = (c) => fmtMes.format(deChave(c)).replace(".", "");    // "out"
   const mesAno = (c) => fmtMesAno.format(deChave(c));                     // "outubro de 2026"
-  const hora = (m) => String(m || "").slice(11, 16);                      // "14:32"
-  const dataHora = (m) => `${dataCompleta(m)} ${hora(m)}`;                // "12/10/2026 14:32"
-  function dataHoraCurta(m) {                                             // "hoje, 14:32" / "12 out, 14:32"
-    const n = diasEntre(hoje(), m);
-    const dia = n === 0 ? "hoje" : n === -1 ? "ontem" : dataCurta(m);
-    return `${dia}, ${hora(m)}`;
-  }
+
   function relativo(c) {
     const n = diasEntre(hoje(), c);
     if (n === 0) return "hoje";
@@ -95,7 +84,6 @@ window.NX = window.NX || {};
   const formatoMoeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const formatoMoedaInteira = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
   const formatoNumero = new Intl.NumberFormat("pt-BR");
-  const formatoDecimal = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const formatoPercentual = new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 });
 
   // Respeita a preferência "valores compactos" (R$ 12,5 mil)
@@ -111,16 +99,12 @@ window.NX = window.NX || {};
     return formatoMoedaInteira.format(v);
   }
   const numero = (v) => formatoNumero.format(v || 0);
-  const decimal = (v) => formatoDecimal.format(v || 0);
   const percentual = (v) => formatoPercentual.format(Number.isFinite(v) ? v : 0);
-  const plural = (n, um, varios) => `${numero(n)} ${Math.abs(n) === 1 ? um : varios}`;
-  const unidades = (n) => `${numero(n)} un.`;
-  const comSinal = (n) => (n > 0 ? `+${numero(n)}` : n < 0 ? `−${numero(-n)}` : "0");
-  const arredondar = (v) => Math.round((v + Number.EPSILON) * 100) / 100;
+  const plural = (n, um, varios) => `${numero(n)} ${n === 1 ? um : varios}`;
 
   /* ---------- Texto ---------- */
-  const semAcento = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  const iniciais = (nome) => String(nome || "?").trim().split(/\s+/).filter((p) => p && /[\p{L}\d]/u.test(p[0])).slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "?";
+  const semAcento = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const iniciais = (nome) => String(nome || "?").trim().split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join("");
   const contem = (texto, busca) => semAcento(texto).includes(semAcento(busca));
 
   function mascaraTelefone(valor) {
@@ -129,51 +113,6 @@ window.NX = window.NX || {};
     if (n.length > 6) return `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
     if (n.length > 2) return `(${n.slice(0, 2)}) ${n.slice(2)}`;
     return n;
-  }
-  function mascaraCnpj(valor) {
-    const n = String(valor).replace(/\D/g, "").slice(0, 14);
-    return n.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
-  }
-
-  /* ---------- Validações ---------- */
-  const emailValido = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v || "");
-  const telefoneValido = (v) => { const n = String(v || "").replace(/\D/g, ""); return n.length === 10 || n.length === 11; };
-  // Código de barras GTIN (EAN-8, UPC-12, EAN-13, GTIN-14): confere o dígito verificador
-  function gtinValido(v) {
-    const n = String(v || "");
-    if (!/^(\d{8}|\d{12}|\d{13}|\d{14})$/.test(n)) return false;
-    const digitos = n.split("").map(Number);
-    const dv = digitos.pop();
-    const soma = digitos.reverse().reduce((t, d, i) => t + d * (i % 2 === 0 ? 3 : 1), 0);
-    return (10 - (soma % 10)) % 10 === dv;
-  }
-  // CNPJ: 14 dígitos e os dois dígitos verificadores
-  function cnpjValido(v) {
-    const n = String(v || "").replace(/\D/g, "");
-    if (n.length !== 14 || /^(\d)\1+$/.test(n)) return false;
-    const calc = (base) => {
-      const pesos = base.length === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-      const r = base.split("").reduce((t, d, i) => t + Number(d) * pesos[i], 0) % 11;
-      return r < 2 ? 0 : 11 - r;
-    };
-    const d1 = calc(n.slice(0, 12));
-    const d2 = calc(n.slice(0, 12) + d1);
-    return n.endsWith(`${d1}${d2}`);
-  }
-  // Valor em reais: aceita "12.500,50", "12500.5", "R$ 89,90"
-  function lerValor(v) {
-    const t = String(v ?? "").trim().replace(/\s|R\$/g, "");
-    if (!t) return NaN;
-    let normal = t;
-    if (t.includes(",")) normal = t.replace(/\./g, "").replace(",", ".");
-    else if (/^\d{1,3}(\.\d{3})+$/.test(t)) normal = t.replace(/\./g, "");
-    if (!/^-?\d+(\.\d+)?$/.test(normal)) return NaN;
-    return Number(normal);
-  }
-  // Quantidade inteira (sem vírgula, sem sinal)
-  function lerInteiro(v) {
-    const t = String(v ?? "").trim().replace(/\./g, "");
-    return /^\d{1,7}$/.test(t) ? Number(t) : NaN;
   }
 
   /* ---------- Avisos (toast) ---------- */
@@ -186,69 +125,52 @@ window.NX = window.NX || {};
     }
     const nomeIcone = { ok: "circle-check", erro: "triangle-alert", info: "info" }[tipo] || "info";
     caixa.className = `nx-aviso nx-aviso--${tipo}`;
-    caixa.setAttribute("role", tipo === "erro" ? "alert" : "status");
     caixa.replaceChildren(icone(nomeIcone, 18), el("span", { texto }));
     caixa.hidden = false;
     // Se houver uma janela aberta, o aviso vai para dentro dela (fica por cima do fundo escuro)
     const janela = $$("dialog[open]").pop();
     (janela || document.body).append(caixa);
     clearTimeout(temporizador);
-    temporizador = setTimeout(() => { caixa.hidden = true; }, tipo === "erro" ? 6500 : 4500);
+    temporizador = setTimeout(() => { caixa.hidden = true; }, 4500);
   }
 
-  /* ---------- Janela de confirmação ----------
-     exigirCiencia: texto de uma caixa que precisa ser marcada antes de confirmar */
-  function confirmar({ titulo, texto, rotulo = "Confirmar", perigo = false, exigirCiencia }) {
+  /* ---------- Janela de confirmação ---------- */
+  function confirmar({ titulo, texto, rotulo = "Confirmar", perigo = false }) {
     return new Promise((resolver) => {
       const dlg = $("#dlg-confirmar");
       $("#confirmar-titulo", dlg).textContent = titulo;
       $("#confirmar-texto", dlg).textContent = texto;
       const ok = $("#confirmar-ok", dlg);
       ok.textContent = rotulo;
-      ok.className = `btn ${perigo ? "btn--perigo-cheio" : "btn--primario"}`;
-      const ciencia = $("#confirmar-ciencia", dlg);
-      const caixa = $("#confirmar-ciencia-caixa", dlg);
-      ciencia.checked = false;
-      caixa.hidden = !exigirCiencia;
-      $("#confirmar-ciencia-texto", dlg).textContent = exigirCiencia || "";
-      ok.disabled = !!exigirCiencia;
-      const aoMarcar = () => { ok.disabled = !ciencia.checked; };
+      ok.className = `btn ${perigo ? "btn--perigo" : "btn--primario"}`;
       const fechar = (resultado) => {
         dlg.removeEventListener("close", aoFechar);
         ok.removeEventListener("click", aoOk);
-        ciencia.removeEventListener("change", aoMarcar);
         if (dlg.open) dlg.close();
         resolver(resultado);
       };
-      const aoOk = () => { if (!exigirCiencia || ciencia.checked) fechar(true); };
+      const aoOk = () => fechar(true);
       const aoFechar = () => fechar(false);
       ok.addEventListener("click", aoOk);
-      ciencia.addEventListener("change", aoMarcar);
       dlg.addEventListener("close", aoFechar);
       dlg.showModal();
-      (exigirCiencia ? ciencia : perigo ? $("[data-fechar]", dlg) : ok).focus();
+      ok.focus();
     });
   }
 
   /* ---------- Formulário genérico em janela ----------
-     campos: [{ nome, rotulo, tipo, opcoes, obrigatorio, valor, largura, ajuda, min, max, passo,
-                vazio, somenteLeitura, aoMudar(valor, form), placeholder, maiusculas, mascara }]
-     tipo: text | email | tel | number | inteiro | dinheiro | date | datetime-local | select | textarea | checkbox
-     opcoes (select): ["A","B"] ou [{ valor, rotulo, grupo, desativado }]
-     aoSalvar(valores, form) → { ok: true } ou { ok: false, erros: { campo: "mensagem" }, erro: "geral" }
-     Os valores digitados ficam na janela quando há erro (nada se perde). */
-  function formulario({ titulo, descricao, campos, rotuloSalvar = "Salvar", aoSalvar, extra, largura }) {
+     campos: [{ nome, rotulo, tipo, opcoes, obrigatorio, valor, largura, ajuda, min, max, passo }]
+     tipo: text | email | tel | number | date | select | textarea
+     opcoes (select): ["A","B"] ou [{ valor, rotulo, grupo }]
+     aoSalvar(valores) → { ok: true } ou { ok: false, erros: { campo: "mensagem" }, erro: "geral" } */
+  function formulario({ titulo, descricao, campos, rotuloSalvar = "Salvar", aoSalvar, extra }) {
     const dlg = $("#dlg-form");
-    dlg.classList.toggle("janela--larga", largura === "larga");
     const form = $("#form-generico", dlg);
-    form.reset();
     $("#form-titulo", dlg).textContent = titulo;
     const desc = $("#form-descricao", dlg);
-    desc.replaceChildren(...(descricao ? [descricao] : []));
+    desc.textContent = descricao || "";
     desc.hidden = !descricao;
-    const salvar = $("#form-salvar", dlg);
-    salvar.textContent = rotuloSalvar;
-    salvar.disabled = false;
+    $("#form-salvar", dlg).textContent = rotuloSalvar;
     $("#form-erro", dlg).textContent = "";
 
     const grade = $("#form-campos", dlg);
@@ -258,8 +180,8 @@ window.NX = window.NX || {};
       if (c.tipo === "select") {
         controle = el("select", { id, name: c.nome });
         const grupos = new Map();
-        (c.vazio != null ? [{ valor: "", rotulo: c.vazio }] : []).concat(c.opcoes.map((o) => (typeof o === "string" ? { valor: o, rotulo: o } : o))).forEach((o) => {
-          const op = el("option", { value: o.valor, texto: o.rotulo, disabled: !!o.desativado });
+        (c.vazio ? [{ valor: "", rotulo: c.vazio }] : []).concat(c.opcoes.map((o) => (typeof o === "string" ? { valor: o, rotulo: o } : o))).forEach((o) => {
+          const op = el("option", { value: o.valor, texto: o.rotulo });
           if (String(o.valor) === String(c.valor ?? "")) op.selected = true;
           if (o.grupo) {
             if (!grupos.has(o.grupo)) { const g = el("optgroup", { label: o.grupo }); grupos.set(o.grupo, g); controle.append(g); }
@@ -267,60 +189,38 @@ window.NX = window.NX || {};
           } else controle.append(op);
         });
       } else if (c.tipo === "textarea") {
-        controle = el("textarea", { id, name: c.nome, rows: c.linhas || 3, maxlength: c.max || 500, placeholder: c.placeholder });
+        controle = el("textarea", { id, name: c.nome, rows: c.linhas || 3, maxlength: c.max || 500 });
         controle.value = c.valor ?? "";
-      } else if (c.tipo === "checkbox") {
-        controle = el("input", { id, name: c.nome, type: "checkbox" });
-        controle.checked = !!c.valor;
       } else {
-        const tipoHtml = { inteiro: "text", dinheiro: "text" }[c.tipo] || c.tipo || "text";
-        controle = el("input", {
-          id, name: c.nome, type: tipoHtml, autocomplete: c.autocomplete || "off",
-          min: c.min, max: ["number", "date", "datetime-local"].includes(c.tipo) ? c.max : null, step: c.passo,
-          maxlength: ["text", "email", "tel", "inteiro", "dinheiro"].includes(c.tipo || "text") ? (c.max && !["number"].includes(c.tipo) ? c.max : c.tipo === "inteiro" ? 9 : c.tipo === "dinheiro" ? 14 : 120) : null,
-          inputmode: c.tipo === "tel" ? "tel" : c.tipo === "inteiro" ? "numeric" : c.tipo === "dinheiro" ? "decimal" : null,
-          placeholder: c.placeholder, readonly: !!c.somenteLeitura,
-        });
+        controle = el("input", { id, name: c.nome, type: c.tipo || "text", autocomplete: c.autocomplete || "off", min: c.min, max: c.tipo === "number" || c.tipo === "date" ? c.max : null, step: c.passo, maxlength: c.tipo === "text" || c.tipo === "email" ? (c.max || 120) : null, inputmode: c.tipo === "tel" ? "tel" : c.tipo === "number" ? "decimal" : null, placeholder: c.placeholder });
         controle.value = c.valor ?? "";
         if (c.tipo === "tel") controle.addEventListener("input", () => { controle.value = mascaraTelefone(controle.value); });
-        if (c.mascara === "cnpj") controle.addEventListener("input", () => { controle.value = mascaraCnpj(controle.value); });
-        if (c.maiusculas) controle.addEventListener("input", () => { const p = controle.selectionStart; controle.value = controle.value.toUpperCase(); controle.setSelectionRange(p, p); });
       }
       if (c.obrigatorio) controle.setAttribute("aria-required", "true");
-      if (c.aoMudar) controle.addEventListener(c.tipo === "select" || c.tipo === "checkbox" ? "change" : "input", () => c.aoMudar(c.tipo === "checkbox" ? controle.checked : controle.value, form));
       const erro = el("p", { class: "campo__erro", id: `${id}-erro` });
-      controle.setAttribute("aria-describedby", `${id}-erro ${id}-ajuda`);
-      const ajuda = el("p", { class: "campo__ajuda", id: `${id}-ajuda` });
-      if (c.ajuda instanceof Node) ajuda.append(c.ajuda); else if (c.ajuda) ajuda.textContent = c.ajuda;
-      ajuda.hidden = !c.ajuda;
-      if (c.tipo === "checkbox") {
-        return el("div", { class: `campo campo--caixa${c.largura === "inteira" ? " campo--inteira" : ""}`, "data-campo": c.nome },
-          el("label", { class: "caixa-marcar", for: id }, controle, el("span", { texto: c.rotulo })), ajuda, erro);
-      }
-      return el("div", { class: `campo${c.largura === "inteira" ? " campo--inteira" : ""}`, "data-campo": c.nome },
-        el("label", { for: id }, c.rotulo, c.obrigatorio ? el("span", { class: "campo__obrig", "aria-hidden": "true", texto: " *" }) : (c.somenteLeitura ? null : el("span", { class: "campo__opc", texto: " (opcional)" }))),
-        controle, ajuda, erro);
+      controle.setAttribute("aria-describedby", `${id}-erro${c.ajuda ? ` ${id}-ajuda` : ""}`);
+      return el("div", { class: `campo${c.largura === "inteira" ? " campo--inteira" : ""}` },
+        el("label", { for: id }, c.rotulo, c.obrigatorio ? el("span", { class: "campo__obrig", "aria-hidden": "true", texto: " *" }) : el("span", { class: "campo__opc", texto: " (opcional)" })),
+        controle,
+        c.ajuda ? el("p", { class: "campo__ajuda", id: `${id}-ajuda`, texto: c.ajuda }) : null,
+        erro);
     }));
     const caixaExtra = $("#form-extra", dlg);
     caixaExtra.replaceChildren(...(extra ? [extra] : []));
 
-    let enviando = false;
     const aoEnviar = (evento) => {
       evento.preventDefault();
-      if (enviando) return;                     // impede envio duplo (dois cliques rápidos)
       const valores = {};
       campos.forEach((c) => {
-        const ctrl = form.elements[c.nome];
-        valores[c.nome] = c.tipo === "checkbox" ? ctrl.checked : (typeof ctrl.value === "string" ? ctrl.value.trim() : ctrl.value);
+        const v = form.elements[c.nome].value;
+        valores[c.nome] = typeof v === "string" ? v.trim() : v;
       });
+      // Obrigatórios primeiro, aqui mesmo
       const erros = {};
       campos.forEach((c) => {
-        if (c.obrigatorio && c.tipo !== "checkbox" && !valores[c.nome]) erros[c.nome] = "Preencha este campo.";
+        if (c.obrigatorio && !valores[c.nome]) erros[c.nome] = "Preencha este campo.";
       });
-      enviando = true;
-      let resultado;
-      try { resultado = Object.keys(erros).length ? { ok: false, erros } : aoSalvar(valores, form); }
-      finally { enviando = false; }
+      const resultado = Object.keys(erros).length ? { ok: false, erros } : aoSalvar(valores);
       campos.forEach((c) => {
         const msg = (resultado.erros || {})[c.nome] || "";
         $(`#f-${c.nome}-erro`, dlg).textContent = msg;
@@ -335,22 +235,33 @@ window.NX = window.NX || {};
       }
     };
     form.onsubmit = aoEnviar;
-    if (!dlg.open) dlg.showModal();
-    const primeiroCampo = form.querySelector("input:not([readonly]):not([type=checkbox]), select, textarea");
+    dlg.showModal();
+    const primeiroCampo = form.querySelector("input, select, textarea");
     if (primeiroCampo) primeiroCampo.focus();
-    return { dlg, form, ajuda: (nome, conteudo) => { const p = $(`#f-${nome}-ajuda`, dlg); if (!p) return; p.replaceChildren(...[].concat(conteudo || []).map((x) => (x instanceof Node ? x : document.createTextNode(String(x))))); p.hidden = !conteudo; } };
+    return dlg;
   }
 
-  /* ---------- CSV (separado por ponto e vírgula, abre direto no Excel em português) ---------- */
-  function textoCSV(cabecalho, linhas) {
-    const celula = (v) => {
-      const t = v == null ? "" : typeof v === "number" ? String(arredondar(v)).replace(".", ",") : String(v);
-      return /[";\r\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
-    };
-    return [cabecalho, ...linhas].map((l) => l.map(celula).join(";")).join("\r\n");
+  /* ---------- Validações ---------- */
+  const emailValido = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v || "");
+  const telefoneValido = (v) => { const n = String(v || "").replace(/\D/g, ""); return n.length === 10 || n.length === 11; };
+  function lerValor(v) {
+    // aceita "12.500,50", "12500.5" ou "12500"
+    const t = String(v || "").trim().replace(/\s|R\$/g, "");
+    let normal = t;
+    if (t.includes(",")) normal = t.replace(/\./g, "").replace(",", ".");          // 12.500,50
+    else if (/^\d{1,3}(\.\d{3})+$/.test(t)) normal = t.replace(/\./g, "");         // 80.000
+    const n = Number(normal);
+    return Number.isFinite(n) ? n : NaN;
   }
+
+  /* ---------- CSV (separado por ponto e vírgula, abre direto no Excel) ---------- */
   function baixarCSV(nomeArquivo, cabecalho, linhas) {
-    const blob = new Blob(["﻿" + textoCSV(cabecalho, linhas)], { type: "text/csv;charset=utf-8" });
+    const celula = (v) => {
+      const t = v == null ? "" : typeof v === "number" ? String(v).replace(".", ",") : String(v);
+      return /[";\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+    };
+    const texto = [cabecalho, ...linhas].map((l) => l.map(celula).join(";")).join("\r\n");
+    const blob = new Blob(["﻿" + texto], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = el("a", { href: url, download: nomeArquivo });
     document.body.append(a);
@@ -359,16 +270,15 @@ window.NX = window.NX || {};
     setTimeout(() => URL.revokeObjectURL(url), 2000);
     aviso(`Arquivo ${nomeArquivo} gerado com ${plural(linhas.length, "linha", "linhas")}.`);
   }
-  const nomeArquivo = (base) => `nexora-stock-${base}-${hoje()}.csv`;
 
   NX.util = {
     el, icone, $, $$,
-    hoje, agora, chave, deChave, somarDias, diasEntre, inicioDoMes, fimDoMes, somarMeses, dataValida, momentoValido, diaDaSemana,
-    dataCurta, dataCompleta, dataLonga, mesAno, hora, dataHora, dataHoraCurta, relativo,
-    moeda, moedaCompacta, numero, decimal, percentual, plural, unidades, comSinal, arredondar,
-    semAcento, iniciais, contem, mascaraTelefone, mascaraCnpj,
-    emailValido, telefoneValido, gtinValido, cnpjValido, lerValor, lerInteiro,
+    hoje, chave, deChave, somarDias, diasEntre, inicioDoMes, fimDoMes, somarMeses, dataValida,
+    dataCurta, dataCompleta, dataLonga, nomeDoMes, mesAno, relativo,
+    moeda, moedaCompacta, numero, percentual, plural,
+    semAcento, iniciais, contem, mascaraTelefone,
     aviso, confirmar, formulario,
-    textoCSV, baixarCSV, nomeArquivo,
+    emailValido, telefoneValido, lerValor,
+    baixarCSV,
   };
 })();

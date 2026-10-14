@@ -1,8 +1,5 @@
 /* ==========================================================================
-   NEXORA BOOKING — Telas: Clientes e ficha do cliente
-   Histórico, número de atendimentos e última visita vêm das reservas
-   reais. O telefone não se repete (evita cadastro duplicado) e só os dados
-   necessários para o atendimento são pedidos.
+   NEXORA CRM — Telas: Clientes (lista) e Ficha do cliente
    ========================================================================== */
 window.NX = window.NX || {};
 NX.telas = NX.telas || {};
@@ -11,156 +8,208 @@ NX.telas = NX.telas || {};
   "use strict";
   const U = NX.util;
   const L = NX.loja;
-  const M = NX.metricas;
   const { el, icone } = U;
   const C = () => NX.componentes;
 
-  const FILTROS = [["", "Todos"], ["futura", "Com reserva marcada"], ["sumidos", "Sem visita há 60+ dias"], ["novos", "Cadastrados nos últimos 30 dias"], ["sem", "Nunca atendidos"], ["repetidos", "Nomes repetidos"]];
-  const estado = { busca: "", filtro: "", ordem: "nome", direcao: "asc", pagina: 1 };
-  let p = null;
+  /* ========================= LISTA ========================= */
+  const filtro = { busca: "", categoria: "", status: "", ordem: "empresa:asc" };
+  let partes = null;
 
-  function aoEntrar(params) {
-    if (params.filtro !== undefined) estado.filtro = FILTROS.some(([f]) => f === params.filtro) ? params.filtro : "";
-    if (params.q !== undefined) estado.busca = params.q;
+  function filtrados() {
+    const lista = L.dados.clientes.filter((c) =>
+      (!filtro.busca || U.contem(c.nome, filtro.busca) || U.contem(c.empresa, filtro.busca) || U.contem(c.email, filtro.busca)) &&
+      (!filtro.categoria || c.categoria === filtro.categoria) &&
+      (!filtro.status || c.status === filtro.status));
+    const [campo, dir] = filtro.ordem.split(":");
+    const fator = dir === "asc" ? 1 : -1;
+    const valor = new Map(lista.map((c) => [c.id, L.valorDoCliente(c.id).ganho]));
+    const cmp = {
+      empresa: (a, b) => a.empresa.localeCompare(b.empresa, "pt-BR"),
+      cadastro: (a, b) => a.cadastro.localeCompare(b.cadastro),
+      valor: (a, b) => valor.get(a.id) - valor.get(b.id),
+    }[campo];
+    return lista.sort((a, b) => cmp(a, b) * fator);
   }
+
   function montar(secao) {
-    const busca = C().campoBusca({ placeholder: "Nome, telefone ou e-mail", rotulo: "Buscar clientes", foco: "cli-busca", valor: estado.busca, aoMudar: (v) => { estado.busca = v; estado.pagina = 1; atualizar(); } });
-    p = { busca, seletores: el("div", { style: { display: "contents" } }), corpo: el("div") };
-    p.filtros = el("div", { class: "barra-filtros" }, busca.caixa, p.seletores);
-    U.trocar(secao, 
-      C().cabecalho({ id: "clientes", titulo: "Clientes", sub: "Cadastro mínimo: nome e telefone. O histórico vem das reservas.", acoes: [
-        C().botao("Exportar CSV", "btn--linha", exportar, "download"),
-        C().botao("Novo cliente", "btn--primario", () => NX.form.cliente({ aoCriar: (id) => NX.ir(`clientes/${id}`) }), "user-plus"),
-      ] }),
-      p.filtros, p.corpo);
+    const busca = el("input", { type: "search", class: "campo-busca", placeholder: "Pesquisar por empresa, contato ou e-mail", "aria-label": "Pesquisar clientes", "data-foco": "clientes-busca" });
+    busca.addEventListener("input", () => { filtro.busca = busca.value.trim(); atualizar(); });
+    const categoria = el("select", { "aria-label": "Filtrar por categoria" }, el("option", { value: "", texto: "Todas as categorias" }), ...NX.CATEGORIAS.map((c) => el("option", { value: c, texto: c })));
+    categoria.addEventListener("change", () => { filtro.categoria = categoria.value; atualizar(); });
+    const status = el("select", { "aria-label": "Filtrar por status" }, el("option", { value: "", texto: "Todos os status" }), ...NX.STATUS_CLIENTE.map((c) => el("option", { value: c, texto: c })));
+    status.addEventListener("change", () => { filtro.status = status.value; atualizar(); });
+    const ordem = el("select", { "aria-label": "Ordenar clientes" },
+      el("option", { value: "empresa:asc", texto: "Empresa (A–Z)" }), el("option", { value: "cadastro:desc", texto: "Cadastro mais recente" }),
+      el("option", { value: "cadastro:asc", texto: "Cadastro mais antigo" }), el("option", { value: "valor:desc", texto: "Maior valor em negócios" }));
+    ordem.addEventListener("change", () => { filtro.ordem = ordem.value; atualizar(); });
+    partes = {
+      busca, categoria, status, ordem,
+      resumo: el("div", { class: "resumo-linha" }),
+      contagem: el("p", { class: "contagem", "aria-live": "polite" }),
+      corpo: el("tbody"),
+      vazio: el("div", { class: "vazio", hidden: true }, icone("search", 22), el("p", { texto: "Nenhum cliente encontrado com esses filtros." })),
+    };
+    secao.replaceChildren(
+      C().cabecalho({
+        id: "clientes", titulo: "Clientes", sub: "Empresas atendidas e o relacionamento com cada uma",
+        acoes: [C().botao("Exportar CSV", "btn--linha", exportar, "download"), C().botao("Novo cliente", "btn--primario", () => NX.form.cliente(), "plus")],
+      }),
+      partes.resumo,
+      el("div", { class: "barra-filtros" }, el("div", { class: "barra-filtros__busca" }, icone("search", 16), busca), categoria, status, ordem),
+      el("div", { class: "cartao cartao--tabela" },
+        partes.contagem,
+        el("div", { class: "tabela-rolagem" },
+          el("table", { class: "tabela tabela--clientes" },
+            el("caption", { class: "vh", texto: "Lista de clientes" }),
+            el("thead", {}, el("tr", {},
+              ...["Cliente", "Categoria", "Telefone", "E-mail", "Cadastro", "Status"].map((t) => el("th", { scope: "col", texto: t })),
+              el("th", { scope: "col", class: "num", texto: "Negócios ganhos" }))),
+            partes.corpo)),
+        partes.vazio),
+    );
   }
 
-  function lista() {
-    const resumo = M.resumoClientes();
-    const q = estado.busca.trim();
-    const dig = U.digitos(q);
-    const hoje = U.hoje();
-    const nomes = new Map();
-    L.dados.clientes.forEach((c) => { const k = U.semAcento(c.nome).replace(/\s+/g, " ").trim(); nomes.set(k, (nomes.get(k) || 0) + 1); });
-    return L.dados.clientes.map((c) => ({ c, r: resumo.get(c.id) || { atendimentos: 0, reservas: 0 } })).filter(({ c, r }) => {
-      if (q && !(U.contem(c.nome, q) || U.contem(c.email, q) || (dig.length >= 3 && c.telefone.includes(dig)))) return false;
-      if (estado.filtro === "futura") return !!r.proximo;
-      if (estado.filtro === "sumidos") return r.ultimaVisita && U.diasEntre(r.ultimaVisita, hoje) >= 60 && !r.proximo;
-      if (estado.filtro === "novos") return c.criadoEm.slice(0, 10) >= U.somarDias(hoje, -29);
-      if (estado.filtro === "sem") return !r.atendimentos;
-      if (estado.filtro === "repetidos") return nomes.get(U.semAcento(c.nome).replace(/\s+/g, " ").trim()) > 1;
-      return true;
-    });
+  function atualizar() {
+    const todos = L.dados.clientes;
+    const ativos = todos.filter((c) => c.status === "Ativo").length;
+    const total = todos.reduce((t, c) => t + L.valorDoCliente(c.id).ganho, 0);
+    partes.resumo.replaceChildren(
+      el("p", {}, el("b", { texto: U.numero(todos.length) }), " clientes"),
+      el("p", {}, el("b", { texto: U.numero(ativos) }), " ativos"),
+      el("p", {}, el("b", { texto: U.moeda(total) }), " em negócios ganhos"),
+    );
+    const lista = filtrados();
+    partes.contagem.textContent = lista.length === todos.length ? U.plural(todos.length, "cliente", "clientes") : `${U.plural(lista.length, "cliente encontrado", "clientes encontrados")} de ${todos.length}`;
+    partes.vazio.hidden = lista.length > 0;
+    partes.corpo.replaceChildren(...lista.map((c) => {
+      const v = L.valorDoCliente(c.id);
+      return el("tr", { class: "linha-clicavel", onclick: (e) => { if (!e.target.closest("a, button")) NX.ir(`clientes/${c.id}`); } },
+        el("td", { "data-rotulo": "Cliente" }, el("a", { class: "nome-btn", href: `#/clientes/${c.id}` },
+          el("span", { class: "avatar avatar--empresa", "aria-hidden": "true", texto: U.iniciais(c.empresa) }),
+          el("span", {}, el("b", { texto: c.empresa }), el("span", { class: "suave", texto: c.nome })))),
+        el("td", { "data-rotulo": "Categoria", texto: c.categoria }),
+        el("td", { "data-rotulo": "Telefone", class: "mono nowrap", texto: c.telefone }),
+        el("td", { "data-rotulo": "E-mail", class: "mono", texto: c.email }),
+        el("td", { "data-rotulo": "Cadastro", class: "nowrap", texto: U.dataCompleta(c.cadastro) }),
+        el("td", { "data-rotulo": "Status" }, el("span", { class: `pilula pilula--${c.status === "Ativo" ? "verde" : "cinza"}`, texto: c.status })),
+        el("td", { "data-rotulo": "Negócios ganhos", class: "num" }, el("b", { texto: U.moeda(v.ganho) }), v.aberto ? el("span", { class: "suave", texto: `+ ${U.moeda(v.aberto)} em aberto` }) : null));
+    }));
   }
-  function ordenar(itens) {
-    const dir = estado.direcao === "asc" ? 1 : -1;
-    const chave = { nome: (x) => U.semAcento(x.c.nome), atendimentos: (x) => x.r.atendimentos, ultima: (x) => x.r.ultimaVisita || "", proxima: (x) => (x.r.proximo ? x.r.proximo.data + x.r.proximo.inicio : "9999") }[estado.ordem];
-    return [...itens].sort((a, b) => { const x = chave(a); const y = chave(b); return (x < y ? -1 : x > y ? 1 : 0) * dir || a.c.nome.localeCompare(b.c.nome, "pt-BR"); });
-  }
-
-  function desenhar() {
-    if (p.busca.input.value !== estado.busca && document.activeElement !== p.busca.input) p.busca.input.value = estado.busca;
-    U.trocar(p.seletores, C().seletor(FILTROS.map(([v, t]) => ({ valor: v, rotulo: t })), estado.filtro, (v) => { estado.filtro = v; estado.pagina = 1; atualizar(); }, { rotulo: "Filtrar clientes", foco: "cli-filtro" }));
-    const itens = ordenar(lista());
-    if (!itens.length) {
-      U.trocar(p.corpo, el("div", { class: "cartao" }, C().vazio({ icone: "users", titulo: estado.filtro === "repetidos" ? "Nenhum nome repetido" : "Nenhum cliente encontrado", texto: estado.filtro === "repetidos" ? "O telefone já não se repete; aqui aparecem cadastros com o mesmo nome para você conferir." : "Mude a busca ou o filtro.", acao: C().botao("Novo cliente", "btn--linha btn--pequeno", () => NX.form.cliente({ aoCriar: (id) => NX.ir(`clientes/${id}`) }), "user-plus") })));
-      return;
-    }
-    const pag = C().paginar(itens, estado.pagina, NX.preferencias.porPagina);
-    estado.pagina = pag.pagina;
-    const tabela = el("table", { class: "tabela tabela--cartoes" },
-      el("caption", { class: "vh", texto: "Clientes" }),
-      el("thead", {}, el("tr", {},
-        C().thOrdenavel("Cliente", "nome", estado, atualizar),
-        el("th", { scope: "col", texto: "E-mail" }),
-        C().thOrdenavel("Atendimentos", "atendimentos", estado, atualizar, "num"),
-        C().thOrdenavel("Última visita", "ultima", estado, atualizar),
-        C().thOrdenavel("Próxima reserva", "proxima", estado, atualizar),
-        el("th", { scope: "col" }, el("span", { class: "vh", texto: "Ações" })))),
-      el("tbody", {}, ...pag.itens.map(({ c, r }) => el("tr", {},
-        C().td("", C().nomeCliente(c.id), "principal-celula"),
-        C().td("E-mail", c.email ? el("span", { class: "celula-texto", texto: c.email }) : el("span", { class: "suave", texto: "—" })),
-        C().td("Atendimentos", U.numero(r.atendimentos), "num"),
-        C().td("Última visita", r.ultimaVisita ? el("span", {}, U.dataCompleta(r.ultimaVisita), el("span", { class: "sub", texto: U.relativo(r.ultimaVisita) })) : el("span", { class: "suave", texto: "—" })),
-        C().td("Próxima reserva", r.proximo ? el("button", { class: "link-texto", type: "button", onclick: () => NX.reservas.detalhe(r.proximo.id), texto: `${U.dataCurta(r.proximo.data)} às ${r.proximo.inicio}` }) : el("span", { class: "suave", texto: "—" })),
-        C().td("", el("span", {},
-          el("button", { class: "icone-btn icone-btn--sutil", type: "button", "aria-label": `Agendar para ${c.nome}`, title: "Novo agendamento", onclick: () => NX.reservas.novo({ clienteId: c.id }) }, icone("calendar-plus", 16)),
-          el("button", { class: "icone-btn icone-btn--sutil", type: "button", "aria-label": `Editar ${c.nome}`, title: "Editar", onclick: () => NX.form.cliente({ id: c.id }) }, icone("pencil", 16)),
-          el("a", { class: "icone-btn icone-btn--sutil", href: `#/clientes/${c.id}`, "aria-label": `Ficha de ${c.nome}`, title: "Abrir ficha" }, icone("chevron-right", 16))), "acoes-linha")))));
-    U.trocar(p.corpo, el("div", { class: "cartao cartao--tabela" },
-      el("p", { class: "contagem", texto: `${U.plural(itens.length, "cliente", "clientes")}` }),
-      el("div", { class: "tabela-rolagem" }, tabela),
-      C().paginacao(pag, { porPagina: NX.preferencias.porPagina, nome: "clientes", aoMudar: (n) => { estado.pagina = n; atualizar(); }, aoMudarTamanho: (n) => NX.salvarPreferencias({ porPagina: n }) })));
-  }
-
-  const atualizar = C().comFoco(desenhar);
 
   function exportar() {
-    const itens = ordenar(lista());
-    if (!itens.length) { U.aviso("Nada para exportar.", "info"); return; }
-    U.baixarCSV(U.nomeArquivo("clientes"), ["Nome", "Telefone", "E-mail", "Atendimentos", "Última visita", "Próxima reserva", "Observações", "Cadastrado em"],
-      itens.map(({ c, r }) => [c.nome, U.mascaraTelefone(c.telefone), c.email, r.atendimentos, r.ultimaVisita ? U.dataCompleta(r.ultimaVisita) : "", r.proximo ? `${U.dataCompleta(r.proximo.data)} ${r.proximo.inicio}` : "", c.observacoes, U.dataCompleta(c.criadoEm)]));
+    U.baixarCSV("nexora-clientes.csv",
+      ["Empresa", "Contato", "Telefone", "E-mail", "Categoria", "Cadastro", "Status", "Negócios ganhos (R$)", "Em negociação (R$)"],
+      filtrados().map((c) => { const v = L.valorDoCliente(c.id); return [c.empresa, c.nome, c.telefone, c.email, c.categoria, U.dataCompleta(c.cadastro), c.status, v.ganho, v.aberto]; }));
   }
 
-  NX.telas.clientes = { titulo: "Clientes", montar, atualizar, aoEntrar };
+  NX.telas.clientes = { titulo: "Clientes", montar, atualizar };
 
-  /* ======================================================================
-     FICHA DO CLIENTE
-     ====================================================================== */
-  let atualId = null;
-  let q = null;
-  function abrir(id) { atualId = id; }
-  function montarFicha(secao) { q = { secao }; }
-  function atualizarFicha() {
-    const c = L.cliente(atualId);
-    const secao = q.secao;
+  /* ========================= FICHA ========================= */
+  let fichaId = null;
+  let aba = "historico";
+
+  function abrir(id) { fichaId = id; }
+
+  function montarFicha() { /* montada a cada atualização */ }
+
+  function atualizarFicha(secao) {
+    const c = L.cliente(fichaId);
     if (!c) {
-      U.trocar(secao, C().cabecalho({ id: "cliente", titulo: "Cliente não encontrado", antes: C().voltar("clientes", "Clientes") }), el("div", { class: "cartao" }, C().vazio({ icone: "user-x", titulo: "Este cadastro não existe mais", texto: "Ele pode ter sido excluído ou os dados foram restaurados.", acao: el("a", { class: "btn btn--linha btn--pequeno", href: "#/clientes" }, "Ver clientes") })));
+      secao.replaceChildren(C().cabecalho({ id: "cliente", titulo: "Cliente não encontrado", sub: "Ele pode ter sido removido ou os dados foram restaurados." }), el("a", { class: "btn btn--linha", href: "#/clientes", texto: "Voltar para clientes" }));
       return;
     }
-    const h = M.cliente(c.id);
-    const futuras = h.lista.filter((a) => ["pendente", "confirmado"].includes(a.status) && `${a.data}T${a.inicio}` > U.agora());
-    const linhas = h.lista.map((a) => el("tr", { class: "linha-clicavel", tabindex: "0", "data-foco": `hist-${a.id}`, onclick: () => NX.reservas.detalhe(a.id), onkeydown: (e) => { if (e.key === "Enter") NX.reservas.detalhe(a.id); } },
-      C().td("Quando", el("span", {}, el("b", { class: "hora", texto: a.inicio }), el("span", { class: "sub", texto: U.dataCompleta(a.data) }))),
-      C().td("", el("span", {}, el("b", { texto: a.servicoNome }), el("span", { class: "sub", texto: a.codigo })), "principal-celula"),
-      C().td("Profissional", C().nomeProf(a.profissionalId, { curto: true })),
-      C().td("Valor", el("span", {}, U.moeda(a.preco), a.status === "concluido" ? el("span", { class: "sub", texto: a.pagamento ? "pago" : "a receber" }) : null), "num"),
-      C().td("Status", C().pilulaStatus(a.status, { curto: true }))));
-    U.trocar(secao, 
-      C().cabecalho({ id: "cliente", titulo: c.nome, antes: C().voltar("clientes", "Clientes"), sub: `${U.mascaraTelefone(c.telefone)}${c.email ? ` · ${c.email}` : ""} · cliente desde ${U.dataCompleta(c.criadoEm)}`,
-        etiquetas: [c.ficticio ? C().pilula("Cliente fictício (demonstração)", "neutra", "info") : null, c.origem === "pagina" ? C().pilula("Cadastrado pela página", "origem", "globe") : null].filter(Boolean),
-        acoes: [
-          h.lista.length ? null : C().botao("Excluir cadastro", "btn--perigo", excluir, "trash"),
-          C().botao("Editar", "btn--linha", () => NX.form.cliente({ id: c.id }), "pencil"),
-          C().botao("Novo agendamento", "btn--primario", () => NX.reservas.novo({ clienteId: c.id }), "calendar-plus"),
-        ] }),
-      el("div", { class: "detalhe-grade" },
-        el("div", { class: "detalhe-grade__lado" },
-          el("article", { class: "cartao" }, el("h2", { class: "cartao__titulo", texto: "Resumo" }),
-            el("div", { class: "numeros" },
-              el("div", {}, el("span", { texto: "Atendimentos" }), el("b", { texto: U.numero(h.atendimentos) })),
-              el("div", {}, el("span", { texto: "Última visita" }), el("b", { texto: h.ultimaVisita ? U.dataCurta(h.ultimaVisita) : "—" })),
-              el("div", {}, el("span", { texto: "Faltas" }), el("b", { texto: U.numero(h.faltas) })),
-              el("div", {}, el("span", { texto: "Cancelamentos" }), el("b", { texto: U.numero(h.cancelamentos) })),
-              el("div", {}, el("span", { texto: "Total pago (registrado)" }), el("b", { texto: U.moeda(h.totalPago) })),
-              el("div", {}, el("span", { texto: "Reservas futuras" }), el("b", { texto: U.numero(futuras.length) })))),
-          el("article", { class: "cartao" }, el("div", { class: "cartao__cabeca" }, el("h2", { class: "cartao__titulo", texto: "Observações" }), el("button", { class: "link-btn", type: "button", texto: "Editar", onclick: () => NX.form.cliente({ id: c.id }) })),
-            el("p", { class: c.observacoes ? "" : "suave", texto: c.observacoes || "Nenhuma observação. Use para preferências ou alergias que o cliente informou." })),
-          h.proximo ? el("article", { class: "cartao" }, el("h2", { class: "cartao__titulo", texto: "Próxima reserva" }), el("ul", { class: "reservas", style: { marginTop: "10px" } }, el("li", {}, C().linhaReserva(h.proximo, { mostrarData: true })))) : null),
-        el("div", { class: "detalhe-grade__principal" },
-          el("article", { class: "cartao cartao--tabela" },
-            el("div", { class: "cartao__cabeca" }, el("div", {}, el("h2", { class: "cartao__titulo", texto: "Histórico de reservas" }), el("p", { class: "cartao__sub", texto: `${U.plural(h.lista.length, "reserva", "reservas")}, da mais nova para a mais antiga` })),
-              h.lista.length ? el("a", { class: "link-btn", href: `#/agendamentos?cliente=${c.id}&periodo=tudo&status=` }, "Ver na lista") : null),
-            h.lista.length ? el("div", { class: "tabela-rolagem" }, el("table", { class: "tabela tabela--cartoes" },
-              el("thead", {}, el("tr", {}, ...["Quando", "Serviço", "Profissional", "Valor", "Status"].map((t, i) => el("th", { scope: "col", class: i === 3 ? "num" : "", texto: t })))),
-              el("tbody", {}, ...linhas))) : C().vazio({ icone: "calendar", titulo: "Ainda sem reservas", texto: "Quando houver, o histórico aparece aqui." })))));
+    const v = L.valorDoCliente(c.id);
+    const negocios = L.dados.negocios.filter((n) => n.clienteId === c.id).sort((a, b) => (b.fechadoEm || b.ultimaInteracao).localeCompare(a.fechadoEm || a.ultimaInteracao));
+    const tarefas = L.dados.tarefas.filter((t) => t.vinculo.tipo === "cliente" && t.vinculo.id === c.id).sort((a, b) => Number(a.concluida) - Number(b.concluida) || a.prazo.localeCompare(b.prazo));
+    const lead = c.leadId ? L.lead(c.leadId) : null;
+
+    const voltar = el("a", { class: "voltar", href: "#/clientes" }, icone("arrow-left", 16), "Clientes");
+    const cabeca = C().cabecalho({
+      id: "cliente", titulo: c.empresa, antes: voltar,
+      sub: `${c.nome} · ${c.categoria} · cliente desde ${U.dataCompleta(c.cadastro)}`,
+      acoes: [
+        C().botao("Registrar contato", "btn--linha", () => NX.form.contato(c.id), "phone"),
+        C().botao("Adicionar observação", "btn--linha", () => NX.form.observacao(c.id), "sticky-note"),
+        C().botao("Nova oportunidade", "btn--linha", () => NX.form.negocio({ vinculo: `cliente:${c.id}` }), "handshake"),
+        C().botao("Editar", "btn--primario", () => NX.form.cliente(c.id), "pencil"),
+      ],
+    });
+
+    const dados = el("article", { class: "cartao ficha-cliente" },
+      el("div", { class: "ficha-cliente__topo" },
+        el("span", { class: "avatar avatar--g avatar--empresa", "aria-hidden": "true", texto: U.iniciais(c.empresa) }),
+        el("div", {}, el("b", { texto: c.nome }), el("span", { class: `pilula pilula--${c.status === "Ativo" ? "verde" : "cinza"}`, texto: c.status }))),
+      el("dl", { class: "ficha ficha--coluna" },
+        el("div", { class: "ficha__linha" }, el("dt", { texto: "E-mail" }), el("dd", { class: "mono", texto: c.email })),
+        el("div", { class: "ficha__linha" }, el("dt", { texto: "Telefone" }), el("dd", { class: "mono", texto: c.telefone })),
+        el("div", { class: "ficha__linha" }, el("dt", { texto: "Categoria" }), el("dd", { texto: c.categoria })),
+        el("div", { class: "ficha__linha" }, el("dt", { texto: "Responsável" }), el("dd", {}, C().pessoaComAvatar(c.responsavelId))),
+        el("div", { class: "ficha__linha" }, el("dt", { texto: "Origem" }), el("dd", { texto: lead ? `${lead.origem} (lead de ${U.dataCompleta(lead.primeiroContato)})` : "Cadastro direto" }))));
+
+    const numeros = el("div", { class: "numeros-cliente" },
+      el("div", {}, el("span", { texto: "Negócios ganhos" }), el("b", { texto: U.moeda(v.ganho, { compacto: false }) })),
+      el("div", {}, el("span", { texto: "Em negociação" }), el("b", { texto: U.moeda(v.aberto, { compacto: false }) })),
+      el("div", {}, el("span", { texto: "Oportunidades" }), el("b", { texto: U.numero(v.quantidade) })),
+      el("div", {}, el("span", { texto: "Tarefas pendentes" }), el("b", { texto: U.numero(tarefas.filter((t) => !t.concluida).length) })));
+
+    // Abas
+    const ABAS = [
+      { id: "historico", rotulo: "Histórico de contatos", n: c.contatos.length },
+      { id: "negocios", rotulo: "Negociações", n: negocios.length },
+      { id: "tarefas", rotulo: "Tarefas", n: tarefas.length },
+      { id: "observacoes", rotulo: "Observações", n: c.observacoes.length },
+    ];
+    const lista = el("div", { class: "abas", role: "tablist", "aria-label": "Informações do cliente" });
+    const paineis = el("div");
+    const escolher = (idAba, focar) => { aba = idAba; desenharAbas(focar); };
+    function desenharAbas(focar) {
+      lista.replaceChildren(...ABAS.map((a, i) => {
+        const b = el("button", { class: "aba", type: "button", role: "tab", id: `aba-${a.id}`, "aria-controls": `painel-${a.id}`, "aria-selected": String(a.id === aba), tabindex: a.id === aba ? "0" : "-1", "data-foco": `aba-${a.id}` }, a.rotulo, el("span", { class: "aba__n", texto: String(a.n) }));
+        b.addEventListener("click", () => escolher(a.id, true));
+        b.addEventListener("keydown", (e) => {
+          const prox = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: ABAS.length - 1 }[e.key];
+          if (prox === undefined) return;
+          e.preventDefault();
+          escolher(ABAS[(prox + ABAS.length) % ABAS.length].id, true);
+        });
+        return b;
+      }));
+      paineis.replaceChildren(el("div", { class: "aba-painel", role: "tabpanel", id: `painel-${aba}`, "aria-labelledby": `aba-${aba}`, tabindex: "0" }, ...conteudoDaAba()));
+      if (focar) lista.querySelector('[aria-selected="true"]').focus();
+    }
+    function conteudoDaAba() {
+      if (aba === "historico") {
+        return [
+          el("div", { class: "aba-painel__topo" }, el("p", { class: "suave", texto: "Ligações, e-mails, reuniões e mensagens registradas." }), C().botao("Registrar contato", "btn--linha btn--pequeno", () => NX.form.contato(c.id), "plus")),
+          c.contatos.length ? el("ol", { class: "linha-tempo" }, ...c.contatos.map((h) => el("li", {},
+            el("span", { class: "linha-tempo__icone" }, icone({ "Ligação": "phone", "E-mail": "mail", "Reunião": "users", "WhatsApp": "message-square", "Visita": "building" }[h.tipo] || "circle-dot", 14)),
+            el("div", {}, el("p", {}, el("b", { texto: h.tipo }), el("span", { class: "suave", texto: ` · ${U.dataCompleta(h.data)} · ${L.membro(h.autorId).nome}` })), el("p", { texto: h.resumo }))))) : el("p", { class: "vazio-pequeno", texto: "Nenhum contato registrado." }),
+        ];
+      }
+      if (aba === "negocios") {
+        return [
+          el("div", { class: "aba-painel__topo" }, el("p", { class: "suave", texto: "Oportunidades abertas, ganhas e perdidas com este cliente." }), C().botao("Nova oportunidade", "btn--linha btn--pequeno", () => NX.form.negocio({ vinculo: `cliente:${c.id}` }), "plus")),
+          negocios.length ? el("ul", { class: "relacionados__lista" }, ...negocios.map((n) => el("li", {},
+            el("button", { class: "relacionado", type: "button", onclick: () => NX.detalhe.negocio(n.id) },
+              el("span", {}, el("b", { texto: n.titulo }), el("span", { class: "suave", texto: n.fechadoEm ? ` · ${n.etapa === "ganho" ? "concluída" : "perdida"} em ${U.dataCompleta(n.fechadoEm)}` : ` · última interação ${U.relativo(n.ultimaInteracao)}` })),
+              C().pilulaEtapa(n.etapa), el("b", { class: "mono", texto: U.moeda(n.valor) }))))) : el("p", { class: "vazio-pequeno", texto: "Nenhuma oportunidade." }),
+        ];
+      }
+      if (aba === "tarefas") {
+        return [
+          el("div", { class: "aba-painel__topo" }, el("p", { class: "suave", texto: "Follow-ups ligados a este cliente." }), C().botao("Nova tarefa", "btn--linha btn--pequeno", () => NX.form.tarefa({ vinculo: `cliente:${c.id}` }), "plus")),
+          tarefas.length ? el("ul", { class: "mini-tarefas" }, ...tarefas.map((t) => NX.telas.tarefas.linhaCompacta(t, { semVinculo: true }))) : el("p", { class: "vazio-pequeno", texto: "Nenhuma tarefa." }),
+        ];
+      }
+      return [
+        el("div", { class: "aba-painel__topo" }, el("p", { class: "suave", texto: "Anotações internas da equipe." }), C().botao("Adicionar observação", "btn--linha btn--pequeno", () => NX.form.observacao(c.id), "plus")),
+        c.observacoes.length ? el("ul", { class: "notas" }, ...c.observacoes.map((o) => el("li", { class: "nota" }, el("p", { texto: o.texto }), el("span", { class: "suave", texto: `${L.membro(o.autorId).nome} · ${U.dataCompleta(o.data)}` })))) : el("p", { class: "vazio-pequeno", texto: "Nenhuma observação." }),
+      ];
+    }
+    desenharAbas(false);
+
+    secao.replaceChildren(cabeca, el("div", { class: "cliente-grade" }, el("div", { class: "cliente-grade__lado" }, dados, numeros), el("article", { class: "cartao cartao--abas" }, lista, paineis)));
   }
-  async function excluir() {
-    const c = L.cliente(atualId);
-    const ok = await U.confirmar({ titulo: `Excluir ${c.nome}?`, texto: "O cadastro é apagado deste navegador. Só é possível porque este cliente não tem nenhuma reserva.", rotulo: "Excluir", perigo: true });
-    if (!ok) return;
-    const r = L.removerCliente(c.id);
-    if (r.ok) { U.aviso("Cadastro excluído."); NX.ir("clientes"); } else U.aviso(r.erro, "erro");
-  }
-  NX.telas.cliente = { titulo: "Cliente", montar: montarFicha, atualizar: atualizarFicha, abrir, tituloDinamico: () => (L.cliente(atualId) || {}).nome };
+
+  NX.telas.cliente = { titulo: "Cliente", abrir, montar: montarFicha, atualizar: () => atualizarFicha(document.getElementById("vista-cliente")), get id() { return fichaId; } };
 })();

@@ -1,116 +1,56 @@
 /* ==========================================================================
-   AVESSO — script.js (catálogo demonstrativo)
+   SOLADO — script.js (loja demonstrativa)
    --------------------------------------------------------------------------
    Tema, menu e animações: assets/js/comum.js
-   Aqui: peças, filtros, página de produto, sacola e as "rotas" da página.
-
-   Rotas (tudo na mesma página, usando o # do endereço):
-     #/                      catálogo
-     #/categoria/Camisetas   catálogo já filtrado
-     #/produto/av-01         página da peça
-     #/sacola                sacola
-   A sacola fica salva neste navegador (localStorage). Não há pagamento.
+   Aqui: produtos, filtros, ordenação, detalhes e carrinho.
+   O carrinho fica salvo neste navegador (localStorage). Não há pagamento.
    ========================================================================== */
 
 
 /* ------------------------------------------------------------------------
-   CONFIGURAÇÕES E PEÇAS — EDITE AQUI
+   CONFIGURAÇÕES E PRODUTOS — EDITE AQUI
    ------------------------------------------------------------------------ */
 const CONFIG = {
-  usarFotos: false,            // true depois de colocar assets/images/moda/hero.jpg
-  quantidadeMaxima: 5,         // por peça (mesma cor e tamanho)
-  chaveSacola: "avesso:sacola",
+  usarFotos: false,               // true depois de colocar a foto do hero em assets/images/tenis/
+  quantidadeMaxima: 5,            // por item
+  chaveCarrinho: "solado:carrinho",
 };
 
-const CATEGORIAS = ["Camisetas", "Calças", "Moletons", "Acessórios"];
-
-// Ordem em que os tamanhos aparecem no filtro
-const ORDEM_TAMANHOS = ["PP", "P", "M", "G", "GG", "38", "40", "42", "44", "46", "Único"];
-
-// Cores usadas nas peças (nome → cor do desenho)
-const COR = {
-  "Preto": "#141414",
-  "Off-white": "#EFEBE3",
-  "Areia": "#D9CBB4",
-  "Grafite": "#3A3A3A",
-  "Ferrugem": "#A4542F",
-  "Cinza": "#8A8A85",
-  "Cru": "#E8E0CF",
-};
-
-const ADULTO = ["PP", "P", "M", "G", "GG"];
-const SEM_PP = ["P", "M", "G", "GG"];
-const NUMERACAO = ["38", "40", "42", "44", "46"];
-
-// Peças fictícias. "desenho" escolhe a ilustração; "variante" liga ou
-// desliga detalhes do desenho (bolso cargo, capuz, zíper).
-const PECAS = [
-  { id: "av-01", nome: "Camiseta Avesso", categoria: "Camisetas", preco: 129, desenho: "camiseta", cores: ["Preto", "Off-white", "Areia"], tamanhos: ADULTO,
-    descricao: "Malha pesada, gola reforçada e costuras com acabamento por dentro. A peça que deu nome à marca.",
-    composicao: "100% algodão · 240 g/m²", modelagem: "Regular", cuidados: "Lavar do avesso, em água fria" },
-  { id: "av-02", nome: "Camiseta Costura Aparente", categoria: "Camisetas", preco: 149, desenho: "camiseta", cores: ["Grafite", "Off-white"], tamanhos: SEM_PP,
-    descricao: "As costuras ficam do lado de fora, de propósito. Tecido encorpado com toque seco.",
-    composicao: "100% algodão · 220 g/m²", modelagem: "Regular", cuidados: "Lavar do avesso, em água fria" },
-  { id: "av-03", nome: "Camiseta Oversized", categoria: "Camisetas", preco: 159, desenho: "camiseta", cores: ["Ferrugem", "Preto"], tamanhos: SEM_PP,
-    descricao: "Corte amplo, ombro caído e barra reta. Fica solta sem parecer grande demais.",
-    composicao: "100% algodão · 260 g/m²", modelagem: "Ampla", cuidados: "Não usar secadora" },
-  { id: "av-04", nome: "Calça Cargo Concreto", categoria: "Calças", preco: 289, desenho: "calca", cores: ["Cinza", "Preto"], tamanhos: NUMERACAO,
-    descricao: "Sarja pesada com bolsos laterais e barra com ajuste. Feita para o uso de todo dia.",
-    composicao: "98% algodão, 2% elastano", modelagem: "Reta com bolsos cargo", cuidados: "Lavar do avesso, em água fria" },
-  { id: "av-05", nome: "Calça Reta Sarja", categoria: "Calças", preco: 259, desenho: "calca", variante: { "--cargo": 0 }, cores: ["Areia", "Preto"], tamanhos: NUMERACAO,
-    descricao: "Corte reto e limpo, sem bolsos externos. Combina com tudo da coleção.",
-    composicao: "100% algodão", modelagem: "Reta", cuidados: "Passar do avesso" },
-  { id: "av-06", nome: "Bermuda Avesso", categoria: "Calças", preco: 179, desenho: "bermuda", cores: ["Grafite", "Areia"], tamanhos: NUMERACAO,
-    descricao: "A mesma sarja da calça reta, no comprimento acima do joelho.",
-    composicao: "100% algodão", modelagem: "Reta", cuidados: "Lavar em água fria" },
-  { id: "av-07", nome: "Moletom Capuz Avesso", categoria: "Moletons", preco: 329, desenho: "moletom", cores: ["Off-white", "Preto", "Ferrugem"], tamanhos: ADULTO,
-    descricao: "Moletom flanelado por dentro, capuz forrado e bolso canguru.",
-    composicao: "80% algodão, 20% poliéster · 380 g/m²", modelagem: "Regular", cuidados: "Lavar do avesso, sem secadora" },
-  { id: "av-08", nome: "Moletom Gola Careca", categoria: "Moletons", preco: 279, desenho: "moletom", variante: { "--capuz": 0 }, cores: ["Areia", "Grafite"], tamanhos: SEM_PP,
-    descricao: "Gola careca com ribana larga. Mais leve que o modelo com capuz.",
-    composicao: "80% algodão, 20% poliéster · 320 g/m²", modelagem: "Regular", cuidados: "Lavar do avesso, sem secadora" },
-  { id: "av-09", nome: "Moletom Meio-zíper", categoria: "Moletons", preco: 349, desenho: "moletom", variante: { "--capuz": 0, "--ziper": 1 }, cores: ["Preto", "Cinza"], tamanhos: SEM_PP,
-    descricao: "Gola alta com zíper até o peito, para fechar nos dias frios.",
-    composicao: "80% algodão, 20% poliéster · 380 g/m²", modelagem: "Regular", cuidados: "Fechar o zíper antes de lavar" },
-  { id: "av-10", nome: "Boné Seis Gomos", categoria: "Acessórios", preco: 99, desenho: "bone", cores: ["Preto", "Areia"], tamanhos: ["Único"],
-    descricao: "Aba curva e fecho ajustável atrás. Bordado discreto na frente.",
-    composicao: "100% algodão", modelagem: "Ajustável", cuidados: "Lavar à mão" },
-  { id: "av-11", nome: "Ecobag Lona Crua", categoria: "Acessórios", preco: 79, desenho: "bolsa", cores: ["Cru"], tamanhos: ["Único"],
-    descricao: "Lona grossa e alças longas, cabe um notebook e a compra da semana.",
-    composicao: "100% algodão (lona)", modelagem: "40 × 42 cm", cuidados: "Lavar à mão" },
-  { id: "av-12", nome: "Meia Cano Alto (par)", categoria: "Acessórios", preco: 39, desenho: "meia", cores: ["Off-white", "Preto"], tamanhos: ["Único"],
-    descricao: "Cano alto com listras em azul e punho reforçado.",
-    composicao: "75% algodão, 23% poliamida, 2% elastano", modelagem: "Tamanho único (38 a 43)", cuidados: "Lavar do avesso" },
+// Faixas de preço do filtro
+const FAIXAS = [
+  { id: "todas", nome: "Todos", min: 0, max: Infinity },
+  { id: "ate400", nome: "Até R$ 400", min: 0, max: 400 },
+  { id: "400a600", nome: "R$ 400 a R$ 600", min: 400, max: 600 },
+  { id: "acima600", nome: "Acima de R$ 600", min: 600, max: Infinity },
 ];
 
-// Peça usada para ilustrar cada categoria
-const CAPA_CATEGORIA = {
-  "Camisetas": ["av-01", "Off-white"],
-  "Calças": ["av-04", "Cinza"],
-  "Moletons": ["av-07", "Ferrugem"],
-  "Acessórios": ["av-10", "Preto"],
-};
+// Produtos fictícios. "novidade": quanto maior, mais recente.
+// "modelo": "baixo" ou "alto" (desenho usado). "cores": cabedal, sola e detalhe.
+const PRODUTOS = [
+  { id: "runner-vao-01", nome: "Runner Vão 01", categoria: "Corrida", preco: 549.9, novidade: 12, modelo: "baixo", cores: ["#F4F4F2", "#FFFFFF", "#C6FF3D"], tamanhos: [37, 38, 39, 40, 41, 42, 43, 44], descricao: "Corrida de rua com cabedal em malha e entressola macia para treinos diários.", materiais: ["Malha respirável", "Entressola EVA", "Borracha"] },
+  { id: "asfalto-3", nome: "Asfalto 3", categoria: "Corrida", preco: 599.9, novidade: 11, modelo: "baixo", cores: ["#C6FF3D", "#111111", "#111111"], tamanhos: [38, 39, 40, 41, 42, 43], descricao: "Cabedal verde-limão e solado escuro para quem quer ser visto no treino.", materiais: ["Malha técnica", "Entressola EVA", "Borracha"] },
+  { id: "quadra-alta-breu", nome: "Quadra Alta Breu", categoria: "Basquete", preco: 699.9, novidade: 10, modelo: "alto", cores: ["#111111", "#1C1C1C", "#C6FF3D"], tamanhos: [39, 40, 41, 42, 43, 44], descricao: "Cano alto todo preto com recorte verde-limão no calcanhar.", materiais: ["Couro sintético", "Cano acolchoado", "Borracha"] },
+  { id: "runner-vao-01-noite", nome: "Runner Vão 01 Noite", categoria: "Corrida", preco: 549.9, novidade: 9, modelo: "baixo", cores: ["#1A1A1A", "#2A2A2A", "#C6FF3D"], tamanhos: [36, 37, 38, 39, 40, 41, 42], descricao: "A versão escura do Runner Vão 01, com o mesmo conforto.", materiais: ["Malha respirável", "Entressola EVA", "Borracha"] },
+  { id: "garoa", nome: "Garoa", categoria: "Casual", preco: 459.9, novidade: 8, modelo: "baixo", cores: ["#9AA3AD", "#E8E8E8", "#2F5BFF"], tamanhos: [35, 36, 37, 38, 39, 40, 41], descricao: "Cinza frio com detalhe em azul elétrico, para o dia a dia na cidade.", materiais: ["Camurça sintética", "Palmilha macia", "Borracha"] },
+  { id: "quadra-alta", nome: "Quadra Alta", categoria: "Basquete", preco: 699.9, novidade: 7, modelo: "alto", cores: ["#FFFFFF", "#FFFFFF", "#2F5BFF"], tamanhos: [38, 39, 40, 41, 42, 43, 44], descricao: "Cano alto branco com recorte em azul elétrico e solado firme.", materiais: ["Couro sintético", "Cano acolchoado", "Borracha"] },
+  { id: "pista-leve", nome: "Pista Leve", categoria: "Corrida", preco: 429.9, novidade: 6, modelo: "baixo", cores: ["#D9DDE3", "#FFFFFF", "#2F5BFF"], tamanhos: [36, 37, 38, 39, 40, 41, 42, 43], descricao: "Leve e ventilado, pensado para corridas curtas e caminhadas.", materiais: ["Malha leve", "Entressola EVA"] },
+  { id: "concreto-low-carvao", nome: "Concreto Low Carvão", categoria: "Casual", preco: 389.9, novidade: 5, modelo: "baixo", cores: ["#3A3A3A", "#F5F1E8", "#C6FF3D"], tamanhos: [37, 38, 39, 40, 41, 42, 43], descricao: "Cano baixo em grafite com sola creme e um toque de verde-limão.", materiais: ["Lona", "Palmilha macia", "Borracha"] },
+  { id: "rampa-pro", nome: "Rampa Pro", categoria: "Skate", preco: 349.9, novidade: 4, modelo: "baixo", cores: ["#8A8A80", "#C8A97E", "#111111"], tamanhos: [37, 38, 39, 40, 41, 42, 43, 44], descricao: "Skate com camurça resistente e sola de borracha em tom natural.", materiais: ["Camurça", "Sola vulcanizada"] },
+  { id: "concreto-low", nome: "Concreto Low", categoria: "Casual", preco: 389.9, novidade: 3, modelo: "baixo", cores: ["#E8E2D6", "#F5F1E8", "#8A8A80"], tamanhos: [35, 36, 37, 38, 39, 40, 41, 42], descricao: "O básico em tom areia, fácil de combinar com tudo.", materiais: ["Lona", "Palmilha macia", "Borracha"] },
+  { id: "rampa-pro-areia", nome: "Rampa Pro Areia", categoria: "Skate", preco: 349.9, novidade: 2, modelo: "baixo", cores: ["#D9CBB4", "#C8A97E", "#111111"], tamanhos: [38, 39, 40, 41, 42], descricao: "A versão clara do Rampa Pro, com a mesma sola vulcanizada.", materiais: ["Camurça", "Sola vulcanizada"] },
+  { id: "meio-fio", nome: "Meio-fio", categoria: "Casual", preco: 299.9, novidade: 1, modelo: "baixo", cores: ["#FFFFFF", "#FFFFFF", "#111111"], tamanhos: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43], descricao: "Branco total com detalhe preto. Simples e direto.", materiais: ["Couro sintético", "Borracha"] },
+];
 
-// Tamanho de cada desenho (proporção do quadro e escala)
-const DESENHOS = {
-  camiseta: { viewBox: "0 0 220 200", escala: 1 },
-  moletom: { viewBox: "0 0 220 210", escala: 1 },
-  calca: { viewBox: "0 0 200 260", escala: 0.74 },
-  bermuda: { viewBox: "0 0 200 170", escala: 0.86 },
-  bone: { viewBox: "0 0 200 140", escala: 0.94 },
-  bolsa: { viewBox: "0 0 200 230", escala: 0.78 },
-  meia: { viewBox: "0 0 140 230", escala: 0.52 },
-};
+const TODOS_TAMANHOS = [...new Set(PRODUTOS.flatMap((p) => p.tamanhos))].sort((a, b) => a - b);
+const CATEGORIAS = [...new Set(PRODUTOS.map((p) => p.categoria))];
+const NOVOS = [...PRODUTOS].sort((a, b) => b.novidade - a.novidade).slice(0, 3).map((p) => p.id);
 
 
 /* ------------------------------------------------------------------------
    UTILITÁRIOS
    ------------------------------------------------------------------------ */
-const $ = (id) => document.getElementById(id);
-const moeda = (v) => Comum.moeda(Math.round(v * 100) / 100);
-const pecaPorId = (id) => PECAS.find((p) => p.id === id);
-const ref = (p) => p.id.toUpperCase();
-const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+const moeda = (v) => Comum.moeda(v);
+const produtoPorId = (id) => PRODUTOS.find((p) => p.id === id);
 const criar = (tag, classe, texto) => {
   const el = document.createElement(tag);
   if (classe) el.className = classe;
@@ -118,567 +58,329 @@ const criar = (tag, classe, texto) => {
   return el;
 };
 
-// Contorno claro em peças escuras, para os detalhes continuarem visíveis
-function contornoPara(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  const luz = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return luz < 0.3 ? "#5E5B55" : "#141414";
-}
-
-function desenho(peca, nomeCor, classe) {
+// Desenho do tênis com as cores do produto
+function desenhoTenis(produto, classe) {
   const ns = "http://www.w3.org/2000/svg";
-  const info = DESENHOS[peca.desenho];
   const svg = document.createElementNS(ns, "svg");
-  svg.setAttribute("viewBox", info.viewBox);
+  svg.setAttribute("viewBox", produto.modelo === "alto" ? "0 0 240 132" : "0 0 240 112");
   svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
   if (classe) svg.setAttribute("class", classe);
-  pintar(svg, peca, nomeCor);
-  svg.style.setProperty("--escala", info.escala);
-  Object.entries(peca.variante || {}).forEach(([k, v]) => svg.style.setProperty(k, v));
+  svg.style.setProperty("--cabedal", produto.cores[0]);
+  svg.style.setProperty("--sola", produto.cores[1]);
+  svg.style.setProperty("--detalhe", produto.cores[2]);
   const use = document.createElementNS(ns, "use");
-  use.setAttribute("href", `#peca-${peca.desenho}`);
+  use.setAttribute("href", produto.modelo === "alto" ? "#tenis-alto" : "#tenis-baixo");
   svg.append(use);
   return svg;
 }
 
-function pintar(svg, peca, nomeCor) {
-  const hex = COR[peca.cores.includes(nomeCor) ? nomeCor : peca.cores[0]];
-  svg.style.setProperty("--peca", hex);
-  svg.style.setProperty("--contorno", contornoPara(hex));
-}
 
-function animar(el, classe) {
-  if (Comum.reduzirMovimento()) return;
-  el.classList.remove(classe);
-  void el.offsetWidth;
-  el.classList.add(classe);
-  el.addEventListener("animationend", () => el.classList.remove(classe), { once: true });
+/* ------------------------------------------------------------------------
+   LANÇAMENTOS
+   ------------------------------------------------------------------------ */
+function montarLancamentos() {
+  const caixa = document.getElementById("lancamentos-lista");
+  NOVOS.map(produtoPorId).forEach((p) => {
+    const botao = criar("button", "destaque");
+    botao.type = "button";
+    botao.setAttribute("aria-label", `${p.nome}, ${moeda(p.preco)}. Ver detalhes`);
+    botao.setAttribute("data-reveal", "");
+    botao.append(criar("span", "destaque__novo", "Novo"), desenhoTenis(p, "destaque__tenis"));
+    const info = criar("span", "destaque__info");
+    info.append(criar("span", "destaque__nome", p.nome), criar("span", "destaque__preco", moeda(p.preco)));
+    botao.append(info);
+    botao.addEventListener("click", () => abrirProduto(p.id));
+    caixa.append(botao);
+  });
 }
 
 
 /* ------------------------------------------------------------------------
-   CATEGORIAS (blocos no início)
+   FILTROS E ORDENAÇÃO
    ------------------------------------------------------------------------ */
-function montarCategorias() {
-  $("categorias").replaceChildren(...CATEGORIAS.map((c) => {
-    const [id, cor] = CAPA_CATEGORIA[c];
-    const total = PECAS.filter((p) => p.categoria === c).length;
-    const a = criar("a", "categoria");
-    a.href = `#/categoria/${c}`;
-    a.setAttribute("data-reveal", "");
-    a.append(desenho(pecaPorId(id), cor), criar("span", "categoria__nome", c), criar("span", "categoria__n", plural(total, "peça", "peças")));
-    return a;
-  }));
-}
+const filtros = { categorias: new Set(), tamanhos: new Set(), faixa: "todas", ordem: "novidades" };
 
-
-/* ------------------------------------------------------------------------
-   FILTROS DO CATÁLOGO
-   ------------------------------------------------------------------------ */
-const PRECO_MAX = Number($("preco-max").max);
-const filtros = { categoria: "Tudo", tamanhos: new Set(), precoMax: PRECO_MAX };
-
-function opcaoTamanho({ nome, valor, id, tipo = "checkbox" }) {
-  const div = criar("div", "tam");
+function escolha({ tipo, nome, valor, id, texto, marcado }) {
+  const div = criar("div", "escolha");
   const input = document.createElement("input");
-  Object.assign(input, { type: tipo, name: nome, value: valor, id });
-  const label = criar("label", "", valor);
+  Object.assign(input, { type: tipo, name: nome, value: valor, id, checked: !!marcado });
+  const label = criar("label", "", texto);
   label.htmlFor = id;
   div.append(input, label);
   return div;
 }
 
 function montarFiltros() {
-  // Categorias (botões que ficam "pressionados")
-  const abas = $("abas-categoria");
-  ["Tudo", ...CATEGORIAS].forEach((c) => {
-    const b = criar("button", "aba", c);
-    b.type = "button";
-    b.dataset.categoria = c;
-    b.setAttribute("aria-pressed", String(c === filtros.categoria));
-    b.setAttribute("aria-controls", "grade");
-    abas.append(b);
-  });
-  abas.addEventListener("click", (e) => {
-    const b = e.target.closest(".aba");
-    if (!b) return;
-    escolherCategoria(b.dataset.categoria, { atualizarEndereco: true });
-  });
-
-  // Tamanhos: todos os que existem nas peças, na ordem certa
-  const existentes = new Set(PECAS.flatMap((p) => p.tamanhos));
-  const tamanhos = ORDEM_TAMANHOS.filter((t) => existentes.has(t));
-  $("filtro-tamanhos").replaceChildren(...tamanhos.map((t) => opcaoTamanho({ nome: "filtro-tamanho", valor: t, id: `ft-${t}` })));
-  $("filtro-tamanhos").addEventListener("change", (e) => {
-    e.target.checked ? filtros.tamanhos.add(e.target.value) : filtros.tamanhos.delete(e.target.value);
+  const cat = document.getElementById("filtro-categorias");
+  CATEGORIAS.forEach((c) => cat.append(escolha({ tipo: "checkbox", nome: "categoria", valor: c, id: `fc-${c}`, texto: c })));
+  cat.addEventListener("change", (e) => {
+    e.target.checked ? filtros.categorias.add(e.target.value) : filtros.categorias.delete(e.target.value);
     aplicarFiltros();
   });
 
-  // Preço máximo
-  const faixa = $("preco-max");
-  faixa.value = filtros.precoMax;
-  const mostrarPreco = () => {
-    $("preco-valor").textContent = moeda(Number(faixa.value));
-    faixa.setAttribute("aria-valuetext", moeda(Number(faixa.value)));
-  };
-  faixa.addEventListener("input", () => { filtros.precoMax = Number(faixa.value); mostrarPreco(); aplicarFiltros(); });
-  mostrarPreco();
+  const tam = document.getElementById("filtro-tamanhos");
+  TODOS_TAMANHOS.forEach((t) => tam.append(escolha({ tipo: "checkbox", nome: "tamanho", valor: t, id: `ft-${t}`, texto: t })));
+  tam.addEventListener("change", (e) => {
+    const n = Number(e.target.value);
+    e.target.checked ? filtros.tamanhos.add(n) : filtros.tamanhos.delete(n);
+    aplicarFiltros();
+  });
+
+  const preco = document.getElementById("filtro-precos");
+  FAIXAS.forEach((f, i) => preco.append(escolha({ tipo: "radio", nome: "faixa", valor: f.id, id: `fp-${f.id}`, texto: f.nome, marcado: i === 0 })));
+  preco.addEventListener("change", (e) => { filtros.faixa = e.target.value; aplicarFiltros(); });
+
+  document.getElementById("ordenar").addEventListener("change", (e) => { filtros.ordem = e.target.value; aplicarFiltros(); });
 
   const limpar = () => {
+    filtros.categorias.clear();
     filtros.tamanhos.clear();
-    filtros.precoMax = PRECO_MAX;
-    faixa.value = PRECO_MAX;
-    mostrarPreco();
-    document.querySelectorAll("#filtro-tamanhos input").forEach((i) => { i.checked = false; });
-    escolherCategoria("Tudo", { atualizarEndereco: true });
+    filtros.faixa = "todas";
+    document.querySelectorAll("#filtros input[type=checkbox]").forEach((i) => { i.checked = false; });
+    document.getElementById("fp-todas").checked = true;
+    aplicarFiltros();
   };
-  $("limpar").addEventListener("click", limpar);
-  $("limpar-vazio").addEventListener("click", () => { limpar(); $("catalogo-titulo").focus({ preventScroll: true }); });
-}
+  document.getElementById("limpar-filtros").addEventListener("click", limpar);
+  document.getElementById("limpar-vazio").addEventListener("click", limpar);
 
-function escolherCategoria(categoria, { atualizarEndereco = false } = {}) {
-  filtros.categoria = categoria === "Tudo" || CATEGORIAS.includes(categoria) ? categoria : "Tudo";
-  document.querySelectorAll("#abas-categoria .aba").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.categoria === filtros.categoria)));
-  if (atualizarEndereco) {
-    // Troca o endereço sem criar um passo novo no "voltar" do navegador
-    const novo = filtros.categoria === "Tudo" ? "#/" : `#/categoria/${filtros.categoria}`;
-    history.replaceState(null, "", novo);
-    estado.hash = novo;
-  }
-  marcarMenu(filtros.categoria);
-  aplicarFiltros();
+  // Painel de filtros no celular
+  const painel = document.getElementById("filtros");
+  const botaoAbrir = document.getElementById("abrir-filtros");
+  let fundo = null;
+  const fechar = () => {
+    painel.classList.remove("is-open");
+    botaoAbrir.setAttribute("aria-expanded", "false");
+    if (fundo) { fundo.remove(); fundo = null; }
+    document.removeEventListener("keydown", aoTeclar);
+  };
+  const aoTeclar = (e) => { if (e.key === "Escape") { fechar(); botaoAbrir.focus(); } };
+  botaoAbrir.addEventListener("click", () => {
+    painel.classList.add("is-open");
+    botaoAbrir.setAttribute("aria-expanded", "true");
+    fundo = criar("div", "fundo-escuro");
+    fundo.addEventListener("click", fechar);
+    document.body.append(fundo);
+    document.addEventListener("keydown", aoTeclar);
+    painel.querySelector("input").focus();
+  });
+  document.getElementById("fechar-filtros").addEventListener("click", () => { fechar(); botaoAbrir.focus(); });
+  document.getElementById("ver-resultados").addEventListener("click", () => {
+    fechar();
+    document.getElementById("contagem").scrollIntoView({ block: "start" });
+  });
 }
 
 function aplicarFiltros() {
-  const lista = PECAS.filter((p) =>
-    (filtros.categoria === "Tudo" || p.categoria === filtros.categoria) &&
+  const faixa = FAIXAS.find((f) => f.id === filtros.faixa);
+  let lista = PRODUTOS.filter((p) =>
+    (!filtros.categorias.size || filtros.categorias.has(p.categoria)) &&
     (!filtros.tamanhos.size || p.tamanhos.some((t) => filtros.tamanhos.has(t))) &&
-    p.preco <= filtros.precoMax);
+    p.preco >= faixa.min && p.preco < faixa.max);
 
-  $("contagem").textContent = plural(lista.length, "peça", "peças");
-  $("vazio").hidden = lista.length > 0;
-  $("grade").replaceChildren(...lista.map((p, i) => cartao(p, i)));
+  if (filtros.ordem === "menor") lista.sort((a, b) => a.preco - b.preco || b.novidade - a.novidade);
+  else if (filtros.ordem === "maior") lista.sort((a, b) => b.preco - a.preco || b.novidade - a.novidade);
+  else lista.sort((a, b) => b.novidade - a.novidade);
+
+  const ativos = filtros.categorias.size + filtros.tamanhos.size + (filtros.faixa !== "todas" ? 1 : 0);
+  const marcador = document.getElementById("filtros-ativos");
+  marcador.hidden = ativos === 0;
+  marcador.textContent = ativos;
+
+  document.getElementById("contagem").textContent = `${lista.length} tênis ${lista.length === 1 ? "encontrado" : "encontrados"}`;
+  document.getElementById("vazio").hidden = lista.length > 0;
+  desenharGrade(lista);
 }
 
-function cartao(p, i = 0) {
-  const li = criar("li", "peca-card entrar");
-  li.style.animationDelay = `${Math.min(i, 8) * 40}ms`;
-  const a = criar("a");
-  a.href = `#/produto/${p.id}`;
-  const foto = criar("span", "peca-card__foto");
-  foto.append(desenho(p, p.cores[0]), criar("span", "peca-card__ref", ref(p)));
-  const info = criar("span", "peca-card__info");
-  const cores = criar("span", "peca-card__cores");
-  cores.setAttribute("aria-hidden", "true");
-  p.cores.forEach((c) => { const s = criar("span"); s.style.setProperty("--c", COR[c]); s.title = c; cores.append(s); });
-  info.append(
-    criar("span", "peca-card__nome", p.nome),
-    criar("span", "peca-card__preco", moeda(p.preco)),
-    cores,
-    criar("span", "vh", ` · ${plural(p.cores.length, "cor", "cores")}: ${p.cores.join(", ")}`),
-  );
-  a.append(foto, info);
-  li.append(a);
-  return li;
-}
-
-
-/* ------------------------------------------------------------------------
-   PÁGINA DA PEÇA
-   ------------------------------------------------------------------------ */
-const selecao = { peca: null, cor: null, tamanho: null };
-
-function montarProduto(id) {
-  const p = pecaPorId(id);
-  if (!p) return false;
-  Object.assign(selecao, { peca: p, cor: p.cores[0], tamanho: p.tamanhos.length === 1 ? p.tamanhos[0] : null });
-
-  $("produto-ref").textContent = `${p.categoria} · ${ref(p)}`;
-  $("produto-nome").textContent = p.nome;
-  $("produto-preco").textContent = moeda(p.preco);
-  $("produto-descricao").textContent = p.descricao;
-  $("produto-erro").textContent = "";
-  $("produto-qtd").value = "1";
-  textoAdicionar();
-
-  // Desenho grande + etiqueta
-  $("produto-foto").replaceChildren(desenho(p, selecao.cor), criar("span", "produto__etiqueta", `${ref(p)} · ${p.composicao.split(" · ")[0]}`));
-
-  // Miniaturas: a mesma peça em cada cor (atalho para o mouse;
-  // quem usa teclado ou leitor de tela escolhe pelas bolinhas de cor)
-  const minis = $("produto-miniaturas");
-  minis.hidden = p.cores.length < 2;
-  minis.replaceChildren(...p.cores.map((c) => {
-    const m = criar("div", "miniatura");
-    m.dataset.cor = c;
-    m.append(desenho(p, c));
-    return m;
-  }));
-
-  // Cores
-  $("produto-cores").replaceChildren(...p.cores.map((c, i) => {
-    const div = criar("div", "cor");
-    const input = document.createElement("input");
-    Object.assign(input, { type: "radio", name: "produto-cor", value: c, id: `pc-${i}`, checked: c === selecao.cor });
-    const label = criar("label");
-    label.htmlFor = input.id;
-    label.title = c;
-    label.style.setProperty("--c", COR[c]);
-    label.append(criar("span", "vh", c));
-    div.append(input, label);
-    return div;
-  }));
-
-  // Tamanhos
-  $("produto-tamanhos").replaceChildren(...p.tamanhos.map((t) => {
-    const item = opcaoTamanho({ nome: "produto-tamanho", valor: t, id: `pt-${t}`, tipo: "radio" });
-    item.querySelector("input").checked = t === selecao.tamanho;
-    return item;
-  }));
-
-  // Ficha técnica
-  $("produto-ficha").replaceChildren(...[
-    ["Referência", ref(p)],
-    ["Composição", p.composicao],
-    ["Modelagem", p.modelagem],
-    ["Cuidados", p.cuidados],
-  ].map(([titulo, valor]) => {
-    const div = criar("div");
-    div.append(criar("dt", "", titulo), criar("dd", "", valor));
-    return div;
-  }));
-
-  // "Combina com": uma peça de cada uma das outras categorias
-  const outras = CATEGORIAS.filter((c) => c !== p.categoria).map((c) => PECAS.find((x) => x.categoria === c));
-  $("relacionados").replaceChildren(...outras.map((x, i) => cartao(x, i)));
-
-  mostrarCor();
-  document.title = `${p.nome} · AVESSO (demonstrativo)`;
-  marcarMenu(p.categoria);
-  return true;
-}
-
-function mostrarCor() {
-  const p = selecao.peca;
-  $("produto-cor-nome").textContent = selecao.cor;
-  const principal = $("produto-foto").querySelector("svg");
-  if (principal) pintar(principal, p, selecao.cor);
-  document.querySelectorAll("#produto-miniaturas .miniatura").forEach((m) => m.classList.toggle("is-ativa", m.dataset.cor === selecao.cor));
-  const radio = document.querySelector(`#produto-cores input[value="${CSS.escape(selecao.cor)}"]`);
-  if (radio) radio.checked = true;
-}
-
-function textoAdicionar(texto = "Adicionar à sacola") {
-  $("adicionar").textContent = texto;
-}
-
-function prepararProduto() {
-  $("produto-cores").addEventListener("change", (e) => {
-    selecao.cor = e.target.value;
-    mostrarCor();
-    textoAdicionar();
-  });
-  $("produto-miniaturas").addEventListener("click", (e) => {
-    const m = e.target.closest(".miniatura");
-    if (!m) return;
-    selecao.cor = m.dataset.cor;
-    mostrarCor();
-    textoAdicionar();
-  });
-  $("produto-tamanhos").addEventListener("change", (e) => {
-    selecao.tamanho = e.target.value;
-    $("produto-erro").textContent = "";
-    textoAdicionar();
-  });
-  $("produto-qtd").addEventListener("change", () => textoAdicionar());
-
-  $("adicionar").addEventListener("click", () => {
-    const p = selecao.peca;
-    if (!selecao.tamanho) {
-      $("produto-erro").textContent = "Escolha um tamanho para continuar.";
-      $("produto-tamanhos").querySelector("input").focus();
-      return;
-    }
-    const pedida = Number($("produto-qtd").value) || 1;
-    const resultado = adicionarNaSacola(p.id, selecao.cor, selecao.tamanho, pedida);
-    if (resultado.adicionadas === 0) {
-      $("produto-erro").textContent = `Esta peça já está na sacola com ${CONFIG.quantidadeMaxima} unidades, o limite desta demonstração.`;
-      return;
-    }
-    $("produto-erro").textContent = resultado.adicionadas < pedida
-      ? `Só foi possível adicionar ${resultado.adicionadas}: o limite é ${CONFIG.quantidadeMaxima} unidades por peça.`
-      : "";
-    textoAdicionar("Adicionado à sacola ✓");
-    Comum.aviso(`${p.nome} (${selecao.cor}, ${selecao.tamanho}) foi para a sacola.`);
-  });
-}
-
-
-/* ------------------------------------------------------------------------
-   SACOLA (salva neste navegador)
-   Cada item: { id, cor, tamanho, quantidade }
-   ------------------------------------------------------------------------ */
-let sacola = lerSacola();
-
-function itemValido(i) {
-  const p = i && pecaPorId(i.id);
-  return !!p && p.cores.includes(i.cor) && p.tamanhos.includes(i.tamanho) &&
-    Number.isInteger(i.quantidade) && i.quantidade >= 1 && i.quantidade <= CONFIG.quantidadeMaxima;
-}
-
-function lerSacola() {
-  try {
-    const itens = JSON.parse(Comum.armazenamento.ler(CONFIG.chaveSacola) || "[]");
-    return Array.isArray(itens) ? itens.filter(itemValido) : [];
-  } catch (e) { return []; }
-}
-
-function salvarSacola() {
-  Comum.armazenamento.salvar(CONFIG.chaveSacola, JSON.stringify(sacola));
-  desenharSacola();
-}
-
-function adicionarNaSacola(id, cor, tamanho, quantidade) {
-  let item = sacola.find((i) => i.id === id && i.cor === cor && i.tamanho === tamanho);
-  const antes = item ? item.quantidade : 0;
-  const depois = Math.min(CONFIG.quantidadeMaxima, antes + quantidade);
-  if (depois === antes) return { adicionadas: 0 };
-  if (item) item.quantidade = depois;
-  else sacola.push({ id, cor, tamanho, quantidade: depois });
-  salvarSacola();
-  animar($("link-sacola"), "pulo");
-  return { adicionadas: depois - antes };
-}
-
-function totais() {
-  return sacola.reduce((t, i) => {
-    t.pecas += i.quantidade;
-    t.subtotal += pecaPorId(i.id).preco * i.quantidade;
-    return t;
-  }, { pecas: 0, subtotal: 0 });
-}
-
-function desenharSacola() {
-  const { pecas, subtotal } = totais();
-  $("contador-sacola").textContent = pecas;
-  $("link-sacola").setAttribute("aria-label", `Sacola, ${plural(pecas, "peça", "peças")}`);
-  $("resumo-pecas").textContent = pecas;
-  $("resumo-subtotal").textContent = moeda(subtotal);
-  $("sacola-vazia").hidden = sacola.length > 0;
-  $("sacola-lista").hidden = sacola.length === 0;
-  $("resumo").hidden = sacola.length === 0;
-
-  $("sacola-lista").replaceChildren(...sacola.map((item, indice) => {
-    const p = pecaPorId(item.id);
-    const li = criar("li", "item");
-    const foto = criar("div", "item__foto");
-    foto.append(desenho(p, item.cor));
-
-    const nome = criar("a", "item__nome", p.nome);
-    nome.href = `#/produto/${p.id}`;
-
-    const acoes = criar("div", "item__acoes");
-    const label = criar("label", "", "Qtd.");
-    const select = document.createElement("select");
-    select.id = `qtd-${indice}`;
-    label.htmlFor = select.id;
-    for (let n = 1; n <= CONFIG.quantidadeMaxima; n++) {
-      const op = criar("option", "", n);
-      op.value = n;
-      select.append(op);
-    }
-    select.value = item.quantidade;
-    select.setAttribute("aria-label", `Quantidade de ${p.nome}, ${item.cor}, ${item.tamanho}`);
-    select.addEventListener("change", () => {
-      item.quantidade = Number(select.value);
-      salvarSacola();
-      const mesmo = $(`qtd-${indice}`);
-      if (mesmo) mesmo.focus();
-    });
-    label.append(select);
-
-    const remover = criar("button", "link-botao", "Remover");
-    remover.type = "button";
-    remover.setAttribute("aria-label", `Remover ${p.nome}, ${item.cor}, tamanho ${item.tamanho}`);
-    remover.addEventListener("click", () => {
-      const depois = () => {
-        sacola.splice(sacola.indexOf(item), 1);
-        salvarSacola();
-        // Foco vai para a próxima peça (ou para o título, se a sacola esvaziou)
-        const proximo = $(`qtd-${Math.min(indice, sacola.length - 1)}`);
-        (proximo || $("sacola-titulo")).focus();
-        Comum.aviso(`${p.nome} saiu da sacola.`);
-      };
-      if (Comum.reduzirMovimento()) return depois();
-      li.classList.add("saindo");
-      setTimeout(depois, 280);
-    });
-    acoes.append(label, remover);
-
-    li.append(
-      foto,
-      nome,
-      criar("p", "item__preco", moeda(p.preco * item.quantidade)),
-      criar("p", "item__det", `${item.cor} · ${item.tamanho} · ${moeda(p.preco)} cada`),
-      acoes,
-    );
+function desenharGrade(lista) {
+  const grade = document.getElementById("grade");
+  grade.replaceChildren(...lista.map((p, i) => {
+    const li = criar("li", "cartao entrar");
+    li.style.animationDelay = `${Math.min(i, 8) * 40}ms`;
+    const botao = criar("button", "cartao__botao");
+    botao.type = "button";
+    botao.setAttribute("aria-label", `${p.nome}, ${p.categoria}, ${moeda(p.preco)}. Ver detalhes`);
+    const foto = criar("span", "cartao__foto");
+    if (NOVOS.includes(p.id)) foto.append(criar("span", "cartao__selo", "Novo"));
+    foto.append(desenhoTenis(p, "cartao__tenis"));
+    const info = criar("span", "cartao__info");
+    const cores = criar("span", "cartao__cores");
+    p.cores.forEach((c) => { const s = criar("span"); s.style.setProperty("--c", c); cores.append(s); });
+    info.append(criar("span", "cartao__categoria", p.categoria), criar("span", "cartao__nome", p.nome), criar("span", "cartao__preco", moeda(p.preco)), cores);
+    botao.append(foto, info);
+    botao.addEventListener("click", () => abrirProduto(p.id));
+    li.append(botao);
     return li;
   }));
 }
 
-function prepararSacola() {
-  $("finalizar").addEventListener("click", () => {
-    const { pecas, subtotal } = totais();
-    const linhas = sacola.map((i) => {
-      const p = pecaPorId(i.id);
-      return `${i.quantidade}x ${p.nome} (${i.cor}, ${i.tamanho}) — ${moeda(p.preco * i.quantidade)}`;
-    });
-    $("janela-pedido-resumo").textContent =
-      `Pedido AVESSO (demonstração)\n\n${linhas.join("\n")}\n\nPeças: ${pecas}\nSubtotal: ${moeda(subtotal)}\nFrete: a combinar`;
-    Comum.abrirDialogo($("janela-pedido"));
+
+/* ------------------------------------------------------------------------
+   DETALHES DO PRODUTO
+   ------------------------------------------------------------------------ */
+const selecao = { produto: null, tamanho: null, quantidade: 1 };
+
+function abrirProduto(id) {
+  const p = produtoPorId(id);
+  if (!p) return;
+  Object.assign(selecao, { produto: p, tamanho: null, quantidade: 1 });
+
+  document.getElementById("produto-visual").replaceChildren(desenhoTenis(p));
+  document.getElementById("produto-categoria").textContent = `${p.categoria}${NOVOS.includes(p.id) ? " · Lançamento" : ""}`;
+  document.getElementById("produto-nome").textContent = p.nome;
+  document.getElementById("produto-preco").textContent = moeda(p.preco);
+  document.getElementById("produto-descricao").textContent = p.descricao;
+  document.getElementById("produto-materiais").replaceChildren(...p.materiais.map((m) => criar("li", "", m)));
+  document.getElementById("produto-tamanho-escolhido").textContent = "";
+  document.getElementById("produto-erro").textContent = "";
+
+  // Todos os tamanhos aparecem; os que não existem para o modelo ficam riscados
+  const tamanhos = document.getElementById("produto-tamanhos");
+  tamanhos.replaceChildren(...TODOS_TAMANHOS.map((t) => {
+    const item = escolha({ tipo: "radio", nome: "tamanho-produto", valor: t, id: `pt-${t}`, texto: t });
+    const input = item.querySelector("input");
+    if (!p.tamanhos.includes(t)) {
+      input.disabled = true;
+      item.querySelector("label").setAttribute("aria-label", `${t}, indisponível`);
+    }
+    return item;
+  }));
+  atualizarQuantidade();
+  const adicionar = document.getElementById("adicionar");
+  adicionar.classList.remove("is-ok");
+  adicionar.textContent = "Adicionar ao carrinho";
+  Comum.abrirDialogo(document.getElementById("produto"));
+}
+
+function atualizarQuantidade() {
+  document.getElementById("qtd-valor").textContent = selecao.quantidade;
+  document.getElementById("qtd-menos").disabled = selecao.quantidade <= 1;
+  document.getElementById("qtd-mais").disabled = selecao.quantidade >= CONFIG.quantidadeMaxima;
+}
+
+function prepararProduto() {
+  document.getElementById("produto-tamanhos").addEventListener("change", (e) => {
+    selecao.tamanho = Number(e.target.value);
+    document.getElementById("produto-tamanho-escolhido").textContent = `· ${selecao.tamanho}`;
+    document.getElementById("produto-erro").textContent = "";
   });
-  // Se a sacola mudar em outra aba, atualiza esta
-  window.addEventListener("storage", (e) => {
-    if (e.key === CONFIG.chaveSacola) { sacola = lerSacola(); desenharSacola(); }
+  document.getElementById("qtd-menos").addEventListener("click", () => { selecao.quantidade = Math.max(1, selecao.quantidade - 1); atualizarQuantidade(); });
+  document.getElementById("qtd-mais").addEventListener("click", () => { selecao.quantidade = Math.min(CONFIG.quantidadeMaxima, selecao.quantidade + 1); atualizarQuantidade(); });
+  document.getElementById("adicionar").addEventListener("click", () => {
+    if (!selecao.tamanho) {
+      document.getElementById("produto-erro").textContent = "Escolha um tamanho.";
+      document.querySelector("#produto-tamanhos input:not(:disabled)").focus();
+      return;
+    }
+    adicionarAoCarrinho(selecao.produto.id, selecao.tamanho, selecao.quantidade);
+    const botao = document.getElementById("adicionar");
+    botao.classList.add("is-ok");
+    botao.textContent = "Adicionado ao carrinho";
+    Comum.aviso(`${selecao.produto.nome} (${selecao.tamanho}) foi para o carrinho.`);
   });
-  desenharSacola();
+  document.querySelectorAll("[data-abrir-produto]").forEach((b) => b.addEventListener("click", () => abrirProduto(b.dataset.abrirProduto)));
 }
 
 
 /* ------------------------------------------------------------------------
-   ROTAS: qual "página" mostrar conforme o endereço
+   CARRINHO (salvo neste navegador)
+   Cada item: { id, tamanho, quantidade }
    ------------------------------------------------------------------------ */
-const VISTAS = { catalogo: $("vista-catalogo"), produto: $("vista-produto"), sacola: $("vista-sacola") };
-const estado = {
-  vista: null,
-  hash: "",
-  rotaCatalogo: "#/",     // por onde a pessoa saiu do catálogo
-  rolagemCatalogo: 0,     // e em que altura estava
-  irAoTopo: false,
-};
+let carrinho = lerCarrinho();
 
-if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-
-function hashAtual() {
-  try { return decodeURIComponent(location.hash || ""); } catch (e) { return location.hash || ""; }
+function lerCarrinho() {
+  try {
+    const itens = JSON.parse(Comum.armazenamento.ler(CONFIG.chaveCarrinho) || "[]");
+    // ignora itens de produtos que não existem mais
+    return Array.isArray(itens) ? itens.filter((i) => produtoPorId(i.id) && produtoPorId(i.id).tamanhos.includes(i.tamanho)) : [];
+  } catch (e) { return []; }
+}
+function salvarCarrinho() {
+  Comum.armazenamento.salvar(CONFIG.chaveCarrinho, JSON.stringify(carrinho));
+  desenharCarrinho();
 }
 
-function marcarMenu(categoria) {
-  document.querySelectorAll(".nav__link").forEach((a) => {
-    const ativo = decodeURIComponent(a.getAttribute("href")) === `#/categoria/${categoria}`;
-    a.classList.toggle("is-active", ativo);
-    if (ativo) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+function adicionarAoCarrinho(id, tamanho, quantidade) {
+  const existente = carrinho.find((i) => i.id === id && i.tamanho === tamanho);
+  if (existente) existente.quantidade = Math.min(CONFIG.quantidadeMaxima, existente.quantidade + quantidade);
+  else carrinho.push({ id, tamanho, quantidade });
+  salvarCarrinho();
+  const botao = document.getElementById("abrir-carrinho");
+  botao.classList.remove("pular-contador"); void botao.offsetWidth; botao.classList.add("pular-contador");
+}
+
+function totais() {
+  return carrinho.reduce((t, i) => {
+    t.itens += i.quantidade;
+    t.subtotal += produtoPorId(i.id).preco * i.quantidade;
+    return t;
+  }, { itens: 0, subtotal: 0 });
+}
+
+function desenharCarrinho() {
+  const { itens, subtotal } = totais();
+  const contador = document.getElementById("contador-carrinho");
+  contador.textContent = itens;
+  document.getElementById("abrir-carrinho").setAttribute("aria-label", `Abrir carrinho, ${itens} ${itens === 1 ? "item" : "itens"}`);
+  document.getElementById("carrinho-itens").textContent = itens;
+  // Arredonda para evitar diferenças de centavos em somas com decimais
+  document.getElementById("carrinho-subtotal").textContent = moeda(Math.round(subtotal * 100) / 100);
+  document.getElementById("carrinho-vazio").hidden = carrinho.length > 0;
+  document.getElementById("carrinho-rodape").hidden = carrinho.length === 0;
+
+  const lista = document.getElementById("carrinho-lista");
+  lista.replaceChildren(...carrinho.map((item, indice) => {
+    const p = produtoPorId(item.id);
+    const li = criar("li", "linha");
+    const foto = criar("span", "linha__foto");
+    foto.append(desenhoTenis(p));
+    const acoes = criar("div", "linha__acoes");
+    const qtd = criar("div", "quantidade");
+    qtd.setAttribute("role", "group");
+    qtd.setAttribute("aria-label", `Quantidade de ${p.nome}`);
+    const menos = criar("button", "", "−"); menos.type = "button"; menos.setAttribute("aria-label", "Diminuir"); menos.disabled = item.quantidade <= 1;
+    const valor = criar("output", "", item.quantidade);
+    const mais = criar("button", "", "+"); mais.type = "button"; mais.setAttribute("aria-label", "Aumentar"); mais.disabled = item.quantidade >= CONFIG.quantidadeMaxima;
+    menos.addEventListener("click", () => { item.quantidade -= 1; salvarCarrinho(); focarLinha(indice, 0); });
+    mais.addEventListener("click", () => { item.quantidade += 1; salvarCarrinho(); focarLinha(indice, 1); });
+    qtd.append(menos, valor, mais);
+    acoes.append(qtd, criar("span", "linha__total", moeda(Math.round(p.preco * item.quantidade * 100) / 100)));
+    const remover = criar("button", "linha__remover", "Remover");
+    remover.type = "button";
+    remover.setAttribute("aria-label", `Remover ${p.nome}, tamanho ${item.tamanho}`);
+    remover.addEventListener("click", () => {
+      li.classList.add("saindo");
+      const depois = () => { carrinho.splice(carrinho.indexOf(item), 1); salvarCarrinho(); document.querySelector("#carrinho [data-fechar]").focus(); };
+      Comum.reduzirMovimento() ? depois() : setTimeout(depois, 280);
+    });
+    li.append(foto, criar("p", "linha__nome", p.nome), criar("p", "linha__detalhe", `Tamanho ${item.tamanho} · ${moeda(p.preco)} cada`), acoes, remover);
+    return li;
+  }));
+}
+
+// Depois de redesenhar, devolve o foco ao botão clicado (para quem usa teclado)
+function focarLinha(indice, botao) {
+  const linha = document.querySelectorAll("#carrinho-lista .linha")[indice];
+  if (!linha) return;
+  const alvos = linha.querySelectorAll(".quantidade button");
+  const alvo = alvos[botao].disabled ? alvos[1 - botao] : alvos[botao];
+  alvo.focus();
+}
+
+function prepararCarrinho() {
+  document.getElementById("abrir-carrinho").addEventListener("click", () => Comum.abrirDialogo(document.getElementById("carrinho")));
+  document.getElementById("finalizar").addEventListener("click", () => {
+    const { itens, subtotal } = totais();
+    const linhas = carrinho.map((i) => {
+      const p = produtoPorId(i.id);
+      return `${i.quantidade}x ${p.nome} (tam. ${i.tamanho}) — ${moeda(Math.round(p.preco * i.quantidade * 100) / 100)}`;
+    });
+    document.getElementById("janela-pedido-resumo").textContent = `Pedido SOLADO (demonstração)\n\n${linhas.join("\n")}\n\nItens: ${itens}\nSubtotal: ${moeda(Math.round(subtotal * 100) / 100)}`;
+    document.getElementById("carrinho").close();
+    Comum.abrirDialogo(document.getElementById("janela-pedido"));
   });
-}
-
-function trocarVista(nome, inicial) {
-  const anterior = estado.vista;
-  if (anterior === "catalogo" && nome !== "catalogo") {
-    estado.rolagemCatalogo = window.scrollY;
-    estado.rotaCatalogo = ehRotaDeCatalogo(estado.hash) ? estado.hash || "#/" : "#/";
-  }
-  Object.entries(VISTAS).forEach(([n, el]) => { el.hidden = n !== nome; });
-  estado.vista = nome;
-  if (!inicial && anterior !== nome) animar(VISTAS[nome], "trocando");
-  return anterior;
-}
-
-function ehRotaDeCatalogo(hash) {
-  return !hash.startsWith("#/produto/") && hash !== "#/sacola";
-}
-
-function rolar(y, suave) {
-  window.scrollTo({ top: y, behavior: suave && !Comum.reduzirMovimento() ? "smooth" : "instant" });
-}
-
-function rota({ inicial = false, mesmoEndereco = false } = {}) {
-  const hash = hashAtual();
-  const deOutraVista = !!estado.vista && estado.vista !== "catalogo";
-
-  // Página da peça
-  if (hash.startsWith("#/produto/")) {
-    const id = hash.slice("#/produto/".length);
-    if (montarProduto(id)) {
-      trocarVista("produto", inicial);
-      estado.hash = hash;
-      rolar(0);
-      if (!inicial) $("produto-nome").focus({ preventScroll: true });
-      return;
-    }
-    // Peça que não existe: volta ao catálogo
-    history.replaceState(null, "", "#/");
-    Comum.aviso("Essa peça não existe no catálogo.");
-    return rota({ inicial });
-  }
-
-  // Sacola
-  if (hash === "#/sacola") {
-    trocarVista("sacola", inicial);
-    estado.hash = hash;
-    document.title = "Sacola · AVESSO (demonstrativo)";
-    marcarMenu(null);
-    rolar(0);
-    if (!inicial) $("sacola-titulo").focus({ preventScroll: true });
-    return;
-  }
-
-  // Âncora comum (#catalogo, #conteudo...). Se ela já está visível, o
-  // navegador cuida da rolagem; se está no catálogo escondido, mostra o catálogo.
-  const ehRota = hash === "" || hash.startsWith("#/");
-  let alvo = null;
-  if (!ehRota) {
-    alvo = document.getElementById(hash.slice(1));
-    const vistaDoAlvo = alvo && alvo.closest(".vista");
-    if (alvo && !inicial && !(vistaDoAlvo && vistaDoAlvo.hidden)) return;
-  }
-
-  // Daqui para baixo, é sempre o catálogo
-  document.title = "AVESSO · Projeto demonstrativo";
-  const restaurar = !inicial && !estado.irAoTopo && deOutraVista && hash === estado.rotaCatalogo;
-  estado.irAoTopo = false;
-  trocarVista("catalogo", inicial);
-  estado.hash = hash;
-
-  if (hash.startsWith("#/categoria/")) escolherCategoria(hash.slice("#/categoria/".length));
-  else if (ehRota) escolherCategoria("Tudo");
-
-  if (restaurar) {
-    rolar(estado.rolagemCatalogo);
-  } else if (hash.startsWith("#/categoria/")) {
-    rolar($("catalogo").getBoundingClientRect().top + window.scrollY - 64, !inicial && !deOutraVista);
-    if (!inicial) $("catalogo-titulo").focus({ preventScroll: true });
-  } else if (ehRota) {
-    if (!inicial) rolar(0, mesmoEndereco);
-  } else if (alvo) {
-    alvo.scrollIntoView({ block: "start", behavior: inicial || deOutraVista || Comum.reduzirMovimento() ? "instant" : "smooth" });
-  }
-}
-
-function prepararRotas() {
-  window.addEventListener("hashchange", () => rota());
-
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[href^='#']");
-    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
-    const href = decodeURIComponent(a.getAttribute("href"));
-
-    // "Voltar": retorna ao catálogo no mesmo ponto em que a pessoa estava
-    if (a.hasAttribute("data-voltar")) {
-      e.preventDefault();
-      location.hash = estado.rotaCatalogo || "#/";
-      return;
-    }
-    if (a.classList.contains("logo")) estado.irAoTopo = true;
-
-    // Clique num link para o endereço atual: o navegador não avisa, então
-    // a rota é refeita aqui (ex.: clicar em "Camisetas" estando em Camisetas)
-    if (href.startsWith("#/") && href === hashAtual()) {
-      e.preventDefault();
-      rota({ mesmoEndereco: true });
-    }
-  });
+  // Se o carrinho mudar em outra aba, atualiza esta
+  window.addEventListener("storage", (e) => { if (e.key === CONFIG.chaveCarrinho) { carrinho = lerCarrinho(); desenharCarrinho(); } });
+  desenharCarrinho();
 }
 
 
@@ -686,11 +388,10 @@ function prepararRotas() {
    INICIALIZAÇÃO
    ------------------------------------------------------------------------ */
 document.addEventListener("DOMContentLoaded", () => {
-  montarCategorias();
+  montarLancamentos();
   montarFiltros();
+  aplicarFiltros();
   prepararProduto();
-  prepararSacola();
-  prepararRotas();
-  rota({ inicial: true });
+  prepararCarrinho();
   Comum.carregarFotos(CONFIG.usarFotos, "../../assets/images/");
 });
