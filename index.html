@@ -1,0 +1,806 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!-- SEO: título e descrição do Google e do compartilhamento -->
+  <title>Martins | Criação de Sites</title>
+  <meta name="description" content="Sites personalizados para pequenos e médios negócios: sites institucionais, landing pages, vitrines, lojas e sistemas de agendamento, com atendimento direto.">
+  <meta name="theme-color" content="#08080A">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Martins | Criação de Sites">
+  <meta property="og:description" content="Sites que transformam negócios em marcas digitais. Veja os projetos e peça um orçamento.">
+  <!-- Depois de publicar, você pode adicionar uma imagem de compartilhamento (1200 x 630):
+       <meta property="og:image" content="https://SEU-SITE.netlify.app/assets/images/portfolio/compartilhar.jpg"> -->
+
+  <!-- Ícone da aba: o símbolo M -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%2308080A'/%3E%3Cpath d='M10 29V12.5l9 9.5 9-9.5V29' fill='none' stroke='%23fff' stroke-width='3.6'/%3E%3Crect x='30.5' y='4.5' width='5' height='5' rx='1' fill='%237C3AED'/%3E%3C/svg%3E">
+
+  <!-- Fontes do portfólio (Space Grotesk e Inter) e das capas dos projetos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Archivo:wdth,wght@125,800&family=Big+Shoulders+Display:wght@800&family=Bodoni+Moda:ital,wght@1,500&family=Unbounded:wght@800&family=Instrument+Serif:ital@0;1&family=Fraunces:ital,wght@1,600&family=Bricolage+Grotesque:opsz,wdth,wght@96,80,750&family=Gloock&family=Instrument+Sans:wdth,wght@75,600&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Tema, menu, animações e funções comuns (sem "defer" de propósito) -->
+  <script src="assets/js/comum.js"></script>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="progresso" aria-hidden="true"><span id="barra-progresso"></span></div>
+
+  <!-- Desenhos reutilizados (símbolo M e ilustrações das capas) -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="simbolo-m" viewBox="0 0 40 40">
+      <rect width="40" height="40" rx="10" fill="var(--logo-fundo)"/>
+      <path d="M10 29V12.5l9 9.5 9-9.5V29" fill="none" stroke="var(--logo-letra)" stroke-width="3.6"/>
+      <rect x="30.5" y="4.5" width="5" height="5" rx="1" fill="#7C3AED"/>
+    </symbol>
+    <symbol id="ilustra-tenis" viewBox="0 0 240 112">
+      <path d="M14 92c0-6 4-9 10-9h176c16 0 28 3 32 9v4c0 5-4 8-9 8H22c-5 0-8-3-8-8z" fill="var(--sola, #fff)" stroke="#111" stroke-width="2"/>
+      <path d="M22 93h204" stroke="#111" stroke-width="1.2" opacity=".35"/>
+      <path d="M24 84V52c0-12 6-20 16-22l20-4c8-1 12 4 16 10 6 9 14 12 22 6l14-14c6-6 14-5 18 2l10 18c8 14 22 22 42 26l22 4c14 2 22 4 24 6z" fill="var(--cabedal, #F4F4F2)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M24 84V52c0-12 6-20 16-22l8-1.6V84z" fill="var(--detalhe, #C6FF3D)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M60 84c6-18 22-28 46-30" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 3"/>
+      <path d="M180 74c14 3 30 6 46 10" fill="none" stroke="#111" stroke-width="1.4" opacity=".5"/>
+      <g fill="#fff" stroke="#111" stroke-width="1.6"><circle cx="118" cy="36" r="2.6"/><circle cx="128" cy="43" r="2.6"/><circle cx="138" cy="50" r="2.6"/><circle cx="148" cy="57" r="2.6"/></g>
+      <path d="M114 40l10-8M124 47l10-8M134 54l10-8M144 61l10-8" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="84" cy="66" r="7" fill="#111"/><path d="M81.5 66h5" stroke="var(--detalhe, #C6FF3D)" stroke-width="2"/>
+    </symbol>
+    <symbol id="ilustra-camiseta" viewBox="0 0 220 200">
+      <path d="M70 18l26-8c4 10 10 14 14 14s10-4 14-14l26 8 40 30-18 28-20-10v116H68V66L48 76 30 48z" fill="var(--peca, #111)" stroke="var(--contorno, #111)" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="104" y="30" width="12" height="7" fill="var(--etiqueta, #D9CBB4)"/>
+    </symbol>
+    <symbol id="ilustra-moletom" viewBox="0 0 220 210">
+      <path d="M78 26c6-16 58-16 64 0l30 10 40 52-20 18-26-24v116H54V82l-26 24L8 88l40-52z" fill="var(--peca, #E8E4DC)" stroke="var(--contorno, #111)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M78 26c4 22 18 32 32 32s28-10 32-32" fill="none" stroke="var(--contorno, #111)" stroke-width="2"/>
+      <path d="M100 58v26M120 58v26" stroke="var(--contorno, #111)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M76 140h68v40H76z" fill="none" stroke="var(--contorno, #111)" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="ilustra-brigadeiro" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="25" fill="none" stroke="var(--forminha, #C99A6B)" stroke-width="9" stroke-dasharray="2.4 2"/>
+      <circle cx="30" cy="30" r="20" fill="var(--doce, #3B2418)"/>
+      <g stroke="var(--granulado, #6B4433)" stroke-width="2" stroke-linecap="round">
+        <path d="M22 20l3 2M33 17l3-1M40 24l1 3M20 31l1 3M27 28l3 1M36 34l2 2M25 39l3 1M33 41l2-2M42 31l1-3"/>
+      </g>
+      <ellipse cx="24" cy="23" rx="6" ry="3.5" fill="#fff" opacity=".12"/>
+    </symbol>
+    <symbol id="icone-whatsapp" viewBox="0 0 24 24">
+      <path d="M12 2.8a9.1 9.1 0 0 0-7.8 13.8L3 21l4.5-1.2A9.1 9.1 0 1 0 12 2.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M9.1 7.4c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .5-.1.7l-.5.6c-.1.2-.1.4 0 .6.6 1 1.5 1.9 2.5 2.5.2.1.4.1.6 0l.6-.5c.2-.1.5-.2.7-.1l1.7.7c.3.1.4.3.4.5v.5c0 .3-.1.6-.4.8-.6.4-1.3.6-2 .5-3-.4-5.6-3-6-6-.1-.7.1-1.4.5-2z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icone-seta" viewBox="0 0 24 24">
+      <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icone-externo" viewBox="0 0 24 24">
+      <path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <header class="cabecalho" data-header>
+    <div class="container cabecalho__linha">
+      <a class="logo" href="#inicio" aria-label="Martins, Criação de Sites. Ir para o início">
+        <svg class="logo__simbolo" aria-hidden="true"><use href="#simbolo-m"/></svg>
+        <span class="logo__texto"><b>Martins</b><small>Criação de Sites</small></span>
+      </a>
+
+      <nav class="nav" id="menu" aria-label="Menu principal">
+        <ul class="nav__lista">
+          <li><a class="nav__link" href="#inicio">Início</a></li>
+          <li><a class="nav__link" href="#projetos">Projetos</a></li>
+          <li><a class="nav__link" href="#servicos">Serviços</a></li>
+          <li><a class="nav__link" href="#sobre">Sobre</a></li>
+          <li><a class="nav__link" href="#contato">Contato</a></li>
+        </ul>
+        <a class="btn btn--primario nav__cta" href="#contato">Solicitar orçamento</a>
+      </nav>
+
+      <div class="cabecalho__acoes">
+        <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema claro">
+          <svg class="icone-sol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="icone-lua" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="btn btn--primario cabecalho__cta" href="#contato">Solicitar orçamento</a>
+        <button class="icone-btn menu-btn" type="button" data-menu-toggle="1000" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+          <span class="menu-btn__barras" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="inicio" aria-labelledby="hero-titulo">
+      <div class="container hero__grade">
+        <div class="hero__texto">
+          <p class="sobretitulo">Criação de sites para pequenos e médios negócios</p>
+          <h1 class="hero__titulo" id="hero-titulo">Sites que transformam negócios em <span class="destaque">marcas digitais.</span></h1>
+          <p class="hero__subtitulo">Crio experiências digitais personalizadas para negócios que querem apresentar seus serviços com profissionalismo, fortalecer sua presença online e facilitar o contato com seus clientes.</p>
+          <div class="hero__botoes">
+            <a class="btn btn--primario btn--grande" href="#projetos">Explorar projetos</a>
+            <a class="btn btn--contorno btn--grande" href="#contato">Solicitar orçamento</a>
+          </div>
+        </div>
+
+        <!-- Recortes de telas dos projetos (montados em HTML e CSS) -->
+        <div class="colagem" role="img" aria-label="Recortes de telas dos projetos: AutoPrime, SOLADO, Ponto e AgendaPro">
+          <span class="geo geo--circulo" aria-hidden="true"></span>
+          <span class="geo geo--pontos" aria-hidden="true"></span>
+          <span class="geo geo--quadrado" aria-hidden="true"></span>
+
+          <div class="recorte recorte--auto" aria-hidden="true">
+            <div class="r-auto__barra"><b>AUTOPRIME</b><span>Serviços</span><span>Galeria</span><i>Orçamento</i></div>
+            <p class="r-auto__etiqueta">MANUTENÇÃO E DIAGNÓSTICO</p>
+            <p class="r-auto__titulo">Seu carro merece<br>cuidado de alto nível</p>
+            <img class="r-auto__carro" src="projetos/autoprime/img/carro.svg" alt="" width="1000" height="380" loading="lazy" decoding="async">
+          </div>
+
+          <div class="recorte recorte--agenda" aria-hidden="true">
+            <div class="r-agenda__topo"><b>AgendaPro</b><span>Semana</span></div>
+            <div class="r-agenda__dias"><span>Seg</span><span class="on">Ter</span><span>Qua</span><span>Qui</span></div>
+            <div class="r-agenda__item r-agenda__item--a"><time>09:00</time><span>Corte + barba</span></div>
+            <div class="r-agenda__item r-agenda__item--b"><time>10:30</time><span>Esmaltação</span></div>
+            <div class="r-agenda__item r-agenda__item--livre"><time>13:00</time><span>Livre</span></div>
+            <div class="r-agenda__item r-agenda__item--c"><time>14:00</time><span>Pé e mão</span></div>
+          </div>
+
+          <div class="recorte recorte--tenis" aria-hidden="true">
+            <div class="r-tenis__topo"><b>SOLADO</b><span>Novo</span></div>
+            <svg class="r-tenis__tenis"><use href="#ilustra-tenis"/></svg>
+            <div class="r-tenis__info"><span>Runner Vão 01</span><b>R$ 549,90</b></div>
+            <div class="r-tenis__tamanhos"><span>38</span><span>39</span><span class="on">40</span><span>41</span></div>
+          </div>
+
+          <div class="recorte recorte--doces" aria-hidden="true">
+            <p class="r-doces__marca">Ponto</p>
+            <p class="r-doces__titulo">Sua encomenda</p>
+            <ul class="r-doces__lista">
+              <li><span>Brigadeiro</span><b>50</b></li>
+              <li><span>Coxinha</span><b>100</b></li>
+              <li><span>Bolo de cenoura</span><b>1</b></li>
+            </ul>
+            <p class="r-doces__total"><span>Subtotal</span><b>R$ 320,00</b></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROJETOS ===================== -->
+    <section class="secao" id="projetos" aria-labelledby="projetos-titulo">
+      <div class="container">
+        <header class="secao__cabeca" data-reveal>
+          <p class="sobretitulo">Portfólio</p>
+          <h2 id="projetos-titulo">Projetos</h2>
+          <p class="secao__lead">Um site de cliente, já publicado, e projetos demonstrativos: cada um com marca, estrutura e recursos pensados para o seu segmento.</p>
+        </header>
+
+        <!-- ---------- Cliente real ---------- -->
+        <div class="grupo">
+          <div class="grupo__cabeca" data-reveal>
+            <h3 class="grupo__titulo">Cliente</h3>
+            <p>Site real, publicado e no ar.</p>
+          </div>
+
+          <article class="cliente" data-reveal>
+            <!-- Capa: ilustração. Para usar um print do site, veja CONFIG.clientes em script.js -->
+            <a class="cliente__capa capa-bratz" href="https://nailsbybratz.pythonanywhere.com" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true" data-cliente-link="nails-by-bratz" data-cliente-print="nails-by-bratz">
+              <span class="capa-bratz__url">nailsbybratz.pythonanywhere.com</span>
+              <span class="capa-bratz__agenda">
+                <span class="capa-bratz__agenda-topo"><b>Agenda</b><span></span></span>
+                <span class="capa-bratz__dias"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span></span>
+                <span class="capa-bratz__horarios">
+                  <span class="a"></span><span></span><span class="b"></span><span class="a"></span><span></span>
+                  <span></span><span class="b"></span><span class="a"></span><span></span><span class="b"></span>
+                  <span class="a"></span><span></span><span></span><span class="b"></span><span class="a"></span>
+                </span>
+              </span>
+              <span class="capa-bratz__marca"><span>Nails <i>by</i></span><span>Bratz</span><small>Agendamento online</small></span>
+              <span class="capa-bratz__rotulo">Ilustração</span>
+            </a>
+            <div class="cliente__info">
+              <p class="meta"><span class="selo selo--cliente">Cliente real</span><span>Beleza · Agendamento online</span></p>
+              <h4 class="cliente__titulo">Nails by Bratz</h4>
+              <p>Site para um estúdio de nail design, com agendamento online para as clientes e um painel administrativo para o estúdio. Está publicado e funcionando.</p>
+              <ul class="recursos" aria-label="Recursos do projeto">
+                <li>Agendamento online</li>
+                <li>Painel administrativo</li>
+                <li>Site no ar</li>
+              </ul>
+              <div class="botoes">
+                <a class="btn btn--primario" href="https://nailsbybratz.pythonanywhere.com" target="_blank" rel="noopener" data-cliente-link="nails-by-bratz">
+                  Ver site no ar
+                  <svg width="16" height="16" aria-hidden="true"><use href="#icone-externo"/></svg>
+                  <span class="sr-only">(abre em nova aba)</span>
+                </a>
+                <a class="btn btn--contorno js-whatsapp" href="#contato" data-msg="Olá, Martins! Vi o site da Nails by Bratz no seu portfólio e quero um site com agendamento para o meu negócio.">Quero um site assim</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- ---------- Projetos demonstrativos ---------- -->
+        <div class="grupo">
+          <div class="grupo__cabeca" data-reveal>
+            <h3 class="grupo__titulo">Demonstrativos</h3>
+            <p>Empresas fictícias, criadas para mostrar estilos e recursos. Nomes, preços e dados são ilustrativos.</p>
+          </div>
+
+          <div class="vitrine">
+            <!-- 1. AutoPrime: largura total, capa à esquerda -->
+            <article class="peca peca--larga" data-reveal data-projeto="autoprime">
+              <a class="peca__capa capa-auto" href="projetos/autoprime/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-autoprime.jpg">
+                <span class="capa-auto__grade"></span>
+                <span class="capa-auto__etiqueta">CENTRO AUTOMOTIVO</span>
+                <span class="capa-auto__marca">AUTOPRIME</span>
+                <img class="capa-auto__carro" src="projetos/autoprime/img/carro.svg" alt="" width="1000" height="380" loading="lazy" decoding="async">
+                <span class="capa-auto__specs"><span>FREIOS</span><span>SUSPENSÃO</span><span>DIAGNÓSTICO</span></span>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Centro automotivo</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">AutoPrime</h4>
+                <p class="peca__descricao">Site premium para centro automotivo: cada serviço já escolhe o orçamento, um guia mostra o que verificar pelo sinal do carro e o pedido é revisado antes de abrir o WhatsApp.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Pedido de orçamento com revisão</li><li>Guia de sinais do carro</li><li>Galeria ampliável</li></ul>
+                <a class="link-seta" href="projetos/autoprime/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+
+            <!-- 2. Barbearia: coluna estreita -->
+            <article class="peca peca--5" data-reveal data-projeto="black-copper">
+              <a class="peca__capa capa-copper" href="projetos/black-copper/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-black-copper.jpg">
+                <span class="capa-copper__marca">Black Copper<small>Barber Studio</small></span>
+                <span class="capa-copper__quadro">
+                  <span><b>Corte</b><i>R$ 50</i></span>
+                  <span><b>Degradê</b><i>R$ 60</i></span>
+                  <span><b>Barba</b><i>R$ 45</i></span>
+                  <span><b>Corte e barba</b><i>R$ 90</i></span>
+                </span>
+                <svg class="capa-copper__navalha" viewBox="0 0 200 50"><rect x="0" y="27" width="112" height="13" rx="6.5" fill="#B8734F"/><circle cx="106" cy="33.5" r="3" fill="#F2E8D8"/><path d="M104 27 L188 12 Q199 10 199 21 L199 30 Q199 33 196 33.4 L110 41 Z" fill="#F2E8D8"/></svg>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Barbearia</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">BLACK COPPER</h4>
+                <p class="peca__descricao">Barbearia em preto, creme e cobre: tabela de preços em letreiro de feltro, barbeiros com a disponibilidade do dia, agendamento sem conflito de horário e painel da barbearia.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Letreiro de serviços</li><li>Agendamento</li><li>Painel</li></ul>
+                <a class="link-seta" href="projetos/black-copper/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+
+            <!-- 3. Estúdio de unhas: coluna larga -->
+            <article class="peca peca--7" data-reveal data-projeto="violet-studio">
+              <a class="peca__capa capa-violet" href="projetos/violet-studio/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-violet-studio.jpg">
+                <svg viewBox="0 214 470 330" aria-hidden="true" class="capa-violet__leque" focusable="false"> <g transform="rotate(-38 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc1"><path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z"/></clipPath> <linearGradient id="cvb2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> </defs><g clip-path="url(#cvc1)"><path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z" fill="#D9C9F5"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb2)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g><g transform="rotate(-19.5 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc4"><path d="M20 2 C31 2 37 9 37 20 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 20 C3 9 9 2 20 2 Z"/></clipPath> <linearGradient id="cvb5" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> </defs><g clip-path="url(#cvc4)"><path d="M20 2 C31 2 37 9 37 20 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 20 C3 9 9 2 20 2 Z" fill="#F3E9E2"/><path d="M0 0 H40 V17 Q20 8 0 17 Z" fill="#FFFFFF"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb5)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M20 2 C31 2 37 9 37 20 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 20 C3 9 9 2 20 2 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g><g transform="rotate(-1 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc7"><path d="M12.5 1 L27.5 1 Q29 1 29.4 2.4 L37 32 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 32 L10.6 2.4 Q11 1 12.5 1 Z"/></clipPath> <linearGradient id="cvb8" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> <linearGradient id="cvg9" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#D9C9F5"/><stop offset=".35" stop-color="#51318C"/><stop offset=".55" stop-color="#F7F6F9"/><stop offset=".75" stop-color="#51318C"/><stop offset="1" stop-color="#51318C"/></linearGradient> </defs><g clip-path="url(#cvc7)"><path d="M12.5 1 L27.5 1 Q29 1 29.4 2.4 L37 32 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 32 L10.6 2.4 Q11 1 12.5 1 Z" fill="url(#cvg9)"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb8)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M12.5 1 L27.5 1 Q29 1 29.4 2.4 L37 32 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 32 L10.6 2.4 Q11 1 12.5 1 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g><g transform="rotate(17.5 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc10"><path d="M6 2 L34 2 Q37 2 37 5 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 5 Q3 2 6 2 Z"/></clipPath> <linearGradient id="cvb11" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> </defs><g clip-path="url(#cvc10)"><path d="M6 2 L34 2 Q37 2 37 5 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 5 Q3 2 6 2 Z" fill="#FFFFFF"/><circle cx="20" cy="52" r="3.2" fill="#111014"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb11)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M6 2 L34 2 Q37 2 37 5 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 5 Q3 2 6 2 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g><g transform="rotate(36 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc13"><path d="M20 0 C23 9 37 22 37 34 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 34 C3 22 17 9 20 0 Z"/></clipPath> <linearGradient id="cvb14" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> </defs><g clip-path="url(#cvc13)"><path d="M20 0 C23 9 37 22 37 34 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 34 C3 22 17 9 20 0 Z" fill="#7950C8"/><path d="M24 6 C16 22 26 36 17 58" stroke="#FFFFFF" stroke-width="1.1" fill="none" stroke-linecap="round"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb14)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M20 0 C23 9 37 22 37 34 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 34 C3 22 17 9 20 0 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g><g transform="rotate(54.5 210 505)"><g > <line x1="210" y1="481" x2="210" y2="435" stroke="#C9C3D3" stroke-width="3" stroke-linecap="round"/> <g transform="translate(155 267) scale(2.75)"><defs> <clipPath id="cvc16"><path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z"/></clipPath> <linearGradient id="cvb17" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient> </defs><g clip-path="url(#cvc16)"><path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z" fill="#3A3046"/><circle cx="13" cy="16" r="0.9" fill="#E9E4F2"/><circle cx="26" cy="22" r="1.4" fill="#E9E4F2"/><circle cx="18" cy="31" r="0.7" fill="#E9E4F2"/><circle cx="29" cy="38" r="0.9" fill="#E9E4F2"/><circle cx="11" cy="44" r="1.2" fill="#E9E4F2"/><circle cx="22" cy="51" r="0.8" fill="#E9E4F2"/><circle cx="30" cy="12" r="0.6" fill="#E9E4F2"/><path d="M21 9 l1 2.6 2.6 1 -2.6 1 -1 2.6 -1 -2.6 -2.6 -1 2.6 -1 z" fill="#E9E4F2"/> <path d="M7 10 C6 24 6.5 40 8 54" stroke="url(#cvb17)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/> <path d="M3 60 Q20 66 37 60" stroke="#000" stroke-opacity=".12" stroke-width="3" fill="none"/></g> <path d="M20 1 C30 1 37 14 37 28 L37 56 Q37 62 31 62.6 Q20 64.4 9 62.6 Q3 62 3 56 L3 28 C3 14 10 1 20 1 Z" fill="none" stroke="#111014" stroke-opacity=".28" stroke-width=".7"/><circle cx="20" cy="59" r="1.6" fill="#111014" opacity=".45"/></g> </g></g> <circle cx="210" cy="505" r="27" fill="none" stroke="#C9C3D3" stroke-width="5"/> <circle cx="210" cy="505" r="27" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1.5" stroke-dasharray="18 150"/> </svg>
+                <span class="capa-violet__marca"><b>violet</b><small>studio · nails &amp; beauty</small></span>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Estúdio de unhas</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">VIOLET STUDIO</h4>
+                <p class="peca__descricao">Marca em preto, branco e roxo com catálogo de preços editáveis, galeria ilustrada e agendamento em 7 etapas que respeita jornada, pausas, folgas e bloqueios. Inclui consulta e cancelamento pelo código e um painel de demonstração para o estúdio.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Agendamento sem conflito</li><li>Painel do estúdio</li><li>Galeria</li></ul>
+                <a class="link-seta" href="projetos/violet-studio/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+
+            <!-- 4. Loja de tênis: largura total, capa à direita -->
+            <article class="peca peca--larga peca--invertida" data-reveal data-projeto="tenis">
+              <a class="peca__capa capa-solado" href="projetos/tenis/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-tenis.jpg">
+                <span class="capa-solado__fundo">SOLADO</span>
+                <svg class="capa-solado__tenis"><use href="#ilustra-tenis"/></svg>
+                <span class="capa-solado__selo">Novo<br>drop</span>
+                <span class="capa-solado__ref">REF. 001 — 012</span>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Loja de tênis</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">SOLADO</h4>
+                <p class="peca__descricao">Loja de sneakers com direção de arte de campanha: vitrine de lançamentos, filtros, ordenação, detalhes do produto e carrinho com subtotal.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Filtros e ordenação</li><li>Escolha de tamanho</li><li>Carrinho</li></ul>
+                <a class="link-seta" href="projetos/tenis/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+
+            <!-- 5. Moda: coluna larga -->
+            <article class="peca peca--7" data-reveal data-projeto="moda">
+              <a class="peca__capa capa-avesso" href="projetos/moda/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-moda.jpg">
+                <span class="capa-avesso__arara"></span>
+                <svg class="capa-avesso__peca capa-avesso__peca--1" style="--peca:#141414;--contorno:#141414"><use href="#ilustra-camiseta"/></svg>
+                <svg class="capa-avesso__peca capa-avesso__peca--2" style="--peca:#EFEBE3;--contorno:#141414"><use href="#ilustra-moletom"/></svg>
+                <span class="capa-avesso__marca">Avesso</span>
+                <span class="capa-avesso__etiqueta">P · M · G · GG</span>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Moda urbana</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">AVESSO</h4>
+                <p class="peca__descricao">Catálogo de marca independente: categorias, filtros por tamanho e preço, cores por peça e sacola com edição de quantidades.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Catálogo</li><li>Cor e tamanho</li><li>Carrinho</li></ul>
+                <a class="link-seta" href="projetos/moda/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+
+            <!-- 6. Doces e salgados: coluna estreita -->
+            <article class="peca peca--5" data-reveal data-projeto="doces-salgados">
+              <a class="peca__capa capa-ponto" href="projetos/doces-salgados/index.html" tabindex="-1" aria-hidden="true" data-foto="portfolio/capa-doces.jpg">
+                <span class="capa-ponto__caixa">
+                  <svg><use href="#ilustra-brigadeiro"/></svg><svg><use href="#ilustra-brigadeiro"/></svg><svg><use href="#ilustra-brigadeiro"/></svg>
+                  <svg><use href="#ilustra-brigadeiro"/></svg><svg><use href="#ilustra-brigadeiro"/></svg><svg><use href="#ilustra-brigadeiro"/></svg>
+                </span>
+                <span class="capa-ponto__marca">Ponto</span>
+                <span class="capa-ponto__sub">doces &amp; salgados</span>
+              </a>
+              <div class="peca__info">
+                <p class="meta"><span>Doces e salgados</span><span class="selo">Projeto demonstrativo</span></p>
+                <h4 class="peca__titulo">Ponto</h4>
+                <p class="peca__descricao">Catálogo de doces, salgados e caixas para eventos, com montagem de encomenda, data desejada e resumo enviado pelo WhatsApp.</p>
+                <ul class="recursos" aria-label="Recursos demonstrados"><li>Encomenda</li><li>Resumo do pedido</li></ul>
+                <a class="link-seta" href="projetos/doces-salgados/index.html">Abrir demonstração <svg width="18" height="18" aria-hidden="true"><use href="#icone-seta"/></svg></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- 7. Sistema de agendamento: faixa própria -->
+          <article class="sistema" data-reveal data-projeto="agendapro">
+            <div class="sistema__texto">
+              <p class="meta"><span>Sistema de agendamento</span><span class="selo">Projeto demonstrativo</span></p>
+              <h4 class="sistema__titulo">AgendaPro</h4>
+              <p>Uma demonstração funcional de reservas: o cliente escolhe serviço, profissional, data e horário livre; o estabelecimento acompanha tudo em um painel.</p>
+              <ul class="sistema__lista">
+                <li>Agenda por dia e por semana</li>
+                <li>Bloqueio de horários em conflito</li>
+                <li>Serviços e expediente configuráveis</li>
+                <li>Status: confirmado, pendente e cancelado</li>
+              </ul>
+              <a class="btn btn--primario" href="projetos/agendapro/index.html">Abrir o sistema</a>
+              <p class="sistema__nota">Demonstração local: os dados ficam salvos só no navegador de quem testa.</p>
+            </div>
+
+            <div class="app" aria-hidden="true">
+              <div class="app__lateral">
+                <b>AgendaPro</b>
+                <span class="on">Painel</span><span>Agenda</span><span>Reservas</span><span>Serviços</span><span>Expediente</span>
+              </div>
+              <div class="app__principal">
+                <div class="app__topo"><b>Semana</b><span>+ Novo agendamento</span></div>
+                <div class="app__semana">
+                  <div class="app__horas"><span>09h</span><span>10h</span><span>11h</span><span>12h</span><span>13h</span><span>14h</span></div>
+                  <div class="app__col"><em>Seg</em><i class="ev ev--a" style="--y:0;--h:1.5">Corte</i><i class="ev ev--b" style="--y:3;--h:1">Barba</i></div>
+                  <div class="app__col"><em>Ter</em><i class="ev ev--c" style="--y:1;--h:2">Alongamento</i><i class="ev ev--bloq" style="--y:3.5;--h:1">Bloqueado</i></div>
+                  <div class="app__col"><em>Qua</em><i class="ev ev--a" style="--y:.5;--h:1">Corte</i><i class="ev ev--pend" style="--y:3.5;--h:1.5">Pendente</i></div>
+                  <div class="app__col"><em>Qui</em><i class="ev ev--b" style="--y:2;--h:1">Pé e mão</i></div>
+                  <div class="app__col"><em>Sex</em><i class="ev ev--c" style="--y:0;--h:1">Gel</i><i class="ev ev--a" style="--y:2.5;--h:2">Combo</i></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 8. CRM: faixa própria, com a miniatura do lado esquerdo -->
+          <article class="sistema sistema--invertido" data-reveal data-projeto="nexora-crm">
+            <div class="sistema__texto">
+              <p class="meta"><span>Sistema de gestão comercial</span><span class="selo">Projeto demonstrativo</span></p>
+              <h4 class="sistema__titulo">NEXORA CRM</h4>
+              <p class="sistema__sub">Gestão inteligente de clientes e oportunidades comerciais</p>
+              <p>CRM demonstrativo desenvolvido para centralizar clientes, organizar negociações, acompanhar tarefas comerciais e visualizar indicadores de vendas em uma única plataforma.</p>
+              <ul class="sistema__lista">
+                <li>Pipeline de vendas com arrastar e soltar</li>
+                <li>Indicadores e gráficos calculados a partir dos registros</li>
+                <li>Leads, clientes e ficha com histórico de contatos</li>
+                <li>Tarefas com lembretes e relatórios exportáveis em CSV</li>
+              </ul>
+              <a class="btn btn--primario" href="projetos/nexora-crm/index.html">Abrir o sistema</a>
+              <p class="sistema__nota">Demonstração local com dados fictícios: não há login nem servidor, e tudo fica salvo só no navegador de quem testa.</p>
+            </div>
+
+            <div class="crm" aria-hidden="true">
+              <div class="crm__lateral">
+                <b><i>N</i>NEXORA</b>
+                <span>Visão geral</span><span>Leads</span><span>Clientes</span><span class="on">Pipeline</span><span>Tarefas</span><span>Relatórios</span>
+              </div>
+              <div class="crm__principal">
+                <div class="crm__kpis">
+                  <div><small>Em aberto</small><b>R$ 232 mil</b></div>
+                  <div><small>Conversão</small><b>60%</b></div>
+                  <div><small>Meta do mês</small><b>34%</b><i class="crm__meta"><span></span></i></div>
+                </div>
+                <div class="crm__quadro">
+                  <div class="crm__col"><em>Novo lead <u>9</u></em>
+                    <span class="crm__card"><small>Site institucional</small><b>Clínica Patas</b><code>R$ 7.000</code></span>
+                    <span class="crm__card"><small>Loja virtual</small><b>Tecelagem Fio Nobre</b><code>R$ 16.550</code></span>
+                  </div>
+                  <div class="crm__col"><em>Proposta <u>4</u></em>
+                    <span class="crm__card crm__card--parado"><small>Tráfego pago</small><b>Construtora Alicerce</b><code>R$ 8.400</code></span>
+                    <span class="crm__card crm__card--arrastando"><small>Agendamento</small><b>Doceria Mascavo</b><code>R$ 6.350</code></span>
+                  </div>
+                  <div class="crm__col crm__col--ganho"><em>Venda concluída <u>2</u></em>
+                    <span class="crm__card"><small>Loja virtual</small><b>Navalha de Ouro</b><code>R$ 23.550</code></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 9. Controle de estoque: faixa própria -->
+          <article class="sistema sistema--seguinte" data-reveal data-projeto="nexora-stock">
+            <div class="sistema__texto">
+              <p class="meta"><span>Sistema de controle de estoque</span><span class="selo">Projeto demonstrativo</span></p>
+              <h4 class="sistema__titulo">NEXORA STOCK</h4>
+              <p class="sistema__sub">Controle inteligente de estoque</p>
+              <p>Uma solução de gestão de estoque que centraliza produtos, fornecedores e movimentações, ajudando empresas a acompanhar seus níveis de mercadoria, identificar necessidades de reposição e organizar suas operações.</p>
+              <ul class="sistema__lista">
+                <li>Entradas, saídas e ajustes com histórico que nunca é apagado</li>
+                <li>Saída maior que o saldo é bloqueada e o estoque baixo gera alerta</li>
+                <li>Pedidos de compra com recebimento parcial</li>
+                <li>Dashboard, relatórios por período e exportação em CSV</li>
+              </ul>
+              <a class="btn btn--primario" href="projetos/nexora-stock/index.html">Abrir o sistema</a>
+              <p class="sistema__nota">Demonstração local com dados fictícios: não há login nem servidor, e tudo fica salvo só no navegador de quem testa. O valor do estoque é uma estimativa pelo preço de custo.</p>
+            </div>
+
+            <div class="stk" aria-hidden="true">
+              <div class="stk__lateral">
+                <b><i>N</i>STOCK</b>
+                <span>Dashboard</span><span class="on">Produtos</span><span>Movimentações</span><span>Fornecedores</span><span>Pedidos</span><span>Relatórios</span>
+              </div>
+              <div class="stk__principal">
+                <div class="stk__kpis">
+                  <div><small>Valor estimado</small><b>R$ 17 mil</b></div>
+                  <div class="stk__kpi--alerta"><small>Estoque baixo</small><b>6</b></div>
+                  <div class="stk__kpi--perigo"><small>Sem estoque</small><b>3</b></div>
+                </div>
+                <div class="stk__tabela">
+                  <div class="stk__linha stk__linha--cabeca"><span>Produto</span><span>Saldo</span><span>Situação</span></div>
+                  <div class="stk__linha"><span><b>Joelho PVC 90° 25 mm</b><code>HID-1054</code></span><span><code>214</code><i style="--p:1"></i></span><span class="stk__pill stk__pill--ok">Normal</span></div>
+                  <div class="stk__linha"><span><b>Fita isolante 19 mm</b><code>ELE-1010</code></span><span><code>14</code><i class="stk__baixo" style="--p:.25"></i></span><span class="stk__pill stk__pill--baixo">Baixo</span></div>
+                  <div class="stk__linha stk__linha--destaque"><span><b>Disjuntor 20 A</b><code>ELE-1054</code></span><span><code>0</code><i style="--p:0"></i></span><span class="stk__pill stk__pill--zero">Sem estoque</span></div>
+                  <div class="stk__linha"><span><b>Tinta acrílica 18 L</b><code>PIN-1016</code></span><span><code>7</code><i style="--p:.7"></i></span><span class="stk__pill stk__pill--ok">Normal</span></div>
+                </div>
+                <div class="stk__aviso"><i></i>Recebimento parcial registrado: +12 un.</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 10. Agendamento online: faixa própria, com a miniatura do lado esquerdo -->
+          <article class="sistema sistema--invertido sistema--booking" data-reveal data-projeto="nexora-booking">
+            <div class="sistema__texto">
+              <p class="meta"><span>Sistema de agendamento online</span><span class="selo">Projeto demonstrativo</span></p>
+              <h4 class="sistema__titulo">NEXORA BOOKING</h4>
+              <p class="sistema__sub">Agendamento online e gestão de horários</p>
+              <p>Sistema completo para salões, barbearias, clínicas e estúdios: o cliente reserva sozinho por uma página online, só nos horários realmente livres, e a equipe acompanha agenda, clientes, profissionais e faturamento em um painel.</p>
+              <ul class="sistema__lista">
+                <li>Agenda por dia, semana, mês e lista, com uma cor por profissional</li>
+                <li>Conflitos, duração do serviço, pausas, folgas, feriados e bloqueios conferidos em toda reserva</li>
+                <li>Página do cliente com código da reserva, cancelamento e reagendamento dentro da política</li>
+                <li>Dashboard, financeiro e relatórios com exportação em CSV</li>
+              </ul>
+              <div class="sistema__botoes">
+                <a class="btn btn--primario" href="projetos/nexora-booking/index.html">Abrir o painel</a>
+                <a class="btn btn--contorno" href="projetos/nexora-booking/reservar.html">Ver a página do cliente</a>
+              </div>
+              <p class="sistema__nota">Demonstração local com dados fictícios: não há login nem servidor, nada é enviado por WhatsApp ou e-mail e nenhum pagamento é processado. Tudo fica salvo só no navegador de quem testa.</p>
+            </div>
+
+            <div class="bkg" aria-hidden="true">
+              <div class="bkg__lateral">
+                <b><i>N</i>BOOKING</b>
+                <span>Dashboard</span><span class="on">Agenda</span><span>Agendamentos</span><span>Clientes</span><span>Serviços</span><span>Profissionais</span>
+              </div>
+              <div class="bkg__principal">
+                <div class="bkg__topo"><b>Terça, 13 de outubro</b><span><em class="on">Dia</em><em>Semana</em><em>Mês</em></span></div>
+                <div class="bkg__grade">
+                  <div class="bkg__horas"><span>09h</span><span>10h</span><span>11h</span><span>12h</span><span>13h</span><span>14h</span></div>
+                  <div class="bkg__col" style="--c:#2a78d6"><em><i></i>Rafael</em>
+                    <u class="bkg__ev" style="--y:0;--h:.75">Corte</u><u class="bkg__ev" style="--y:1;--h:1.25">Corte + barba</u>
+                    <u class="bkg__fora" style="--y:3;--h:1"></u><u class="bkg__ev bkg__ev--pend" style="--y:4;--h:.5">Barba</u>
+                  </div>
+                  <div class="bkg__col" style="--c:#eb6834"><em><i></i>Helena</em>
+                    <u class="bkg__fora" style="--y:0;--h:1"></u><u class="bkg__ev" style="--y:1;--h:1">Corte feminino</u>
+                    <u class="bkg__ev" style="--y:2.25;--h:.75">Escova</u><u class="bkg__bloq" style="--y:4;--h:1.4">Curso</u>
+                  </div>
+                  <div class="bkg__col" style="--c:#1baf7a"><em><i></i>Camila</em>
+                    <u class="bkg__ev" style="--y:.5;--h:1.25">Gel</u><u class="bkg__fora" style="--y:3.5;--h:1"></u>
+                    <u class="bkg__ev" style="--y:4.5;--h:.75">Manicure</u>
+                  </div>
+                  <i class="bkg__agora" style="--y:1.6"></i>
+                </div>
+                <div class="bkg__aviso"><i></i>Nova reserva pela página · pendente</div>
+              </div>
+              <div class="bkg__celular">
+                <b>Escolha o horário</b>
+                <span class="bkg__dias"><em>Hoje</em><em class="on">Qua 14</em><em>Qui 15</em></span>
+                <span class="bkg__slots"><em>14:00</em><em class="on">14:15</em><em>14:30</em><em>15:00</em><em>15:15</em><em>16:30</em></span>
+                <span class="bkg__botao">Confirmar</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 11. Gestão de oficina mecânica: faixa própria -->
+          <article class="sistema sistema--seguinte sistema--auto" data-reveal data-projeto="nexora-auto">
+            <div class="sistema__texto">
+              <p class="meta"><span>Sistema de gestão para oficina mecânica</span><span class="selo">Projeto demonstrativo</span></p>
+              <h4 class="sistema__titulo">NEXORA AUTO</h4>
+              <p class="sistema__sub">Ordens de serviço, orçamentos, peças e financeiro da oficina</p>
+              <p>Sistema para centros automotivos e oficinas: do recebimento do veículo à entrega, com orçamento aprovado pelo cliente, peças reservadas e baixadas do estoque na hora certa, agenda de técnicos e boxes e o financeiro separado entre faturado e recebido.</p>
+              <ul class="sistema__lista">
+                <li>Ordem de serviço com etapas, diagnóstico, itens e histórico de cada alteração</li>
+                <li>Orçamento aprovado não muda: alterações viram revisão com nova aprovação</li>
+                <li>Peça no orçamento não mexe no estoque; a aprovação reserva e a baixa acontece uma única vez</li>
+                <li>Agenda sem conflito de técnico ou box, perfis de acesso, relatórios e CSV</li>
+              </ul>
+              <div class="sistema__botoes">
+                <a class="btn btn--primario" href="projetos/nexora-auto/index.html">Abrir o sistema</a>
+              </div>
+              <p class="sistema__nota">Demonstração local com a oficina fictícia AutoPrime: não há login nem servidor (os perfis são uma simulação), nada é enviado por WhatsApp ou e-mail e nenhum pagamento é processado. Tudo fica salvo só no navegador de quem testa.</p>
+            </div>
+
+            <div class="aut" aria-hidden="true">
+              <div class="aut__lateral">
+                <b><i></i>AUTO</b>
+                <span>Painel</span><span class="on">Ordens de serviço</span><span>Orçamentos</span><span>Agenda</span><span>Veículos</span><span>Estoque</span><span>Financeiro</span>
+              </div>
+              <div class="aut__principal">
+                <div class="aut__topo"><b>OS-0057</b><span class="aut__placa">DMO1A11</span><em class="aut__pill aut__pill--exec">Em execução</em></div>
+                <div class="aut__etapas"><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="on"></i><i></i><i></i></div>
+                <div class="aut__itens">
+                  <div class="aut__linha aut__linha--cabeca"><span>Item</span><span>Total</span><span>Estoque</span></div>
+                  <div class="aut__linha"><span><b>Higienização do ar-condicionado</b><code>Serviço</code></span><span>R$ 130,00</span><span>—</span></div>
+                  <div class="aut__linha"><span><b>Filtro de cabine</b><code>FIL-CAB-01</code></span><span>R$ 45,00</span><span class="aut__pill aut__pill--res">Reservada</span></div>
+                  <div class="aut__linha"><span><b>Gás refrigerante R134a</b><code>ARC-GAS-R134</code></span><span>R$ 150,00</span><span class="aut__pill aut__pill--res">Reservada</span></div>
+                  <div class="aut__linha aut__linha--total"><span>Total aprovado</span><span>R$ 325,00</span><span></span></div>
+                </div>
+                <div class="aut__aviso"><i></i>Orçamento aprovado por WhatsApp · registro interno</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SERVIÇOS ===================== -->
+    <section class="secao secao--alt" id="servicos" aria-labelledby="servicos-titulo">
+      <div class="container servicos">
+        <header class="servicos__cabeca" data-reveal>
+          <p class="sobretitulo">Serviços</p>
+          <h2 id="servicos-titulo">O que posso criar para o seu negócio</h2>
+          <p class="secao__lead">Cada projeto começa pelo que o seu cliente precisa encontrar: o que você faz, quanto custa, onde fica e como falar com você.</p>
+          <p class="servicos__nota">Pagamento online, notificações automáticas e integrações com outros sistemas não fazem parte dos pacotes padrão. Se o seu negócio precisar, conversamos antes sobre o que é possível, e nada entra no orçamento sem ter sido testado.</p>
+        </header>
+
+        <ul class="servicos__lista">
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z M9.5 20v-6h5v6"/></svg>
+            <div>
+              <h3>Sites institucionais</h3>
+              <p>Apresentam quem você é, seus serviços, horários e localização, para o cliente decidir com mais segurança.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero um orçamento de site institucional.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5 11.5 20l2.3-6.7 6.7-2.3z M14 14l5 5"/></svg>
+            <div>
+              <h3>Landing pages para campanhas</h3>
+              <p>Uma página com um objetivo só: divulgar um serviço, uma promoção ou um lançamento, com o contato sempre à vista.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero um orçamento de landing page para uma campanha.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z"/></svg>
+            <div>
+              <h3>Catálogos e vitrines digitais</h3>
+              <p>Cardápios, catálogos e listas de produtos organizados por categoria, fáceis de mandar por link e de manter atualizados.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero um orçamento de catálogo ou vitrine digital.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.2 12H6.2z M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
+            <div>
+              <h3>Lojas virtuais demonstrativas</h3>
+              <p>Vitrine com filtros, página de produto e carrinho. O pedido segue pelo WhatsApp; pagamento online é orçado à parte.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero conversar sobre uma loja virtual com vitrine e carrinho.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4z M4 10h16 M8 3v5 M16 3v5 M8 14h3 M13 14h3 M8 17h3"/></svg>
+            <div>
+              <h3>Sistemas de agendamento</h3>
+              <p>Reservas com horários livres e painel para o estabelecimento. Com servidor, como o da Nails by Bratz, as reservas ficam guardadas de verdade.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero um orçamento de site com agendamento online.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z M4 7l8 6 8-6"/></svg>
+            <div>
+              <h3>Formulários de contato</h3>
+              <p>Formulários com validação que organizam o pedido do cliente e abrem a conversa no WhatsApp já com os dados preenchidos.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero um formulário de contato no meu site.">Pedir orçamento</a>
+          </li>
+          <li class="servico" data-reveal>
+            <svg class="servico__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12v10H3z M17 9h4v10h-4z M7 19h6"/></svg>
+            <div>
+              <h3>Melhorias de responsividade e experiência</h3>
+              <p>Ajustes em sites que já existem para funcionarem bem no celular: textos legíveis, botões fáceis de tocar e menus que funcionam.</p>
+            </div>
+            <a class="servico__link js-whatsapp" href="#contato" data-msg="Olá, Martins! Quero melhorar o site que já tenho.">Pedir orçamento</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Como funciona: quatro etapas, nesta ordem -->
+      <div class="container">
+        <ol class="etapas" aria-label="Como funciona">
+          <li data-reveal><b>Conversa</b><span>Você conta sobre o negócio e o que espera do site.</span></li>
+          <li data-reveal><b>Orçamento</b><span>Recebe por escrito o que será feito, o prazo e o valor.</span></li>
+          <li data-reveal><b>Criação e revisão</b><span>Recebe um link de prévia e pede os ajustes combinados.</span></li>
+          <li data-reveal><b>Publicação</b><span>O site vai ao ar e você sabe como pedir alterações.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== SOBRE ===================== -->
+    <section class="secao" id="sobre" aria-labelledby="sobre-titulo">
+      <div class="container sobre">
+        <div class="sobre__texto" data-reveal>
+          <p class="sobretitulo" id="sobre-titulo">Sobre</p>
+          <p class="sobre__frase">Sou Martins e desenvolvo sites com foco em apresentação visual, experiência do usuário e objetivos comerciais.</p>
+          <p>Meu processo combina estudo, desenvolvimento e ferramentas modernas para criar soluções digitais adaptadas a cada negócio. Uso inteligência artificial como apoio no trabalho, e as decisões, a revisão e os testes de cada site ficam comigo.</p>
+          <p>Não sou uma agência: quem conversa com você é quem cria o seu site, e tudo o que será feito fica combinado por escrito antes de começar.</p>
+        </div>
+
+        <ul class="principios" data-reveal>
+          <li><b>Comunicação clara</b><span>Cada etapa explicada sem termos técnicos.</span></li>
+          <li><b>Transparência</b><span>Você sabe o que está incluído e o que não está.</span></li>
+          <li><b>Atenção aos detalhes</b><span>Textos revisados e botões testados um a um.</span></li>
+          <li><b>Celular em primeiro lugar</b><span>O layout nasce pensado para a tela do telefone.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== DÚVIDAS ===================== -->
+    <section class="secao secao--alt" id="duvidas" aria-labelledby="duvidas-titulo">
+      <div class="container duvidas">
+        <header class="secao__cabeca" data-reveal>
+          <p class="sobretitulo">Dúvidas</p>
+          <h2 id="duvidas-titulo">Perguntas frequentes</h2>
+        </header>
+        <div class="faq" data-reveal>
+          <details class="faq__item">
+            <summary>Quanto custa um site?</summary>
+            <p>Depende do tipo de site, da quantidade de páginas e dos recursos. Depois de entender o que você precisa, envio um orçamento por escrito, sem compromisso.</p>
+          </details>
+          <details class="faq__item">
+            <summary>Quanto tempo leva para ficar pronto?</summary>
+            <p>Depende do tamanho do projeto e de quando os textos e as fotos ficam prontos. O prazo é combinado no orçamento, antes de começar.</p>
+          </details>
+          <details class="faq__item">
+            <summary>Onde o site fica hospedado?</summary>
+            <p>Sites sem sistema, como este portfólio, podem ser publicados no Netlify. Sites com agendamento e painel precisam de um servidor, como o PythonAnywhere, onde está a Nails by Bratz. O domínio próprio (como seunegocio.com.br) é registrado à parte. No orçamento eu explico os custos de cada um, se houver.</p>
+          </details>
+          <details class="faq__item">
+            <summary>E se eu precisar mudar algo depois?</summary>
+            <p>Alterações depois da entrega podem ser feitas quando você precisar ou combinadas como manutenção mensal. As condições ficam definidas no orçamento.</p>
+          </details>
+          <details class="faq__item">
+            <summary>Os projetos demonstrativos são clientes reais?</summary>
+            <p>Não. Eles mostram estilos e recursos que posso aplicar no seu site. O projeto de cliente real está identificado como "Cliente real".</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTATO ===================== -->
+    <section class="secao contato" id="contato" aria-labelledby="contato-titulo">
+      <div class="container contato__grade">
+        <div class="contato__texto" data-reveal>
+          <p class="sobretitulo">Contato</p>
+          <h2 id="contato-titulo">Vamos conversar sobre o seu site?</h2>
+          <p>Me chame no WhatsApp ou preencha o formulário. Ele organiza o seu pedido e abre a conversa já com os dados, para você revisar e enviar.</p>
+          <a class="btn btn--whatsapp btn--grande js-whatsapp" href="#contato">
+            <svg width="22" height="22" aria-hidden="true"><use href="#icone-whatsapp"/></svg>
+            Chamar no WhatsApp
+          </a>
+          <!-- O número aparece aqui depois que você configurar em script.js -->
+          <p class="contato__numero" id="whatsapp-numero" hidden></p>
+          <!-- Redes sociais: preenchidas pelo script.js (só as que tiverem link) -->
+          <ul class="redes" id="redes-contato" hidden></ul>
+        </div>
+
+        <form class="formulario" id="form-contato" novalidate data-reveal>
+          <div class="campo">
+            <label for="f-nome">Seu nome</label>
+            <input id="f-nome" name="nome" type="text" autocomplete="name" maxlength="60" required aria-describedby="f-nome-erro">
+            <p class="campo__erro" id="f-nome-erro"></p>
+          </div>
+          <div class="campo">
+            <label for="f-negocio">Nome do negócio</label>
+            <input id="f-negocio" name="negocio" type="text" autocomplete="organization" maxlength="60" required aria-describedby="f-negocio-erro">
+            <p class="campo__erro" id="f-negocio-erro"></p>
+          </div>
+          <div class="campo">
+            <label for="f-servico">Serviço desejado</label>
+            <select id="f-servico" name="servico" required aria-describedby="f-servico-erro">
+              <option value="">Escolha uma opção</option>
+              <option>Site institucional</option>
+              <option>Landing page para campanha</option>
+              <option>Catálogo ou vitrine digital</option>
+              <option>Loja virtual (vitrine e carrinho)</option>
+              <option>Sistema de agendamento</option>
+              <option>Formulário de contato</option>
+              <option>Melhorias em um site que já tenho</option>
+              <option>Ainda não sei</option>
+            </select>
+            <p class="campo__erro" id="f-servico-erro"></p>
+          </div>
+          <div class="campo">
+            <label for="f-descricao">Descrição do projeto</label>
+            <textarea id="f-descricao" name="descricao" rows="4" maxlength="800" required aria-describedby="f-descricao-dica f-descricao-erro" placeholder="Ex.: tenho uma barbearia e quero um site com os serviços, o endereço e o agendamento."></textarea>
+            <p class="campo__dica" id="f-descricao-dica">Pelo menos 20 caracteres.</p>
+            <p class="campo__erro" id="f-descricao-erro"></p>
+          </div>
+          <button class="btn btn--primario btn--grande formulario__enviar" type="submit">
+            <svg width="20" height="20" aria-hidden="true"><use href="#icone-whatsapp"/></svg>
+            Continuar no WhatsApp
+          </button>
+          <div class="formulario__status" id="form-status" role="status" aria-live="polite" hidden></div>
+          <p class="formulario__nota">Nada fica salvo neste site. O formulário monta a mensagem e abre o WhatsApp para você enviar.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== RODAPÉ ===================== -->
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <div class="rodape__marca">
+        <a class="logo" href="#inicio" aria-label="Martins, Criação de Sites. Voltar ao início">
+          <svg class="logo__simbolo" aria-hidden="true"><use href="#simbolo-m"/></svg>
+          <span class="logo__texto"><b>Martins</b><small>Criação de Sites</small></span>
+        </a>
+        <p>Sites personalizados para pequenos e médios negócios, com atendimento direto.</p>
+      </div>
+
+      <nav class="rodape__coluna" aria-label="Navegação do rodapé">
+        <h2 class="rodape__titulo">Navegação</h2>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#projetos">Projetos</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+
+      <div class="rodape__coluna">
+        <h2 class="rodape__titulo">Projetos</h2>
+        <ul>
+          <li><a href="https://nailsbybratz.pythonanywhere.com" target="_blank" rel="noopener" data-cliente-link="nails-by-bratz">Nails by Bratz<span class="sr-only"> (abre em nova aba)</span></a></li>
+          <li data-projeto="autoprime"><a href="projetos/autoprime/index.html">AutoPrime</a></li>
+          <li data-projeto="black-copper"><a href="projetos/black-copper/index.html">BLACK COPPER</a></li>
+          <li data-projeto="violet-studio"><a href="projetos/violet-studio/index.html">VIOLET STUDIO</a></li>
+          <li data-projeto="tenis"><a href="projetos/tenis/index.html">SOLADO</a></li>
+          <li data-projeto="moda"><a href="projetos/moda/index.html">AVESSO</a></li>
+          <li data-projeto="doces-salgados"><a href="projetos/doces-salgados/index.html">Ponto</a></li>
+          <li data-projeto="agendapro"><a href="projetos/agendapro/index.html">AgendaPro</a></li>
+          <li data-projeto="nexora-crm"><a href="projetos/nexora-crm/index.html">NEXORA CRM</a></li>
+          <li data-projeto="nexora-stock"><a href="projetos/nexora-stock/index.html">NEXORA STOCK</a></li>
+          <li data-projeto="nexora-booking"><a href="projetos/nexora-booking/index.html">NEXORA BOOKING</a></li>
+          <li data-projeto="nexora-auto"><a href="projetos/nexora-auto/index.html">NEXORA AUTO</a></li>
+        </ul>
+      </div>
+
+      <div class="rodape__coluna">
+        <h2 class="rodape__titulo">Contato</h2>
+        <ul>
+          <li><a class="js-whatsapp" href="#contato">WhatsApp</a></li>
+        </ul>
+        <ul class="redes redes--rodape" id="redes-rodape" hidden></ul>
+      </div>
+    </div>
+
+    <div class="container rodape__base">
+      <p>© <span data-ano>2026</span> Martins | Criação de Sites</p>
+      <p>Projetos marcados como demonstrativos usam empresas fictícias.</p>
+    </div>
+  </footer>
+
+  <!-- Botão flutuante de WhatsApp -->
+  <a class="whatsapp-flutuante js-whatsapp" href="#contato" aria-label="Conversar no WhatsApp">
+    <svg width="28" height="28" aria-hidden="true"><use href="#icone-whatsapp"/></svg>
+  </a>
+
+  <script src="script.js"></script>
+
+</body></html>
