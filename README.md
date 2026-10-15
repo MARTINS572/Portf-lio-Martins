@@ -1,18 +1,20 @@
 
 <div align="center">
 
-# MARTINS
-### CRIAÇÃO DE SITES & DESENVOLVIMENTO WEB
+<img src="https://capsule-render.vercel.app/api?type=venom&height=220&color=0:09090b,50:4c1d95,100:8b5cf6&text=MARTINS&fontColor=ffffff&fontSize=65&fontAlignY=45&desc=CRIAÇÃO%20DE%20SITES%20%7C%20DESENVOLVIMENTO%20WEB&descAlignY=68&descSize=15" width="100%" alt="Martins | Criação de Sites">
 
-**Transformando ideias em experiências digitais.**
+### 💜 Transformando ideias em experiências digitais
 
-Desenvolvimento de sites modernos, responsivos e
-pensados para apresentar negócios, serviços e produtos
-de forma profissional na internet.
+Criação de sites modernos, interfaces responsivas
+e projetos demonstrativos para negócios e aplicações web.
 
-[Portfólio](#-portfólio)
-· [Tecnologias](#-tecnologias)
-· [Contato](#-contato)
+[🚀 Projetos](#-projetos-demonstrativos)
+&nbsp; • &nbsp;
+[🧩 Sistemas](#-sistemas-demonstrativos)
+&nbsp; • &nbsp;
+[🛠️ Tecnologias](#-tecnologias)
+&nbsp; • &nbsp;
+[📬 Contato](#-contato)
 
 </div>
 
@@ -20,124 +22,105 @@ de forma profissional na internet.
 
 ## 👨‍💻 Sobre mim
 
-Sou Martins, estou aprendendo desenvolvimento web e
-utilizo ferramentas de inteligência artificial como apoio
-para desenvolver, testar e aprimorar meus projetos.
+Sou Martins e estou aprendendo desenvolvimento web,
+utilizando ferramentas de inteligência artificial como apoio
+para criar, testar e aprimorar meus projetos.
 
-Meu foco é criar experiências digitais modernas,
-funcionais e acessíveis, com atenção ao design,
-à experiência do usuário e à adaptação para dispositivos
-móveis.
+Meu objetivo é desenvolver soluções digitais com foco em:
 
-Também desenvolvo projetos demonstrativos para explorar
-soluções digitais que podem ajudar pequenos negócios
-a fortalecer sua presença na internet.
+- 🎨 Design moderno e identidade visual consistente.
+- 📱 Experiência responsiva para dispositivos móveis.
+- ⚡ Interatividade e usabilidade.
+- 💼 Presença digital para pequenos negócios.
+- 🧩 Desenvolvimento de aplicações e sistemas demonstrativos.
 
-## 🎯 O que desenvolvo
+---
 
-- Sites institucionais para empresas e profissionais.
-- Landing pages focadas em apresentação de serviços.
-- Sites demonstrativos para diferentes segmentos.
-- Interfaces responsivas para celulares, tablets e computadores.
-- Projetos com formulários, interações e funcionalidades
-  implementadas de acordo com cada necessidade.
+## 🚀 Projetos demonstrativos
+
+Projetos voltados à apresentação de negócios, serviços
+e produtos na internet.
+
+| Projeto | Descrição |
+|---|---|
+| 🚗 AutoPrime | Conceito de site para o setor automotivo |
+| 💈 Barbearia | Apresentação de serviços e conceito de agendamento |
+| 💅 Manicure e Pedicure | Site demonstrativo para profissionais da beleza |
+| 👟 Loja de Tênis | Conceito de loja virtual |
+| 👕 Loja de Roupas | Apresentação demonstrativa de produtos |
+| 🍰 Doces e Salgados | Divulgação de produtos e cardápio |
+
+> Os projetos acima fazem parte do planejamento do portfólio.
+> Adicione links e imagens somente quando os respectivos
+> projetos estiverem disponíveis neste repositório.
+
+---
+
+## 🧩 Sistemas demonstrativos
+
+Além dos sites, o portfólio também explora aplicações
+voltadas à organização e à gestão de informações.
+
+| Sistema ou módulo | Arquivos identificados |
+|---|---|
+| 📅 Agenda e agendamentos | `agenda.js`, `agendamentos.js` |
+| ✅ Tarefas | `tarefas.js` |
+| 🚘 Veículos | `veículos.js` |
+| 🛠️ Serviços | `serviços.js` |
+| 📊 Visão geral | `visao-geral.js` |
+
+> Os nomes acima foram identificados na estrutura do repositório.
+> A finalidade, o funcionamento e o nível de conclusão de cada
+> módulo precisam ser verificados individualmente.
+
+---
 
 ## 🛠️ Tecnologias
 
 <div align="center">
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
 
 </div>
 
-**Meu processo de desenvolvimento:**
-- Estruturação com HTML.
-- Estilização e responsividade com CSS.
-- Interatividade com JavaScript.
-- Versionamento e organização dos projetos com GitHub.
-- Uso de IA como ferramenta auxiliar no desenvolvimento.
+### 🎯 Objetivos de desenvolvimento
 
-## 🚀 Portfólio
+- Criar interfaces organizadas e responsivas.
+- Aprimorar minhas habilidades em HTML, CSS e JavaScript.
+- Explorar soluções digitais para pequenos negócios.
+- Melhorar a experiência do usuário.
+- Evoluir continuamente meus projetos.
 
-Projetos demonstrativos criados para explorar design,
-funcionalidades e soluções digitais para diferentes negócios.
-
-### 🚗 AutoPrime Centro Automotivo
-
-Site demonstrativo para o setor automotivo, com foco em
-apresentação de serviços, identidade visual e contato.
-
-### 💈 Barbearia
-
-Projeto demonstrativo para barbearias, com apresentação
-de serviços, preços, localização e experiência de agendamento.
-
-### 💅 Manicure e Pedicure
-
-Interface demonstrativa para profissionais de beleza,
-com apresentação de serviços e proposta de agendamento.
-
-### 👟 Loja de Tênis
-
-Projeto demonstrativo de loja virtual, explorando
-apresentação de produtos e experiência de navegação.
-
-### 👕 Loja de Roupas
-
-Interface demonstrativa de comércio eletrônico,
-com foco em organização visual e apresentação de produtos.
-
-### 🍰 Doces e Salgados
-
-Site demonstrativo para divulgação de produtos,
-cardápio e informações de contato.
-
-### 📅 Sistemas e aplicações
-
-Projetos voltados à exploração de funcionalidades como
-agendamentos, organização de clientes e controle de estoque,
-conforme o escopo de cada aplicação.
-
-> **Observação:** os projetos acima são apresentações
-> demonstrativas. Consulte cada projeto para verificar
-> as funcionalidades realmente implementadas.
-
-## 🎨 Minha abordagem
-
-- Design moderno e consistente.
-- Layout responsivo e experiência mobile.
-- Navegação clara e intuitiva.
-- Código organizado e manutenção facilitada.
-- Funcionalidades testadas de acordo com o escopo.
-- Atenção à acessibilidade e ao desempenho.
+---
 
 ## 📌 Status do portfólio
 
-🟣 Em desenvolvimento contínuo.
+<img src="https://img.shields.io/badge/Status-Em%20desenvolvimento-8b5cf6?style=for-the-badge" alt="Em desenvolvimento">
 
-Novos projetos, melhorias visuais e funcionalidades
-serão adicionados conforme minha evolução técnica.
+O portfólio está em evolução. Novos projetos, melhorias
+visuais e funcionalidades serão adicionados progressivamente.
+
+---
 
 ## 📬 Contato
 
-Interessado em conversar sobre um site para seu negócio?
-
 **Martins | Criação de Sites**
 
-- GitHub: https://github.com/MARTINS572
+💻 [Meu GitHub](https://github.com/MARTINS572)
 
-Para outros canais de contato, adicione seus links
-profissionais quando estiverem configurados.
+Para solicitar um site ou conversar sobre um projeto,
+entre em contato pelos canais profissionais que estiverem
+disponíveis no meu portfólio.
 
 ---
 
 <div align="center">
 
-**Desenvolvido com dedicação por Martins.**
+**Feito com dedicação por Martins 💜**
 
-*Aprendendo, criando e evoluindo a cada projeto.*
+*Aprendendo • Criando • Evoluindo*
 
 </div>
