@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NEXORA CRM · Projeto demonstrativo</title>
+  <meta name="description" content="NEXORA CRM: demonstração funcional de um CRM para centralizar clientes, organizar negociações, acompanhar tarefas comerciais e ver indicadores de vendas. Dados fictícios, salvos só no navegador. Criado por Martins | Criação de Sites.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0F1115">
+  <meta property="og:title" content="NEXORA CRM · Projeto demonstrativo">
+  <meta property="og:description" content="Gestão de clientes e oportunidades comerciais em um só lugar. Demonstração com dados fictícios.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232F5BEA'/%3E%3Cpath d='M9 23V9l14 14V9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+  <!-- Geist (interface) e Geist Mono (números alinhados) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/comum.js"></script>
+</head>
+<body>
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <!-- Ícones: Lucide (lucide.dev), licença ISC; texto completo em LICENCA-ICONES.txt -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-alarm-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2" /><path d="M5 3 2 6" /><path d="m22 6-3-3" /><path d="M6.38 18.7 4 21" /><path d="M17.64 18.67 20 21" /></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></symbol>
+    <symbol id="i-arrow-up-down" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4" /><path d="M17 20V4" /><path d="m3 8 4-4 4 4" /><path d="M7 4v16" /></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M12 6h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M16 6h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /><path d="M8 6h.01" /><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" /><rect x="4" y="2" width="16" height="20" rx="2" /></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /></symbol>
+    <symbol id="i-calendar-clock" viewBox="0 0 24 24"><path d="M16 14v2.2l1.6 1" /><path d="M16 2v3" /><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338" /><path d="M3 9h5.859" /><path d="M8 2v3" /><circle cx="16" cy="16" r="6" /></symbol>
+    <symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+    <symbol id="i-check-check" viewBox="0 0 24 24"><path d="M18 6 7 17l-5-5" /><path d="m22 10-7.5 7.5L13 16" /></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+    <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></symbol>
+    <symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></symbol>
+    <symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="12" r="10" /></symbol>
+    <symbol id="i-circle-question-mark" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></symbol>
+    <symbol id="i-circle-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></symbol>
+    <symbol id="i-currency" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><line x1="3" x2="6" y1="3" y2="6" /><line x1="21" x2="18" y1="3" y2="6" /><line x1="3" x2="6" y1="21" y2="18" /><line x1="21" x2="18" y1="21" y2="18" /></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528" /></symbol>
+    <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" /></symbol>
+    <symbol id="i-form" viewBox="0 0 24 24"><path d="M4 14h6" /><path d="M4 2h10" /><rect x="4" y="18" width="16" height="4" rx="1" /><rect x="4" y="6" width="16" height="4" rx="1" /></symbol>
+    <symbol id="i-grip-vertical" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1" /><circle cx="9" cy="5" r="1" /><circle cx="9" cy="19" r="1" /><circle cx="15" cy="12" r="1" /><circle cx="15" cy="5" r="1" /><circle cx="15" cy="19" r="1" /></symbol>
+    <symbol id="i-group" viewBox="0 0 24 24"><path d="M3 7V5c0-1.1.9-2 2-2h2" /><path d="M17 3h2c1.1 0 2 .9 2 2v2" /><path d="M21 17v2c0 1.1-.9 2-2 2h-2" /><path d="M7 21H5c-1.1 0-2-.9-2-2v-2" /><rect width="7" height="5" x="7" y="7" rx="1" /><rect width="7" height="5" x="10" y="12" rx="1" /></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3" /><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" /><path d="m21 3 1 11h-2" /><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" /><path d="M3 4h8" /></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol>
+    <symbol id="i-layout-dashboard" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 5h.01" /><path d="M3 12h.01" /><path d="M3 19h.01" /><path d="M8 5h13" /><path d="M8 12h13" /><path d="M8 19h13" /></symbol>
+    <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="M13 5h8" /><path d="M13 12h8" /><path d="M13 19h8" /><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" /></symbol>
+    <symbol id="i-log-out" viewBox="0 0 24 24"><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol>
+    <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" /></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2" /><line x1="8" x2="16" y1="21" y2="21" /><line x1="12" x2="12" y1="17" y2="21" /></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol>
+    <symbol id="i-mouse" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="7" /><path d="M12 6v4" /></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 2v20" /><path d="m15 19-3 3-3-3" /><path d="m19 9 3 3-3 3" /><path d="M2 12h20" /><path d="m5 9-3 3 3 3" /><path d="m9 5 3-3 3 3" /></symbol>
+    <symbol id="i-option" viewBox="0 0 24 24"><path d="M14 3h7" /><path d="M3 3h5.28a1 1 0 0 1 .948.684l5.544 16.632a1 1 0 0 0 .949.684H21" /></symbol>
+    <symbol id="i-panel-left" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /></symbol>
+    <symbol id="i-panel-left-close" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /><path d="m16 15-3-3 3-3" /></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></symbol>
+    <symbol id="i-presentation" viewBox="0 0 24 24"><path d="M2 3h20" /><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3" /><path d="m7 21 5-5 5 5" /></symbol>
+    <symbol id="i-radio" viewBox="0 0 24 24"><path d="M16.247 7.761a6 6 0 0 1 0 8.478" /><path d="M19.075 4.933a10 10 0 0 1 0 14.134" /><path d="M4.925 19.067a10 10 0 0 1 0-14.134" /><path d="M7.753 16.239a6 6 0 0 1 0-8.478" /><circle cx="12" cy="12" r="2" /></symbol>
+    <symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></symbol>
+    <symbol id="i-section" viewBox="0 0 24 24"><path d="M16 5a4 3 0 0 0-8 0c0 4 8 3 8 7a4 3 0 0 1-8 0" /><path d="M8 19a4 3 0 0 0 8 0c0-4-8-3-8-7a4 3 0 0 1 8 0" /></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></symbol>
+    <symbol id="i-square-kanban" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M8 7v7" /><path d="M12 7v4" /><path d="M16 7v9" /></symbol>
+    <symbol id="i-sticky-note" viewBox="0 0 24 24"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z" /><path d="M15 3v5a1 1 0 0 0 1 1h5" /></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24"><path d="M12 3v18" /><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18" /><path d="M3 15h18" /></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+    <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2" /><path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2" /><path d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3" /><path d="M4 22h16" /><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" /><path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3" /></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" x2="19" y1="8" y2="14" /><line x1="22" x2="16" y1="11" y2="11" /></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><path d="M16 3.128a4 4 0 0 1 0 7.744" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><circle cx="9" cy="7" r="4" /></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+  </svg>
+
+  <!-- ===================== BOAS-VINDAS (primeira abertura) ===================== -->
+  <div class="boas-vindas" id="boas-vindas" role="dialog" aria-modal="true" aria-labelledby="bv-titulo" aria-describedby="bv-aviso" hidden>
+    <div class="boas-vindas__caixa">
+      <div class="marca marca--grande">
+        <span class="marca__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 18V6l12 12V6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="marca__nome">NEXORA <b>CRM</b></span>
+      </div>
+      <h1 class="boas-vindas__titulo" id="bv-titulo">Gestão inteligente de clientes e oportunidades comerciais</h1>
+      <p class="boas-vindas__aviso" id="bv-aviso"><span class="selo-demo">Ambiente demonstrativo</span> Explore as funcionalidades utilizando dados fictícios.</p>
+      <ul class="boas-vindas__lista">
+        <li><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-user-plus"/></svg>Cadastre leads e clientes, com busca, filtros e ficha completa</li>
+        <li><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-square-kanban"/></svg>Arraste oportunidades no pipeline e veja os números mudarem</li>
+        <li><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-list-checks"/></svg>Organize tarefas de follow-up com prazos e prioridades</li>
+        <li><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-chart-column"/></svg>Consulte relatórios por período e exporte em CSV</li>
+      </ul>
+      <p class="boas-vindas__nota">Tudo o que você fizer fica salvo só neste navegador. Não há login, servidor ou envio de dados.</p>
+      <div class="boas-vindas__botoes">
+        <button class="btn btn--primario btn--grande" type="button" id="bv-explorar">Explorar demonstração <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+        <a class="btn btn--fantasma" href="../../index.html#projetos">Voltar ao portfólio</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+
+    <!-- ===================== MENU LATERAL ===================== -->
+    <aside class="lateral" id="lateral" aria-label="Menu do NEXORA CRM">
+      <div class="lateral__topo">
+        <a class="marca" href="#/visao-geral" aria-label="NEXORA CRM, ir para a visão geral">
+          <span class="marca__icone" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 18V6l12 12V6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="marca__nome">NEXORA <b>CRM</b></span>
+        </a>
+        <button class="icone-btn icone-btn--sutil lateral__recolher" type="button" id="recolher-menu" aria-label="Recolher menu lateral" aria-expanded="true">
+          <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-panel-left-close"/></svg>
+        </button>
+        <button class="icone-btn icone-btn--sutil lateral__fechar" type="button" id="fechar-menu" aria-label="Fechar menu">
+          <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+
+      <div class="empresa-atual">
+        <span class="empresa-atual__avatar" id="empresa-avatar" aria-hidden="true">AD</span>
+        <span class="empresa-atual__texto"><b id="empresa-nome">Atlas Digital</b><small>Espaço demonstrativo</small></span>
+      </div>
+
+      <nav class="menu" aria-label="Seções do CRM">
+        <ul>
+          <li><a class="menu__link" href="#/visao-geral" data-rota="visao-geral" data-dica="Visão geral"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-layout-dashboard"/></svg><span class="menu__texto">Visão geral</span></a></li>
+          <li><a class="menu__link" href="#/leads" data-rota="leads" data-dica="Leads"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-user-plus"/></svg><span class="menu__texto">Leads</span><span class="menu__conta" id="conta-leads"></span></a></li>
+          <li><a class="menu__link" href="#/clientes" data-rota="clientes" data-dica="Clientes"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-building"/></svg><span class="menu__texto">Clientes</span></a></li>
+          <li><a class="menu__link" href="#/pipeline" data-rota="pipeline" data-dica="Pipeline de vendas"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-square-kanban"/></svg><span class="menu__texto">Pipeline de vendas</span></a></li>
+          <li><a class="menu__link" href="#/tarefas" data-rota="tarefas" data-dica="Tarefas"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-list-checks"/></svg><span class="menu__texto">Tarefas</span><span class="menu__conta menu__conta--alerta" id="conta-tarefas"></span></a></li>
+          <li><a class="menu__link" href="#/relatorios" data-rota="relatorios" data-dica="Relatórios"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-chart-column"/></svg><span class="menu__texto">Relatórios</span></a></li>
+          <li><a class="menu__link" href="#/configuracoes" data-rota="configuracoes" data-dica="Configurações"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-settings"/></svg><span class="menu__texto">Configurações</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="lateral__rodape">
+        <p class="lateral__demo"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-info"/></svg><span>Ambiente demonstrativo · dados fictícios salvos só neste navegador</span></p>
+        <a class="lateral__voltar" href="../../index.html#projetos"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Voltar ao portfólio</span></a>
+      </div>
+    </aside>
+    <div class="fundo-menu" id="fundo-menu" hidden></div>
+
+    <!-- ===================== ÁREA PRINCIPAL ===================== -->
+    <div class="area">
+      <header class="topo">
+        <button class="icone-btn icone-btn--sutil topo__menu" type="button" id="abrir-menu" aria-label="Abrir menu" aria-controls="lateral" aria-expanded="false">
+          <svg class="ic" width="20" height="20" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+
+        <div class="busca" id="busca">
+          <svg class="ic busca__icone" width="18" height="18" aria-hidden="true"><use href="#i-search"/></svg>
+          <label class="vh" for="busca-global">Pesquisar no CRM</label>
+          <input id="busca-global" type="search" placeholder="Pesquisar leads, clientes, oportunidades e tarefas" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="busca-resultados" aria-autocomplete="list">
+          <kbd class="busca__atalho" aria-hidden="true">/</kbd>
+          <div class="busca__resultados" id="busca-resultados" role="listbox" aria-label="Resultados da pesquisa" hidden></div>
+        </div>
+
+        <div class="topo__acoes">
+          <div class="suspenso-caixa">
+            <button class="btn btn--primario" type="button" id="btn-novo" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-novo">
+              <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-plus"/></svg><span class="btn__texto">Novo</span>
+            </button>
+            <div class="suspenso" id="menu-novo" role="menu" aria-label="Novo registro" hidden>
+              <button class="suspenso__item" type="button" role="menuitem" data-novo="lead"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-user-plus"/></svg>Lead</button>
+              <button class="suspenso__item" type="button" role="menuitem" data-novo="cliente"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-building"/></svg>Cliente</button>
+              <button class="suspenso__item" type="button" role="menuitem" data-novo="negocio"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-handshake"/></svg>Oportunidade</button>
+              <button class="suspenso__item" type="button" role="menuitem" data-novo="tarefa"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-list-checks"/></svg>Tarefa</button>
+            </div>
+          </div>
+
+          <div class="suspenso-caixa">
+            <button class="icone-btn" type="button" id="btn-notificacoes" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" aria-controls="painel-notificacoes">
+              <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-bell"/></svg>
+              <span class="contador-notif" id="notif-conta" hidden></span>
+            </button>
+            <div class="suspenso suspenso--notificacoes" id="painel-notificacoes" hidden>
+              <div class="suspenso__cabeca">
+                <h2>Notificações</h2>
+                <button class="link-btn" type="button" id="notif-ler-todas">Marcar todas como lidas</button>
+              </div>
+              <ul class="notificacoes" id="lista-notificacoes"></ul>
+              <p class="suspenso__nota">Lembretes calculados a partir das suas tarefas e oportunidades. Não há envio por e-mail ou celular.</p>
+            </div>
+          </div>
+
+          <button class="icone-btn" type="button" id="btn-ajuda" aria-label="Ajuda: como usar">
+            <svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-circle-question-mark"/></svg>
+          </button>
+
+          <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema escuro">
+            <svg class="ic icone-sol" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg>
+            <svg class="ic icone-lua" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg>
+          </button>
+
+          <div class="suspenso-caixa">
+            <button class="avatar-btn" type="button" id="btn-usuario" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-usuario" aria-label="Menu do usuário">
+              <span class="avatar" id="avatar-topo" aria-hidden="true">CR</span>
+              <svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button>
+            <div class="suspenso suspenso--direita" id="menu-usuario" role="menu" aria-label="Menu do usuário" hidden>
+              <div class="suspenso__perfil">
+                <b id="perfil-nome">Camila Rocha</b>
+                <span id="perfil-cargo">Gerente comercial</span>
+                <span class="mono" id="perfil-email"></span>
+              </div>
+              <a class="suspenso__item" role="menuitem" href="#/configuracoes"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-user"/></svg>Perfil e preferências</a>
+              <button class="suspenso__item" type="button" role="menuitem" data-acao="ajuda"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-circle-question-mark"/></svg>Como usar</button>
+              <button class="suspenso__item" type="button" role="menuitem" data-acao="boas-vindas"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-house"/></svg>Tela de boas-vindas</button>
+              <button class="suspenso__item" type="button" role="menuitem" data-acao="restaurar"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-rotate-ccw"/></svg>Restaurar dados da demonstração</button>
+              <a class="suspenso__item" role="menuitem" href="../../index.html#projetos"><svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-log-out"/></svg>Sair da demonstração</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main id="principal" class="principal" tabindex="-1">
+        <section class="vista" id="vista-visao-geral" data-vista="visao-geral" aria-labelledby="titulo-visao-geral" hidden></section>
+        <section class="vista" id="vista-leads" data-vista="leads" aria-labelledby="titulo-leads" hidden></section>
+        <section class="vista" id="vista-clientes" data-vista="clientes" aria-labelledby="titulo-clientes" hidden></section>
+        <section class="vista" id="vista-cliente" data-vista="cliente" aria-labelledby="titulo-cliente" hidden></section>
+        <section class="vista" id="vista-pipeline" data-vista="pipeline" aria-labelledby="titulo-pipeline" hidden></section>
+        <section class="vista" id="vista-tarefas" data-vista="tarefas" aria-labelledby="titulo-tarefas" hidden></section>
+        <section class="vista" id="vista-relatorios" data-vista="relatorios" aria-labelledby="titulo-relatorios" hidden></section>
+        <section class="vista" id="vista-configuracoes" data-vista="configuracoes" aria-labelledby="titulo-configuracoes" hidden></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== JANELAS ===================== -->
+
+  <!-- Formulário genérico (lead, cliente, oportunidade, tarefa...) -->
+  <dialog class="janela" id="dlg-form" aria-labelledby="form-titulo">
+    <form id="form-generico" novalidate>
+      <div class="janela__cabeca">
+        <h2 id="form-titulo">Novo registro</h2>
+        <button class="icone-btn icone-btn--sutil" type="button" data-fechar aria-label="Fechar"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+      <p class="janela__descricao" id="form-descricao" hidden></p>
+      <div class="campos" id="form-campos"></div>
+      <div id="form-extra"></div>
+      <p class="janela__erro" id="form-erro" role="alert"></p>
+      <div class="janela__botoes">
+        <button class="btn btn--linha" type="button" data-fechar>Cancelar</button>
+        <button class="btn btn--primario" type="submit" id="form-salvar">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmação -->
+  <dialog class="janela janela--pequena" id="dlg-confirmar" aria-labelledby="confirmar-titulo" aria-describedby="confirmar-texto">
+    <div class="janela__cabeca"><h2 id="confirmar-titulo">Tem certeza?</h2></div>
+    <p class="janela__descricao" id="confirmar-texto"></p>
+    <div class="janela__botoes">
+      <button class="btn btn--linha" type="button" data-fechar>Cancelar</button>
+      <button class="btn btn--perigo" type="button" id="confirmar-ok">Confirmar</button>
+    </div>
+  </dialog>
+
+  <!-- Detalhes (lead ou oportunidade) -->
+  <dialog class="janela janela--detalhe" id="dlg-detalhe" aria-labelledby="detalhe-titulo">
+    <div class="janela__cabeca">
+      <div>
+        <p class="rotulo" id="detalhe-tipo"></p>
+        <h2 id="detalhe-titulo"></h2>
+      </div>
+      <button class="icone-btn icone-btn--sutil" type="button" data-fechar aria-label="Fechar"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="detalhe-corpo"></div>
+    <div class="janela__botoes" id="detalhe-botoes"></div>
+  </dialog>
+
+  <!-- Ajuda -->
+  <dialog class="janela" id="dlg-ajuda" aria-labelledby="ajuda-titulo">
+    <div class="janela__cabeca">
+      <h2 id="ajuda-titulo">Como usar a demonstração</h2>
+      <button class="icone-btn icone-btn--sutil" type="button" data-fechar aria-label="Fechar"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <ol class="ajuda">
+      <li>
+        <h3>Criar um lead</h3>
+        <p>Clique em <b>Novo</b> no topo e escolha <b>Lead</b>, ou use o botão da página Leads. Preencha nome, empresa, e-mail, telefone e valor estimado.</p>
+        <button class="link-btn" type="button" data-ajuda="lead">Fazer agora</button>
+      </li>
+      <li>
+        <h3>Mover uma oportunidade no pipeline</h3>
+        <p>Na página <b>Pipeline de vendas</b>, arraste o cartão para outra coluna. No celular, segure pela alça <svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-grip-vertical"/></svg> ou use o botão <b>Mover</b> do cartão. Venda perdida pede o motivo.</p>
+        <button class="link-btn" type="button" data-ajuda="pipeline">Abrir o pipeline</button>
+      </li>
+      <li>
+        <h3>Registrar uma tarefa</h3>
+        <p>Em <b>Tarefas</b>, clique em <b>Nova tarefa</b>, escolha o lead ou cliente, o prazo e a prioridade. Tarefas atrasadas aparecem em vermelho e nas notificações.</p>
+        <button class="link-btn" type="button" data-ajuda="tarefa">Criar uma tarefa</button>
+      </li>
+      <li>
+        <h3>Consultar os relatórios</h3>
+        <p>Em <b>Relatórios</b>, escolha o período no topo. Todos os números e gráficos acompanham o filtro, e cada bloco pode ser exportado em CSV.</p>
+        <button class="link-btn" type="button" data-ajuda="relatorios">Ver relatórios</button>
+      </li>
+    </ol>
+    <p class="janela__descricao">Para recomeçar do zero, use <b>Restaurar dados da demonstração</b> no menu do usuário ou em Configurações.</p>
+  </dialog>
+
+  <script src="js/util.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/graficos.js"></script>
+  <script src="js/formularios.js"></script>
+  <script src="js/telas/visao-geral.js"></script>
+  <script src="js/telas/leads.js"></script>
+  <script src="js/telas/clientes.js"></script>
+  <script src="js/telas/pipeline.js"></script>
+  <script src="js/telas/tarefas.js"></script>
+  <script src="js/telas/relatorios.js"></script>
+  <script src="js/telas/configuracoes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

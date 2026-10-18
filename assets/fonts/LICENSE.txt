@@ -1,0 +1,10 @@
+Fontes incluídas neste diretório
+
+- DM Sans — Copyright 2014 The DM Sans Project Authors (https://github.com/googlefonts/dm-fonts)
+- Space Grotesk — Copyright 2020 The Space Grotesk Project Authors (https://github.com/floriankarsten/space-grotesk)
+- JetBrains Mono — Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+Todas são distribuídas sob a SIL Open Font License, versão 1.1:
+https://openfontlicense.org/open-font-license-official-text/
+
+Arquivos obtidos do Google Fonts (subconjunto "latin", fontes variáveis).

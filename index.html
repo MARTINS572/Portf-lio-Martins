@@ -1,269 +1,415 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>SOLADO · Projeto demonstrativo</title>
-  <meta name="description" content="Projeto demonstrativo de loja de tênis com filtros, detalhes do produto e carrinho. A SOLADO e seus produtos são fictícios. Criado por Martins | Criação de Sites.">
-  <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0B0B0B">
-  <meta property="og:title" content="SOLADO · Projeto demonstrativo">
-  <meta property="og:description" content="Exemplo de loja de tênis com vitrine, filtros e carrinho. Loja fictícia, sem vendas reais.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23C6FF3D'/%3E%3Cpath d='M7 20h18v3H7z M9 13h10l4 7H9z' fill='%230B0B0B'/%3E%3C/svg%3E">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Martins | Criação de Sites em Campinas — sites e sistemas web</title>
+  <meta name="description" content="Criação de sites profissionais, landing pages, catálogos digitais e sistemas web para pequenos negócios de Campinas e região. Peça um orçamento pelo WhatsApp.">
+  <meta name="theme-color" content="#0B0B0E">
+  <meta name="color-scheme" content="dark light">
+  <meta name="author" content="Martins | Criação de Sites">
+  <meta name="robots" content="index, follow">
 
-  <!-- Unbounded (marca e títulos), Chivo (textos) e Chivo Mono (preços e etiquetas) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Chivo:wght@400;600;700&family=Chivo+Mono:wght@400;500&display=swap">
+  <script src="assets/js/theme-init.js"></script>
 
-  <link rel="stylesheet" href="style.css">
-  <script src="../../assets/js/comum.js"></script>
+  <!-- Open Graph / redes sociais. Depois do primeiro deploy, troque os caminhos de
+       og:image e twitter:image pelo endereço completo (veja o README). -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Martins | Criação de Sites">
+  <meta property="og:title" content="Martins | Criação de Sites — sites e sistemas web em Campinas">
+  <meta property="og:description" content="Sites profissionais, catálogos digitais e sistemas web sob medida para pequenos negócios de Campinas e região.">
+  <meta property="og:image" content="assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Martins | Criação de Sites — sites profissionais e sistemas web">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Martins | Criação de Sites">
+  <meta name="twitter:description" content="Sites profissionais e sistemas web para pequenos negócios de Campinas e região.">
+  <meta name="twitter:image" content="assets/img/og-image.png">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Martins | Criação de Sites",
+    "description": "Criação de sites profissionais, landing pages, catálogos digitais e sistemas web para pequenos negócios.",
+    "telephone": "+55-19-99312-8050",
+    "areaServed": { "@type": "City", "name": "Campinas" },
+    "knowsLanguage": "pt-BR"
+  }
+  </script>
+
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
 </head>
 <body>
-  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-  <div class="faixa-demo" role="note">
-    <span>Loja demonstrativa · produtos e preços fictícios · sem vendas nem pagamentos</span>
-    <a href="../../index.html#projetos">← Voltar ao portfólio</a>
-  </div>
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="Martins | Criação de Sites — voltar ao início">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span class="brand-name">Martins</span>
+        <span class="brand-sep" aria-hidden="true"></span>
+        <span class="brand-tag">Criação de Sites</span>
+      </a>
 
-  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
-    <!-- Tênis cano baixo. Cores: --cabedal, --sola, --detalhe -->
-    <symbol id="tenis-baixo" viewBox="0 0 240 112">
-      <path d="M14 92c0-6 4-9 10-9h176c16 0 28 3 32 9v4c0 5-4 8-9 8H22c-5 0-8-3-8-8z" fill="var(--sola, #fff)" stroke="#111" stroke-width="2"/>
-      <path d="M22 93h204" stroke="#111" stroke-width="1.2" opacity=".3"/>
-      <path d="M24 84V52c0-12 6-20 16-22l20-4c8-1 12 4 16 10 6 9 14 12 22 6l14-14c6-6 14-5 18 2l10 18c8 14 22 22 42 26l22 4c14 2 22 4 24 6z" fill="var(--cabedal, #F4F4F2)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M24 84V52c0-12 6-20 16-22l8-1.6V84z" fill="var(--detalhe, #C6FF3D)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M60 84c6-18 22-28 46-30" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 3" opacity=".7"/>
-      <path d="M180 74c14 3 30 6 46 10" fill="none" stroke="#111" stroke-width="1.4" opacity=".45"/>
-      <g fill="#fff" stroke="#111" stroke-width="1.6"><circle cx="118" cy="36" r="2.6"/><circle cx="128" cy="43" r="2.6"/><circle cx="138" cy="50" r="2.6"/><circle cx="148" cy="57" r="2.6"/></g>
-      <path d="M114 40l10-8M124 47l10-8M134 54l10-8M144 61l10-8" stroke="#111" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="84" cy="66" r="7" fill="#111"/><path d="M81.5 66h5" stroke="var(--detalhe, #C6FF3D)" stroke-width="2"/>
-    </symbol>
-    <!-- Tênis cano alto (basquete) -->
-    <symbol id="tenis-alto" viewBox="0 0 240 132">
-      <path d="M14 112c0-6 4-9 10-9h176c16 0 28 3 32 9v4c0 5-4 8-9 8H22c-5 0-8-3-8-8z" fill="var(--sola, #fff)" stroke="#111" stroke-width="2"/>
-      <path d="M22 113h204" stroke="#111" stroke-width="1.2" opacity=".3"/>
-      <path d="M24 104V28c0-12 6-20 18-22l38-4c8 0 12 6 12 14v24l18-8c6-3 12-1 15 5l10 24c8 14 22 22 42 26l22 4c14 2 22 6 24 13z" fill="var(--cabedal, #F4F4F2)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M24 60h56v44H24z" fill="var(--detalhe, #C6FF3D)" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M30 20h44" stroke="#111" stroke-width="1.6" opacity=".5"/>
-      <g fill="#fff" stroke="#111" stroke-width="1.6"><circle cx="98" cy="44" r="2.6"/><circle cx="110" cy="52" r="2.6"/><circle cx="122" cy="60" r="2.6"/><circle cx="134" cy="68" r="2.6"/></g>
-      <path d="M94 48l10-8M106 56l10-8M118 64l10-8M130 72l10-8" stroke="#111" stroke-width="2" stroke-linecap="round"/>
-      <path d="M188 92c14 3 26 6 38 11" fill="none" stroke="#111" stroke-width="1.4" opacity=".45"/>
-    </symbol>
-    <symbol id="sacola" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
-    <symbol id="filtro" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="16" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
-    <symbol id="fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  </svg>
-
-  <!-- ===================== CABEÇALHO ===================== -->
-  <header class="cabecalho" data-header>
-    <div class="container cabecalho__linha">
-      <a class="logo" href="#inicio" aria-label="SOLADO, ir para o início">SOLADO</a>
-      <nav class="nav" id="menu" aria-label="Menu principal">
-        <ul class="nav__lista">
-          <li><a class="nav__link" href="#lancamentos">Lançamentos</a></li>
-          <li><a class="nav__link" href="#loja">Loja</a></li>
-          <li><a class="nav__link" href="#sobre">Sobre a demonstração</a></li>
+      <nav class="nav-desktop" aria-label="Principal">
+        <ul>
+          <li><a href="#inicio" data-nav="inicio">Início</a></li>
+          <li><a href="#projetos" data-nav="projetos">Projetos</a></li>
+          <li><a href="#servicos" data-nav="servicos">Serviços</a></li>
+          <li><a href="#processo" data-nav="processo">Processo</a></li>
+          <li><a href="#contato" data-nav="contato">Contato</a></li>
         </ul>
       </nav>
-      <div class="cabecalho__acoes">
-        <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema claro">
-          <svg class="icone-sol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <svg class="icone-lua" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+
+      <div class="header-actions">
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="Ativar tema claro">
+          <svg class="icon icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
         </button>
-        <button class="sacola-btn" type="button" id="abrir-carrinho" aria-label="Abrir carrinho, 0 itens">
-          <svg width="22" height="22" aria-hidden="true"><use href="#sacola"/></svg>
-          <span class="sacola-btn__contador" id="contador-carrinho" aria-hidden="true">0</span>
-        </button>
-        <button class="icone-btn menu-btn" type="button" data-menu-toggle="900" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
-          <span class="menu-btn__barras" aria-hidden="true"><span></span><span></span></span>
+        <a class="btn btn-primary btn-sm header-cta" href="#contato" data-wa="quote">Solicitar orçamento</a>
+        <button type="button" class="icon-btn icon-btn-outline menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="menu-mobile" aria-label="Abrir menu">
+          <svg class="icon icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"/></svg>
+          <svg class="icon icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
     </div>
   </header>
 
+  <!-- Menu mobile fica fora do cabeçalho: o desfoque do cabeçalho prenderia o painel fixo. -->
+  <div class="menu-mobile" id="menu-mobile" data-menu hidden>
+    <nav aria-label="Menu">
+      <ol class="menu-list">
+        <li><a href="#inicio"><span class="menu-num">01</span>Início</a></li>
+        <li><a href="#projetos"><span class="menu-num">02</span>Projetos</a></li>
+        <li><a href="#servicos"><span class="menu-num">03</span>Serviços</a></li>
+        <li><a href="#processo"><span class="menu-num">04</span>Processo</a></li>
+        <li><a href="#contato"><span class="menu-num">05</span>Contato</a></li>
+      </ol>
+    </nav>
+    <div class="menu-footer">
+      <a class="btn btn-primary btn-lg btn-block" href="#contato" data-wa="quote">Solicitar orçamento</a>
+      <p class="mono-label menu-wa">WhatsApp · <span data-wa-display></span></p>
+    </div>
+  </div>
+
   <main id="conteudo">
-
-    <!-- ===================== HERO: campanha de produto ===================== -->
-    <section class="hero" id="inicio" aria-labelledby="hero-titulo">
-      <div class="hero__palco" data-foto="tenis/hero.jpg" data-alt="Tênis de corrida branco com detalhe verde-limão, fotografado de lado em estúdio" data-foto-prioridade>
-        <div class="arte hero__arte" aria-hidden="true">
-          <span class="hero__marca-fundo">SOLADO</span>
-          <svg class="hero__tenis" style="--cabedal:#F4F4F2;--sola:#FFFFFF;--detalhe:#C6FF3D"><use href="#tenis-baixo"/></svg>
-          <span class="hero__sombra"></span>
-          <span class="hero__spec hero__spec--a">MALHA RESPIRÁVEL</span>
-          <span class="hero__spec hero__spec--b">ENTRESSOLA EM EVA</span>
-          <span class="hero__spec hero__spec--c">SOLADO DE BORRACHA</span>
-        </div>
-      </div>
-      <div class="container hero__conteudo">
-        <p class="etiqueta">Drop 01 · Runner Vão 01</p>
-        <h1 class="hero__titulo" id="hero-titulo">Feito para o asfalto.</h1>
-        <p class="hero__texto">Cabedal em malha, entressola macia e o detalhe em verde-limão. Produto fictício, criado para a demonstração.</p>
-        <div class="hero__botoes">
-          <button class="btn btn--limao btn--grande" type="button" data-abrir-produto="runner-vao-01">Ver o Runner Vão 01</button>
-          <a class="btn btn--linha btn--grande" href="#loja">Ver todos</a>
-        </div>
-      </div>
-      <span class="hero__selo" aria-hidden="true">Drop<br>01</span>
-    </section>
-
-    <!-- ===================== LANÇAMENTOS ===================== -->
-    <section class="secao" id="lancamentos" aria-labelledby="lancamentos-titulo">
-      <div class="container">
-        <header class="secao__cabeca" data-reveal>
-          <h2 id="lancamentos-titulo">Lançamentos</h2>
-          <p class="etiqueta">Os três modelos mais recentes da vitrine</p>
-        </header>
-        <!-- Montado pelo script.js com os 3 produtos mais novos -->
-        <div class="lancamentos" id="lancamentos-lista"></div>
-      </div>
-    </section>
-
-    <!-- ===================== LOJA: filtros + grade ===================== -->
-    <section class="secao secao--loja" id="loja" aria-labelledby="loja-titulo">
-      <div class="container">
-        <header class="loja__topo">
-          <h2 id="loja-titulo">Loja</h2>
-          <div class="loja__controles">
-            <button class="btn btn--linha filtros-btn" type="button" id="abrir-filtros" aria-controls="filtros" aria-expanded="false">
-              <svg width="20" height="20" aria-hidden="true"><use href="#filtro"/></svg> Filtros <span class="filtros-btn__n" id="filtros-ativos" hidden></span>
-            </button>
-            <label class="ordenar">
-              <span>Ordenar</span>
-              <select id="ordenar">
-                <option value="novidades">Novidades</option>
-                <option value="menor">Menor preço</option>
-                <option value="maior">Maior preço</option>
-              </select>
-            </label>
-          </div>
-        </header>
-
-        <div class="loja">
-          <!-- Filtros (no celular abrem como painel) -->
-          <aside class="filtros" id="filtros" aria-label="Filtros">
-            <div class="filtros__cabeca">
-              <p class="filtros__titulo">Filtros</p>
-              <button class="icone-btn" type="button" id="fechar-filtros" aria-label="Fechar filtros"><svg width="20" height="20" aria-hidden="true"><use href="#fechar"/></svg></button>
-            </div>
-            <fieldset class="filtro-grupo">
-              <legend>Categoria</legend>
-              <div class="filtro-grupo__opcoes" id="filtro-categorias"></div>
-            </fieldset>
-            <fieldset class="filtro-grupo">
-              <legend>Tamanho</legend>
-              <div class="tamanhos" id="filtro-tamanhos"></div>
-            </fieldset>
-            <fieldset class="filtro-grupo">
-              <legend>Preço</legend>
-              <div class="filtro-grupo__opcoes" id="filtro-precos"></div>
-            </fieldset>
-            <div class="filtros__rodape">
-              <button class="btn btn--linha" type="button" id="limpar-filtros">Limpar filtros</button>
-              <button class="btn btn--limao" type="button" id="ver-resultados">Ver resultados</button>
-            </div>
-          </aside>
-
-          <div class="resultados">
-            <p class="resultados__contagem" id="contagem" aria-live="polite"></p>
-            <ul class="grade" id="grade"></ul>
-            <div class="vazio" id="vazio" hidden>
-              <p>Nenhum tênis com esses filtros.</p>
-              <button class="btn btn--linha" type="button" id="limpar-vazio">Limpar filtros</button>
-            </div>
+    <!-- HERO -->
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="eyebrow-dot" aria-hidden="true"></span>
+            <span>Campinas e região · SP</span>
+            <span class="eyebrow-line" aria-hidden="true"></span>
+            <span>Sites e sistemas web</span>
+          </p>
+          <h1 class="hero-title" id="hero-title">Sites profissionais e sistemas web para transformar ideias em <span class="accent">soluções digitais.</span></h1>
+          <p class="hero-lead">Crio experiências digitais sob medida para pequenos negócios apresentarem seus serviços, conquistarem clientes e organizarem suas operações.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#contato" data-wa="quote">
+              Solicitar orçamento
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+            </a>
+            <a class="btn btn-secondary btn-lg" href="#projetos">
+              Explorar projetos
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+            </a>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ===================== SOBRE A DEMONSTRAÇÃO ===================== -->
-    <section class="secao" id="sobre" aria-labelledby="sobre-titulo">
-      <div class="container sobre">
-        <h2 id="sobre-titulo" data-reveal>Uma loja de verdade na interface. Fictícia no resto.</h2>
-        <ul class="sobre__lista" data-reveal>
-          <li><b>Produtos fictícios</b><span>Nomes, preços, cores e tamanhos foram criados para a demonstração. Nenhuma marca real é representada.</span></li>
-          <li><b>Carrinho funcional</b><span>O carrinho soma os itens, altera quantidades e fica salvo neste navegador.</span></li>
-          <li><b>Sem pagamento</b><span>Não há processamento financeiro. Em uma loja real, o pedido pode seguir pelo WhatsApp ou por um checkout contratado à parte.</span></li>
+        <figure class="hero-visual">
+          <div class="composition" role="img" aria-label="Composição conceitual: um site institucional, um painel de agenda e a versão mobile do mesmo site">
+            <div class="comp-frame"></div>
+
+            <div class="comp-browser">
+              <div class="cb-bar"><i></i><i></i><i></i><span class="cb-url">/inicio</span></div>
+              <div class="cb-body">
+                <div class="cb-nav"><span class="cb-logo"></span><span class="cb-links"><i></i><i></i><i></i><b></b></span></div>
+                <div class="cb-main">
+                  <div class="cb-copy">
+                    <span class="cb-title">Seu negócio,<br>bem apresentado.</span>
+                    <i class="cb-line w92"></i>
+                    <i class="cb-line w68"></i>
+                    <span class="cb-ctas"><b></b><i></i></span>
+                  </div>
+                  <div class="cb-art"><span class="cb-card"></span><i class="cb-l1"></i><i class="cb-l2"></i><b class="cb-dot"></b></div>
+                </div>
+                <div class="cb-tiles"><i></i><i></i><i></i></div>
+              </div>
+            </div>
+
+            <div class="comp-panel">
+              <div class="cp-head">
+                <span class="cp-title"><span class="comp-badge comp-badge-dark">02</span>Agenda · hoje</span>
+                <span class="cp-add">+</span>
+              </div>
+              <div class="cp-row"><span class="cp-time">09:00</span><i></i><span class="cp-pill cp-pill-on">Confirmado</span></div>
+              <div class="cp-row"><span class="cp-time">10:30</span><i></i><span class="cp-pill">Pendente</span></div>
+              <div class="cp-row cp-row-free"><span class="cp-time">14:00</span><i class="cp-empty"></i><span class="cp-pill cp-pill-free">Livre</span></div>
+            </div>
+
+            <div class="comp-phone">
+              <div class="ph-screen">
+                <span class="ph-top"><i></i><span class="ph-burger"><i></i><i></i></span></span>
+                <span class="ph-title">Seu negócio, bem apresentado.</span>
+                <i class="ph-line w90"></i>
+                <i class="ph-line w64"></i>
+                <b class="ph-cta"></b>
+                <span class="ph-img"></span>
+              </div>
+            </div>
+
+            <span class="comp-badge comp-badge-1">01</span>
+            <span class="comp-badge comp-badge-3">03</span>
+          </div>
+          <figcaption class="comp-caption">
+            <span>01 Site · 02 Painel · 03 Mobile</span>
+            <span>Composição conceitual</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="container">
+        <ul class="hero-points">
+          <li><span class="num">01</span><span>Atendimento direto com quem desenvolve o projeto</span></li>
+          <li><span class="num">02</span><span>Pensado primeiro para o celular, depois para telas maiores</span></li>
+          <li><span class="num">03</span><span>Código leve em HTML, CSS e JavaScript</span></li>
         </ul>
+      </div>
+    </section>
+
+    <!-- PROJETOS -->
+    <section class="section" id="projetos" aria-labelledby="projetos-title">
+      <div class="container">
+        <p class="section-label" data-reveal><span class="num">01</span><span class="line" aria-hidden="true"></span><span>Projetos</span></p>
+        <div class="section-head" data-reveal>
+          <h2 class="section-title" id="projetos-title">Projetos e demonstrações</h2>
+          <p class="section-intro">Sites e sistemas completos para segmentos reais de negócio, com empresas e dados fictícios. Não são clientes contratados: abra, navegue e teste à vontade.</p>
+        </div>
+
+        <div class="filter-bar" data-reveal>
+          <div class="filters" role="group" aria-label="Filtrar projetos por categoria">
+            <button type="button" class="chip is-active" data-filter="todos" aria-pressed="true">Todos <span class="chip-count" data-count="todos"></span></button>
+            <button type="button" class="chip" data-filter="sites" aria-pressed="false">Sites <span class="chip-count" data-count="sites"></span></button>
+            <button type="button" class="chip" data-filter="sistemas" aria-pressed="false">Sistemas <span class="chip-count" data-count="sistemas"></span></button>
+          </div>
+          <p class="mono-label results" data-results aria-live="polite"></p>
+        </div>
+
+        <div class="project-grid" data-projects></div>
+
+        <div class="empty-state" data-empty hidden>
+          <p class="empty-title">Nenhum projeto nesta categoria ainda.</p>
+          <p class="empty-text">Veja as outras demonstrações ou fale comigo sobre o que você precisa.</p>
+          <button type="button" class="chip" data-show-all>Ver todos os projetos</button>
+        </div>
+
+        <noscript>
+          <p class="noscript-note">Os projetos são carregados com JavaScript. Ative o JavaScript para vê-los.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="section section-surface" id="servicos" aria-labelledby="servicos-title">
+      <div class="container">
+        <p class="section-label" data-reveal><span class="num">02</span><span class="line" aria-hidden="true"></span><span>Serviços</span></p>
+        <div class="section-head" data-reveal>
+          <h2 class="section-title" id="servicos-title">Soluções para apresentar, atender e organizar.</h2>
+          <p class="section-intro">Do site que apresenta o negócio ao sistema que organiza a rotina. Cada projeto começa pelo que o seu negócio precisa resolver.</p>
+        </div>
+
+        <div class="service-groups">
+          <div class="service-group" data-reveal>
+            <div class="service-group-head">
+              <span class="group-letter">A</span>
+              <h3>Presença digital</h3>
+              <p>Para ser encontrado, apresentar o negócio e receber contatos.</p>
+            </div>
+            <ul class="service-list">
+              <li class="service-row"><span class="service-num">01</span><h4>Criação de sites profissionais</h4><p>Um endereço próprio que apresenta o negócio com clareza, funciona bem no celular e leva o visitante até o contato.</p></li>
+              <li class="service-row"><span class="service-num">02</span><h4>Landing pages</h4><p>Uma página focada em um serviço, campanha ou lançamento, com um único objetivo: levar ao contato.</p></li>
+              <li class="service-row"><span class="service-num">03</span><h4>Sites para negócios locais</h4><p>Localização, horários, serviços e WhatsApp à mão para quem procura um negócio na região.</p></li>
+              <li class="service-row"><span class="service-num">04</span><h4>Catálogos digitais</h4><p>Produtos organizados por categoria, com fotos e detalhes, para o cliente escolher antes de chamar.</p></li>
+            </ul>
+          </div>
+
+          <div class="service-group" data-reveal>
+            <div class="service-group-head">
+              <span class="group-letter">B</span>
+              <h3>Sistemas web</h3>
+              <p>Para organizar a rotina e reduzir tarefas manuais.</p>
+            </div>
+            <ul class="service-list">
+              <li class="service-row"><span class="service-num">05</span><h4>Sistemas de agendamento</h4><p>Horários disponíveis em um só lugar, com menos troca de mensagens para marcar e remarcar.</p></li>
+              <li class="service-row"><span class="service-num">06</span><h4>Sistemas administrativos e de gestão</h4><p>Cadastros, controles e painéis sob medida para tirar processos do papel e das planilhas soltas.</p></li>
+            </ul>
+          </div>
+
+          <div class="service-group" data-reveal>
+            <div class="service-group-head">
+              <span class="group-letter">C</span>
+              <h3>Cuidado contínuo</h3>
+              <p>Para quem já tem um site e quer melhorar.</p>
+            </div>
+            <ul class="service-list">
+              <li class="service-row"><span class="service-num">07</span><h4>Manutenção e melhorias</h4><p>Ajustes, correções e novas seções em sites que já existem, sem precisar recomeçar do zero.</p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESSO -->
+    <section class="section" id="processo" aria-labelledby="processo-title">
+      <div class="container">
+        <p class="section-label" data-reveal><span class="num">03</span><span class="line" aria-hidden="true"></span><span>Processo</span></p>
+        <h2 class="section-title section-title-narrow" id="processo-title" data-reveal>Um processo simples, da conversa à publicação.</h2>
+        <ol class="process">
+          <li class="step is-first" data-reveal><span class="step-num">01</span><h3>Entendimento</h3><p>Conversamos sobre o negócio, o público e o que o projeto precisa resolver.</p></li>
+          <li class="step" data-reveal><span class="step-num">02</span><h3>Planejamento</h3><p>Defino páginas, seções e funcionalidades antes de começar a construir.</p></li>
+          <li class="step" data-reveal><span class="step-num">03</span><h3>Design e desenvolvimento</h3><p>Crio o visual e programo o projeto, pensando no celular e no computador.</p></li>
+          <li class="step" data-reveal><span class="step-num">04</span><h3>Testes e ajustes</h3><p>Reviso em diferentes telas, corrijo detalhes e ajusto com base no seu retorno.</p></li>
+          <li class="step" data-reveal><span class="step-num">05</span><h3>Publicação e orientações</h3><p>Coloco o projeto no ar e mostro como usar o que for necessário no dia a dia.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section" id="sobre" aria-labelledby="sobre-title">
+      <div class="container about">
+        <div class="about-head" data-reveal>
+          <p class="section-label"><span class="num">04</span><span class="line" aria-hidden="true"></span><span>Sobre</span></p>
+          <h2 class="section-title about-title" id="sobre-title">Um desenvolvedor, do primeiro contato à publicação.</h2>
+        </div>
+        <div class="about-body" data-reveal>
+          <p class="about-lead">Sou o Martins e desenvolvo sites e sistemas web para pequenos negócios e profissionais autônomos de Campinas e região.</p>
+          <p>Você conversa diretamente com quem constrói o projeto. Estudo desenvolvimento continuamente e uso ferramentas modernas para criar projetos leves, responsivos e fáceis de manter — com transparência sobre o que cada solução faz e o que ainda não faz.</p>
+          <dl class="facts">
+            <div><dt>Base técnica</dt><dd>HTML5, CSS3 e JavaScript</dd></div>
+            <div><dt>Atendimento</dt><dd>Direto, pelo WhatsApp</dd></div>
+            <div><dt>Região</dt><dd>Campinas e região — SP</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section class="section" id="contato" aria-labelledby="contato-title">
+      <div class="container">
+        <p class="section-label" data-reveal><span class="num">05</span><span class="line" aria-hidden="true"></span><span>Contato</span></p>
+        <div class="contact">
+          <div class="contact-info" data-reveal>
+            <h2 class="section-title" id="contato-title">Vamos conversar sobre o seu projeto?</h2>
+            <p class="section-intro">Conte o que você precisa. O formulário monta a mensagem e abre o WhatsApp — você revisa antes de enviar.</p>
+            <a class="wa-card" href="#contato" data-wa="hello" data-wa-label>
+              <span class="wa-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg></span>
+              <span class="wa-text"><span class="mono-label">WhatsApp</span><span class="wa-number" data-wa-display></span></span>
+              <svg class="wa-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+            </a>
+            <ul class="contact-points">
+              <li><span aria-hidden="true">↳</span>Atendimento em Campinas e região</li>
+              <li><span aria-hidden="true">↳</span>Conversa direta com quem desenvolve</li>
+            </ul>
+          </div>
+
+          <form class="quote-form" data-form novalidate aria-labelledby="form-title" data-reveal>
+            <div class="form-head">
+              <h3 id="form-title">Pedido de orçamento</h3>
+              <span class="mono-label">* obrigatório</span>
+            </div>
+
+            <div class="form-row">
+              <div class="field" data-field="nome">
+                <label for="f-nome">Nome <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-nome" name="nome" type="text" autocomplete="name" maxlength="80" required aria-required="true" aria-describedby="f-nome-erro" placeholder="Como posso te chamar?">
+                <p class="field-error" id="f-nome-erro" hidden></p>
+              </div>
+              <div class="field" data-field="negocio">
+                <label for="f-negocio">Negócio ou segmento</label>
+                <input id="f-negocio" name="negocio" type="text" autocomplete="organization" maxlength="80" placeholder="Ex.: barbearia, loja, clínica">
+              </div>
+            </div>
+
+            <div class="field" data-field="servico">
+              <label for="f-servico">O que você precisa? <span class="req" aria-hidden="true">*</span></label>
+              <select id="f-servico" name="servico" required aria-required="true" aria-describedby="f-servico-erro">
+                <option value="">Selecione uma opção</option>
+                <option value="Site profissional">Site profissional</option>
+                <option value="Landing page">Landing page</option>
+                <option value="Catálogo digital">Catálogo digital</option>
+                <option value="Sistema de agendamento">Sistema de agendamento</option>
+                <option value="Sistema administrativo ou de gestão">Sistema administrativo ou de gestão</option>
+                <option value="Manutenção de site existente">Manutenção de site existente</option>
+                <option value="Outro / ainda não sei">Outro / ainda não sei</option>
+              </select>
+              <p class="field-error" id="f-servico-erro" hidden></p>
+            </div>
+
+            <div class="field" data-field="mensagem">
+              <label for="f-mensagem">Mensagem</label>
+              <textarea id="f-mensagem" name="mensagem" rows="4" maxlength="800" placeholder="Conte um pouco sobre o projeto e o que ele precisa resolver."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Preparar mensagem no WhatsApp
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+              </button>
+              <p class="form-note">Nada é enviado por e-mail: o WhatsApp abre com a mensagem pronta para você revisar.</p>
+            </div>
+
+            <div class="form-status" data-form-status role="status" aria-live="polite" hidden></div>
+          </form>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="rodape">
-    <div class="container rodape__grade">
-      <p class="logo logo--rodape">SOLADO</p>
-      <ul class="rodape__links">
-        <li><a href="#lancamentos">Lançamentos</a></li>
-        <li><a href="#loja">Loja</a></li>
-        <li><a href="#sobre">Sobre a demonstração</a></li>
-      </ul>
-    </div>
-    <div class="container rodape__base">
-      <p><b>Loja demonstrativa.</b> A SOLADO, seus produtos e preços são fictícios. Nenhuma compra é realizada.</p>
-      <p>© <span data-ano>2026</span> · Desenvolvido por <a href="../../index.html">Martins | Criação de Sites</a></p>
-    </div>
-  </footer>
-
-  <!-- ===================== DETALHES DO PRODUTO ===================== -->
-  <dialog class="produto" id="produto" aria-labelledby="produto-nome">
-    <button class="icone-btn produto__fechar" type="button" data-fechar aria-label="Fechar detalhes"><svg width="20" height="20" aria-hidden="true"><use href="#fechar"/></svg></button>
-    <div class="produto__grade">
-      <div class="produto__visual" id="produto-visual"></div>
-      <div class="produto__info">
-        <p class="etiqueta" id="produto-categoria"></p>
-        <h2 class="produto__nome" id="produto-nome"></h2>
-        <p class="produto__preco" id="produto-preco"></p>
-        <p class="produto__descricao" id="produto-descricao"></p>
-        <ul class="produto__materiais" id="produto-materiais"></ul>
-        <fieldset class="produto__tamanhos">
-          <legend>Tamanho <span id="produto-tamanho-escolhido"></span></legend>
-          <div class="tamanhos tamanhos--produto" id="produto-tamanhos"></div>
-        </fieldset>
-        <div class="produto__compra">
-          <div class="quantidade" role="group" aria-label="Quantidade">
-            <button type="button" id="qtd-menos" aria-label="Diminuir quantidade">−</button>
-            <output id="qtd-valor" aria-live="polite">1</output>
-            <button type="button" id="qtd-mais" aria-label="Aumentar quantidade">+</button>
-          </div>
-          <button class="btn btn--limao produto__adicionar" type="button" id="adicionar">Adicionar ao carrinho</button>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="brand brand-static">
+            <span class="brand-mark" aria-hidden="true"><span></span></span>
+            <span class="brand-name">Martins <span class="brand-pipe">|</span> Criação de Sites</span>
+          </span>
+          <p>Sites profissionais, catálogos digitais e sistemas web para pequenos negócios de Campinas e região.</p>
         </div>
-        <p class="produto__erro" id="produto-erro" role="alert"></p>
+        <nav class="footer-nav" aria-label="Rodapé">
+          <p class="mono-label">Navegação</p>
+          <ul>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#projetos">Projetos</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#processo">Processo</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </nav>
+        <div class="footer-contact">
+          <p class="mono-label">Contato</p>
+          <a href="#contato" data-wa="hello">WhatsApp · <span data-wa-display></span></a>
+          <span>Campinas e região — SP</span>
+        </div>
+      </div>
+      <div class="footer-wordmark" aria-hidden="true">martins</div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> Martins | Criação de Sites. Todos os direitos reservados.</span>
+        <a href="#inicio">Voltar ao topo ↑</a>
       </div>
     </div>
-  </dialog>
-
-  <!-- ===================== CARRINHO ===================== -->
-  <dialog class="carrinho" id="carrinho" aria-labelledby="carrinho-titulo">
-    <div class="carrinho__cabeca">
-      <h2 id="carrinho-titulo">Carrinho</h2>
-      <button class="icone-btn" type="button" data-fechar aria-label="Fechar carrinho"><svg width="20" height="20" aria-hidden="true"><use href="#fechar"/></svg></button>
-    </div>
-    <ul class="carrinho__lista" id="carrinho-lista"></ul>
-    <p class="carrinho__vazio" id="carrinho-vazio">Seu carrinho está vazio.</p>
-    <div class="carrinho__rodape" id="carrinho-rodape">
-      <dl class="carrinho__totais">
-        <div><dt>Itens</dt><dd id="carrinho-itens">0</dd></div>
-        <div><dt>Subtotal</dt><dd id="carrinho-subtotal">R$ 0,00</dd></div>
-      </dl>
-      <p class="carrinho__nota">Frete e pagamento não fazem parte desta demonstração.</p>
-      <button class="btn btn--limao btn--grande carrinho__finalizar" type="button" id="finalizar">Finalizar pedido</button>
-    </div>
-  </dialog>
-
-  <!-- Aviso ao finalizar: sem pagamento -->
-  <dialog class="janela" id="janela-pedido" aria-labelledby="janela-pedido-titulo">
-    <p class="etiqueta">Demonstração</p>
-    <h2 id="janela-pedido-titulo">Nenhuma compra foi feita</h2>
-    <p>Esta loja não processa pagamentos. Em uma loja real, este resumo seguiria para o WhatsApp da loja ou para um checkout:</p>
-    <pre class="janela__resumo" id="janela-pedido-resumo"></pre>
-    <div class="janela__botoes">
-      <a class="btn btn--limao" href="../../index.html#contato">Quero uma loja assim</a>
-      <button class="btn btn--linha" type="button" data-fechar>Fechar</button>
-    </div>
-  </dialog>
-
-  <script src="script.js"></script>
+  </footer>
 </body>
 </html>

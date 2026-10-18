@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AutoPrime Centro Automotivo | Manutenção, diagnóstico e orçamento</title>
+  <meta name="description" content="Manutenção preventiva, diagnóstico, freios, suspensão, troca de óleo e arrefecimento com orçamento explicado antes do serviço. Peça seu orçamento pelo site. Projeto demonstrativo de portfólio.">
+  <!-- Marca fictícia: pedimos aos buscadores para não mostrar esta página como empresa real.
+       Num site de cliente real, troque por: <meta name="robots" content="index, follow"> -->
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111318">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F6F8">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="AutoPrime Centro Automotivo">
+  <meta property="og:title" content="AutoPrime Centro Automotivo">
+  <meta property="og:description" content="Manutenção, diagnóstico e serviços mecânicos com orçamento explicado antes do serviço. Projeto demonstrativo de portfólio.">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- PUBLICAÇÃO: quando o endereço definitivo do site existir, apague esta linha de comentário
+       e a última, e troque SEU-ENDERECO pelo endereço real (os buscadores e o WhatsApp exigem endereço completo).
+  <link rel="canonical" href="https://SEU-ENDERECO/projetos/autoprime/">
+  <meta property="og:url" content="https://SEU-ENDERECO/projetos/autoprime/">
+  <meta property="og:image" content="https://SEU-ENDERECO/projetos/autoprime/img/compartilhar.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111318'/%3E%3Cpath d='M6 25 13.5 7h4.2L10.2 25zM14.3 7h4.2L26 25h-4.2z' fill='%23F5F6F8'/%3E%3Crect x='11' y='17.5' width='16' height='3' fill='%23FF6B2C'/%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="img/carro.svg" fetchpriority="high">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
+  <script src="../../assets/js/comum.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <div class="faixa-demo" role="note">
+    <p>Projeto demonstrativo de portfólio <span class="faixa-demo__extra">· marca e conteúdo ilustrativos</span> · <a href="#aviso">ler o aviso</a></p>
+    <a href="../../index.html#projetos">← Voltar ao portfólio</a>
+  </div>
+
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></symbol>
+    <symbol id="i-calendar-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3" /> <path d="M16 2v3" /> <rect x="3" y="3" width="18" height="18" rx="2" /> <path d="M3 9h18" /> <path d="m9 15 2 2 4-4" /></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></symbol>
+    <symbol id="i-circle-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /> <line x1="12" x2="12" y1="8" y2="12" /> <line x1="12" x2="12.01" y1="16" y2="16" /></symbol>
+    <symbol id="i-circle-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /> <path d="m16 9-5.5 5.5L8 12" /></symbol>
+    <symbol id="i-clipboard-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /> <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /> <path d="m9 14 2 2 4-4" /></symbol>
+    <symbol id="i-clipboard-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /> <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /> <path d="M12 11h4" /> <path d="M12 16h4" /> <path d="M8 11h.01" /> <path d="M8 16h.01" /></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /> <path d="M12 6v6l4 2" /></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+    <symbol id="i-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6" /> <path d="M10 14 21 3" /> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /> <circle cx="12" cy="12" r="3" /></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /></symbol>
+    <symbol id="i-list-ordered" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10" /> <path d="M11 12h10" /> <path d="M11 19h10" /> <path d="M4 4h1v5" /> <path d="M4 9h2" /> <path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02" /></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /> <rect x="2" y="4" width="20" height="16" rx="2" /></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /> <circle cx="12" cy="10" r="3" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /> <path d="M4 12h16" /> <path d="M4 19h16" /></symbol>
+    <symbol id="i-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></symbol>
+    <symbol id="i-message-square-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" /> <path d="M7 11h10" /> <path d="M7 15h6" /> <path d="M7 7h8" /></symbol>
+    <symbol id="i-messages-square" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /> <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1" /></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol>
+    <symbol id="i-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></symbol>
+    <symbol id="i-pencil-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 21h8" /> <path d="m15 5 4 4" /> <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></symbol>
+    <symbol id="i-receipt-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 16H8" /> <path d="M14 8H8" /> <path d="M16 12H8" /> <path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z" /></symbol>
+    <symbol id="i-rotate-ccw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /></symbol>
+    <symbol id="i-scan-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2" /> <path d="M17 3h2a2 2 0 0 1 2 2v2" /> <path d="M21 17v2a2 2 0 0 1-2 2h-2" /> <path d="M7 21H5a2 2 0 0 1-2-2v-2" /> <path d="M7 12h10" /></symbol>
+    <symbol id="i-scan-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2" /> <path d="M17 3h2a2 2 0 0 1 2 2v2" /> <path d="M21 17v2a2 2 0 0 1-2 2h-2" /> <path d="M7 21H5a2 2 0 0 1-2-2v-2" /> <circle cx="12" cy="12" r="3" /> <path d="m16 16-1.9-1.9" /></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /></symbol>
+    <symbol id="i-triangle-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" /></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol>
+  </svg>
+
+  <!-- Desenhos da marca (usados mais de uma vez na página) -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="marca" viewBox="0 0 32 32">
+      <path d="M4 26 12.6 6h4.6L8.6 26zM13.6 6h4.6L26.8 26h-4.6z" fill="currentColor"/>
+      <rect x="9.4" y="17.2" width="20" height="3.2" fill="#FF6B2C"/>
+    </symbol>
+    <!-- Carro em linhas: acompanha a cor do texto, funciona nos dois temas -->
+    <symbol id="carro-linha" viewBox="0 0 1000 380">
+      <path d="M 78 306 C 60 304 50 292 48 274 C 46 256 50 242 62 234 C 120 218 250 200 340 188 C 382 160 424 130 470 113 C 540 97 640 96 702 108 C 782 124 852 160 900 182 L 914 186 C 926 198 932 222 934 250 C 935 274 930 296 916 306 L 833.6 306 A 68 68 0 1 0 706.4 306 L 293.6 306 A 68 68 0 1 0 166.4 306 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M 386 186 C 412 166 450 136 488 122 C 552 108 640 108 694 118 C 748 128 796 150 830 172 C 740 178 520 184 386 186 Z" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+      <path d="M 606 112 L 600 184 M 392 194 C 386 232 386 268 394 304 M 603 186 L 607 304 M 742 178 C 742 202 732 224 716 240 M 66 246 C 280 222 620 206 926 216" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".35"/>
+      <path d="M 62 243 C 90 235 118 229 146 226 M 904 190 L 928 199" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      <g fill="none" stroke="currentColor">
+        <circle cx="230" cy="282" r="58" stroke-width="2.4"/><circle cx="230" cy="282" r="43" stroke-width="1.2" stroke-dasharray="3 5" opacity=".6"/><circle cx="230" cy="282" r="10" stroke-width="1.6"/>
+        <circle cx="770" cy="282" r="58" stroke-width="2.4"/><circle cx="770" cy="282" r="43" stroke-width="1.2" stroke-dasharray="3 5" opacity=".6"/><circle cx="770" cy="282" r="10" stroke-width="1.6"/>
+      </g>
+      <path d="M 10 344 H 990" stroke="currentColor" stroke-width="1.2" opacity=".3"/>
+    </symbol>
+  </svg>
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <header class="topo" data-header>
+    <div class="container topo__barra">
+      <a class="marca" href="#inicio" aria-label="AutoPrime Centro Automotivo, ir para o início">
+        <svg class="marca__simbolo" width="34" height="34" aria-hidden="true"><use href="#marca"/></svg>
+        <span class="marca__texto" aria-hidden="true"><span class="marca__nome">AUTOPRIME</span><span class="marca__sub">Centro Automotivo</span></span>
+      </a>
+
+      <nav class="menu" id="menu" aria-label="Seções do site">
+        <ul class="menu__lista">
+          <li><a class="menu__link" href="#inicio">Início</a></li>
+          <li><a class="menu__link" href="#servicos">Serviços</a></li>
+          <li><a class="menu__link" href="#sobre">Sobre nós</a></li>
+          <li><a class="menu__link" href="#diferenciais">Diferenciais</a></li>
+          <li><a class="menu__link" href="#avaliacoes">Avaliações</a></li>
+          <li><a class="menu__link" href="#contato">Contato</a></li>
+        </ul>
+        <button class="menu__tema" type="button" data-theme-toggle aria-label="Mudar o tema">
+          <span>Tema da página</span>
+          <svg class="icone-sol" width="20" height="20" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icone-lua" width="20" height="20" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <a class="btn btn--principal menu__cta" href="#orcamento">Solicitar orçamento</a>
+      </nav>
+
+      <div class="topo__acoes">
+        <a class="btn btn--principal btn--pequeno topo__cta" href="#orcamento"><span class="rotulo-longo">Solicitar orçamento</span><span class="rotulo-curto">Orçamento</span></a>
+        <button class="icone-btn topo__tema" type="button" data-theme-toggle aria-label="Mudar o tema">
+          <svg class="icone-sol" width="20" height="20" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icone-lua" width="20" height="20" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <button class="icone-btn menu-btn" type="button" data-menu-toggle="1100" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+          <svg class="menu-btn__abrir" width="22" height="22" aria-hidden="true"><use href="#i-menu"/></svg>
+          <svg class="menu-btn__fechar" width="22" height="22" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ===================== INÍCIO ===================== -->
+    <section class="hero" id="inicio" aria-labelledby="hero-titulo">
+      <div class="container hero__grade">
+        <div class="hero__texto">
+          <p class="sobretitulo">Manutenção e diagnóstico automotivo</p>
+          <h1 class="hero__titulo" id="hero-titulo">Seu carro merece cuidado de alto nível.</h1>
+          <p class="hero__lead">Manutenção, diagnóstico e cuidado automotivo com atendimento profissional e transparência em cada etapa.</p>
+          <div class="hero__acoes">
+            <a class="btn btn--principal btn--grande" href="#orcamento">Solicitar orçamento <svg width="20" height="20" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="btn btn--linha btn--grande" href="#servicos">Conhecer serviços</a>
+          </div>
+        </div>
+
+        <!-- Palco: ilustração do carro. Com foto configurada (js/config.js), a foto ocupa o palco. -->
+        <figure class="palco" data-slot="hero" data-alt="Foto do carro ou da oficina">
+          <div class="palco__cena" aria-hidden="true">
+            <span class="palco__luz"></span>
+            <span class="palco__piso"></span>
+            <span class="palco__linha"></span>
+          </div>
+          <img class="palco__carro" src="img/carro.svg" width="1000" height="380" fetchpriority="high" decoding="async" alt="Ilustração de um sedã prata de perfil, com as pinças de freio laranja, em um estúdio escuro">
+          <img class="palco__reflexo" src="img/carro.svg" width="1000" height="380" decoding="async" alt="" aria-hidden="true">
+          <figcaption class="palco__legenda">Ilustração demonstrativa</figcaption>
+        </figure>
+
+        <ul class="hero__indicadores" aria-label="Destaques do atendimento">
+          <li><svg width="22" height="22" aria-hidden="true"><use href="#i-wrench"/></svg><span><b>6 especialidades</b> mecânicas</span></li>
+          <li><svg width="22" height="22" aria-hidden="true"><use href="#i-clipboard-check"/></svg><span><b>Orçamento</b> antes do serviço</span></li>
+          <li><svg width="22" height="22" aria-hidden="true"><use href="#i-scan-line"/></svg><span><b>Diagnóstico</b> eletrônico</span></li>
+          <li><svg width="22" height="22" aria-hidden="true"><use href="#i-message-circle"/></svg><span><b>Pedido online</b> pelo WhatsApp</span></li>
+        </ul>
+      </div>
+      <a class="hero__rolar" href="#compromissos"><span>Role para continuar</span><i aria-hidden="true"></i></a>
+    </section>
+
+    <!-- ===================== COMPROMISSOS ===================== -->
+    <section class="faixa" id="compromissos" aria-labelledby="faixa-titulo">
+      <div class="container">
+        <h2 class="visualmente-oculto" id="faixa-titulo">Compromissos de atendimento</h2>
+        <ul class="faixa__lista">
+          <li data-reveal><svg width="26" height="26" aria-hidden="true"><use href="#i-eye"/></svg><div><h3>Atendimento transparente</h3><p>Você acompanha o que foi encontrado e por quê.</p></div></li>
+          <li data-reveal><svg width="26" height="26" aria-hidden="true"><use href="#i-scan-search"/></svg><div><h3>Diagnóstico cuidadoso</h3><p>Primeiro entender a causa, depois falar em conserto.</p></div></li>
+          <li data-reveal><svg width="26" height="26" aria-hidden="true"><use href="#i-receipt-text"/></svg><div><h3>Orçamentos claros</h3><p>Itens separados, com o motivo de cada um.</p></div></li>
+          <li data-reveal><svg width="26" height="26" aria-hidden="true"><use href="#i-calendar-check"/></svg><div><h3>Manutenção preventiva</h3><p>Cuidar antes para evitar reparos maiores.</p></div></li>
+        </ul>
+        <p class="nota-ficticia">Compromissos propostos para a marca fictícia AutoPrime.</p>
+      </div>
+    </section>
+
+    <!-- ===================== SERVIÇOS =====================
+         Cada <li class="servico"> é um serviço. O formulário de orçamento monta a lista de
+         serviços a partir destes blocos (data-servico = código, h3 = nome). -->
+    <section class="secao" id="servicos" aria-labelledby="servicos-titulo">
+      <div class="container">
+        <header class="secao__cabeca" data-reveal>
+          <p class="sobretitulo">Serviços</p>
+          <h2 class="secao__titulo" id="servicos-titulo">Do check-up preventivo ao reparo</h2>
+          <p class="secao__lead">Todo serviço começa por uma avaliação do veículo. O valor depende do que for encontrado, por isso não mostramos preço fixo: você recebe o orçamento antes de decidir.</p>
+        </header>
+
+        <ul class="servicos">
+          <li class="servico" data-servico="preventiva" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-preventiva.svg" data-slot="servico-preventiva" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de um carro visto de cima com os pontos de revisão marcados"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">01</span>
+              <h3 class="servico__nome">Manutenção preventiva</h3>
+              <p>Revisões periódicas para manter o carro em dia e evitar que um desgaste pequeno vire um reparo maior.</p>
+              <ul class="servico__itens"><li>Revisões periódicas</li><li>Verificação de componentes</li><li>Orientações para conservação do veículo</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="preventiva">Solicitar orçamento <span class="visualmente-oculto">de manutenção preventiva</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+          <li class="servico" data-servico="diagnostico" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-diagnostico.svg" data-slot="servico-diagnostico" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de um painel de instrumentos com luzes de alerta acesas"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">02</span>
+              <h3 class="servico__nome">Diagnóstico automotivo</h3>
+              <p>Para luzes de alerta, ruídos e falhas que vêm e vão: entender a causa antes de trocar qualquer peça.</p>
+              <ul class="servico__itens"><li>Identificação de possíveis falhas</li><li>Avaliação técnica</li><li>Orientação sobre reparos necessários</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="diagnostico">Solicitar orçamento <span class="visualmente-oculto">de diagnóstico automotivo</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+          <li class="servico" data-servico="freios-suspensao" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-freios.svg" data-slot="servico-freios" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de um disco de freio com a pinça laranja e um amortecedor com mola"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">03</span>
+              <h3 class="servico__nome">Freios e suspensão</h3>
+              <p>Itens de segurança que se desgastam com o uso e merecem inspeção regular, não só quando fazem barulho.</p>
+              <ul class="servico__itens"><li>Inspeção dos componentes</li><li>Avaliação de desgaste</li><li>Recomendação de manutenção conforme a necessidade</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="freios-suspensao">Solicitar orçamento <span class="visualmente-oculto">de freios e suspensão</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+          <li class="servico" data-servico="oleo-filtros" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-oleo.svg" data-slot="servico-oleo" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de uma gota de óleo, a vareta de nível e um filtro de óleo"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">04</span>
+              <h3 class="servico__nome">Troca de óleo e filtros</h3>
+              <p>Óleo e filtros conforme a especificação do fabricante para o seu veículo, no intervalo indicado.</p>
+              <ul class="servico__itens"><li>Manutenção conforme as especificações aplicáveis ao veículo</li><li>Verificação de filtros</li><li>Orientações sobre intervalos de manutenção</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="oleo-filtros">Solicitar orçamento <span class="visualmente-oculto">de troca de óleo e filtros</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+          <li class="servico" data-servico="arrefecimento" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-arrefecimento.svg" data-slot="servico-arrefecimento" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de um radiador com ventoinha e um termômetro de temperatura"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">05</span>
+              <h3 class="servico__nome">Sistema de arrefecimento</h3>
+              <p>O sistema que mantém o motor na temperatura certa. Vazamento e superaquecimento costumam dar sinais antes.</p>
+              <ul class="servico__itens"><li>Inspeção de componentes</li><li>Verificação de possíveis vazamentos</li><li>Avaliação do sistema</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="arrefecimento">Solicitar orçamento <span class="visualmente-oculto">do sistema de arrefecimento</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+          <li class="servico" data-servico="mecanica-geral" data-reveal>
+            <div class="servico__imagem"><img src="img/servico-mecanica.svg" data-slot="servico-mecanica" width="480" height="300" loading="lazy" decoding="async" alt="Ilustração de uma porca sextavada, uma chave e uma engrenagem"></div>
+            <div class="servico__corpo">
+              <span class="servico__num" aria-hidden="true">06</span>
+              <h3 class="servico__nome">Serviços mecânicos gerais</h3>
+              <p>Quando o problema não se encaixa em uma categoria, a avaliação começa pelo que você percebeu no carro.</p>
+              <ul class="servico__itens"><li>Avaliação inicial do problema</li><li>Estimativa dos serviços necessários</li><li>Orientação sobre os próximos passos</li></ul>
+              <a class="servico__acao" href="#orcamento" data-pedir="mecanica-geral">Solicitar orçamento <span class="visualmente-oculto">de serviços mecânicos gerais</span><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== SINAIS DO CARRO ===================== -->
+    <section class="secao secao--alt" id="sintomas" aria-labelledby="sintomas-titulo">
+      <div class="container sintomas">
+        <header class="sintomas__cabeca" data-reveal>
+          <p class="sobretitulo">Não sabe o que pedir?</p>
+          <h2 class="secao__titulo" id="sintomas-titulo">Comece pelo que você percebeu no carro</h2>
+          <p class="secao__lead">Escolha uma parte do carro para ver o que costuma ser verificado e quais sinais merecem atenção. É uma orientação geral: só a avaliação do veículo confirma a causa.</p>
+          <div class="sintomas__abas" role="tablist" aria-label="Partes do carro" data-abas>
+            <button class="aba" type="button" role="tab" id="aba-motor" aria-controls="painel-motor" aria-selected="true" data-ponto="motor">Motor e óleo</button>
+            <button class="aba" type="button" role="tab" id="aba-arrefecimento" aria-controls="painel-arrefecimento" aria-selected="false" data-ponto="arrefecimento">Arrefecimento</button>
+            <button class="aba" type="button" role="tab" id="aba-freios" aria-controls="painel-freios" aria-selected="false" data-ponto="freios">Freios</button>
+            <button class="aba" type="button" role="tab" id="aba-suspensao" aria-controls="painel-suspensao" aria-selected="false" data-ponto="suspensao">Suspensão</button>
+            <button class="aba" type="button" role="tab" id="aba-eletronica" aria-controls="painel-eletronica" aria-selected="false" data-ponto="eletronica">Painel e eletrônica</button>
+          </div>
+        </header>
+
+        <div class="sintomas__visor" data-reveal>
+          <div class="mapa-carro">
+            <div class="mapa-carro__area">
+            <svg class="mapa-carro__desenho" viewBox="0 0 1000 380" aria-hidden="true" focusable="false"><use href="#carro-linha"/></svg>
+            <!-- Pontos no desenho: atalho visual para as mesmas abas (posição em % da largura e da altura do desenho) -->
+            <span class="ponto" aria-hidden="true" data-ponto="motor" style="--x:21.5%;--y:53%"><span></span></span>
+            <span class="ponto" aria-hidden="true" data-ponto="arrefecimento" style="--x:7.4%;--y:70%"><span></span></span>
+            <span class="ponto" aria-hidden="true" data-ponto="freios" style="--x:23%;--y:74.2%"><span></span></span>
+            <span class="ponto" aria-hidden="true" data-ponto="suspensao" style="--x:77%;--y:57%"><span></span></span>
+            <span class="ponto" aria-hidden="true" data-ponto="eletronica" style="--x:43%;--y:41%"><span></span></span>
+            </div>
+          </div>
+
+          <div class="leituras">
+            <div class="leitura" role="tabpanel" id="painel-motor" aria-labelledby="aba-motor" tabindex="0">
+              <h3 class="leitura__titulo">Motor e óleo</h3>
+              <dl class="leitura__dados">
+                <div><dt>O que é verificado</dt><dd>Nível e aspecto do óleo, filtros, correias e sinais de vazamento.</dd></div>
+                <div><dt>Sinais de atenção</dt><dd>Luz do óleo acesa, cheiro de queimado, fumaça no escapamento ou nível baixando entre as trocas.</dd></div>
+              </dl>
+              <a class="btn btn--linha leitura__acao" href="#orcamento" data-pedir="oleo-filtros">Pedir orçamento: troca de óleo e filtros</a>
+            </div>
+            <div class="leitura" role="tabpanel" id="painel-arrefecimento" aria-labelledby="aba-arrefecimento" tabindex="0">
+              <h3 class="leitura__titulo">Arrefecimento</h3>
+              <dl class="leitura__dados">
+                <div><dt>O que é verificado</dt><dd>Radiador, mangueiras, reservatório, ventoinha e nível do líquido de arrefecimento.</dd></div>
+                <div><dt>Sinais de atenção</dt><dd>Ponteiro de temperatura subindo, cheiro adocicado, poça embaixo do carro ou ventoinha que não liga.</dd></div>
+              </dl>
+              <a class="btn btn--linha leitura__acao" href="#orcamento" data-pedir="arrefecimento">Pedir orçamento: sistema de arrefecimento</a>
+            </div>
+            <div class="leitura" role="tabpanel" id="painel-freios" aria-labelledby="aba-freios" tabindex="0">
+              <h3 class="leitura__titulo">Freios</h3>
+              <dl class="leitura__dados">
+                <div><dt>O que é verificado</dt><dd>Pastilhas, discos, fluido, mangueiras e o comportamento do pedal.</dd></div>
+                <div><dt>Sinais de atenção</dt><dd>Chiado ao frear, pedal mais baixo ou mole, volante tremendo na frenagem ou carro puxando para um lado.</dd></div>
+              </dl>
+              <a class="btn btn--linha leitura__acao" href="#orcamento" data-pedir="freios-suspensao">Pedir orçamento: freios e suspensão</a>
+            </div>
+            <div class="leitura" role="tabpanel" id="painel-suspensao" aria-labelledby="aba-suspensao" tabindex="0">
+              <h3 class="leitura__titulo">Suspensão</h3>
+              <dl class="leitura__dados">
+                <div><dt>O que é verificado</dt><dd>Amortecedores, molas, buchas, bandejas e terminais de direção.</dd></div>
+                <div><dt>Sinais de atenção</dt><dd>Barulho em lombadas e buracos, carro balançando demais ou pneus gastando de um lado só.</dd></div>
+              </dl>
+              <a class="btn btn--linha leitura__acao" href="#orcamento" data-pedir="freios-suspensao">Pedir orçamento: freios e suspensão</a>
+            </div>
+            <div class="leitura" role="tabpanel" id="painel-eletronica" aria-labelledby="aba-eletronica" tabindex="0">
+              <h3 class="leitura__titulo">Painel e eletrônica</h3>
+              <dl class="leitura__dados">
+                <div><dt>O que é verificado</dt><dd>Leitura das centrais eletrônicas com equipamento de diagnóstico, sensores, bateria e sistema de carga.</dd></div>
+                <div><dt>Sinais de atenção</dt><dd>Luz de injeção ou de alerta acesa, falhas que vêm e vão, partida difícil ou bateria descarregando.</dd></div>
+              </dl>
+              <a class="btn btn--linha leitura__acao" href="#orcamento" data-pedir="diagnostico">Pedir orçamento: diagnóstico automotivo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SOBRE NÓS ===================== -->
+    <section class="secao" id="sobre" aria-labelledby="sobre-titulo">
+      <div class="container sobre">
+        <figure class="sobre__imagem" data-reveal>
+          <img src="img/sobre.svg" data-slot="sobre" width="800" height="1000" loading="lazy" decoding="async" alt="Ilustração de um mecânico trabalhando no motor de um carro com o capô aberto">
+          <figcaption class="selo-imagem">Ilustração demonstrativa</figcaption>
+        </figure>
+        <div class="sobre__texto" data-reveal>
+          <p class="sobretitulo">Sobre nós</p>
+          <h2 class="secao__titulo" id="sobre-titulo">Uma oficina pensada para explicar antes de consertar</h2>
+          <p class="sobre__lead">A AutoPrime é um centro automotivo para quem quer entender o que está sendo feito no próprio carro. Todo atendimento segue a mesma ordem: ouvir o relato, avaliar o veículo, explicar o que foi encontrado e só então apresentar o orçamento.</p>
+          <p>O objetivo é que você saia sabendo o estado do carro, o que é urgente, o que pode ser programado e quanto custa cada etapa.</p>
+          <dl class="sobre__principios">
+            <div><dt>Orçamento antes do serviço</dt><dd>Nenhuma intervenção começa sem a sua autorização.</dd></div>
+            <div><dt>Peças à vista</dt><dd>As peças substituídas ficam separadas para você conferir.</dd></div>
+            <div><dt>Linguagem simples</dt><dd>O que foi encontrado é explicado sem jargão técnico.</dd></div>
+          </dl>
+          <p class="nota-ficticia">Texto de apresentação de uma marca fictícia. Num site real, esta seção conta a história e mostra a estrutura do próprio centro automotivo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DIFERENCIAIS ===================== -->
+    <section class="secao secao--alt" id="diferenciais" aria-labelledby="dif-titulo">
+      <div class="container porque">
+        <div class="porque__cabeca" data-reveal>
+          <p class="sobretitulo">Diferenciais</p>
+          <h2 class="secao__titulo" id="dif-titulo">Por que escolher a AutoPrime?</h2>
+          <p class="secao__lead">Um atendimento organizado para você decidir com informação, não com pressa.</p>
+        </div>
+
+        <ol class="porque__lista">
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-receipt-text"/></svg><h3>Transparência no orçamento</h3><p>Cada item aparece separado, com o motivo da recomendação.</p></li>
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-clipboard-list"/></svg><h3>Atendimento organizado</h3><p>Pedido, avaliação e orçamento seguem uma ordem definida, sem improviso.</p></li>
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-messages-square"/></svg><h3>Serviços explicados</h3><p>Você entende por que cada serviço é recomendado antes de decidir.</p></li>
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-calendar-check"/></svg><h3>Atenção à preventiva</h3><p>Cuidar antes evita reparos maiores e paradas inesperadas.</p></li>
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-message-square-text"/></svg><h3>Comunicação clara</h3><p>Retorno pelo contato que você informar, em linguagem direta.</p></li>
+          <li data-reveal><svg width="24" height="24" aria-hidden="true"><use href="#i-list-ordered"/></svg><h3>Processo estruturado</h3><p>Do pedido ao orçamento, você sabe sempre qual é a próxima etapa.</p></li>
+        </ol>
+
+        <!-- Exemplo visual de orçamento explicado (sem valores: preços dependem da avaliação) -->
+        <figure class="exemplo-orc" data-reveal aria-labelledby="exemplo-orc-legenda">
+          <div class="exemplo-orc__cabeca">
+            <span class="exemplo-orc__selo">Exemplo ilustrativo</span>
+            <p class="exemplo-orc__titulo">Orçamento explicado</p>
+            <p class="exemplo-orc__carro">Sedã · revisão de 60 mil km</p>
+          </div>
+          <ul class="exemplo-orc__itens">
+            <li class="prioridade--agora"><span class="tag"><svg width="14" height="14" aria-hidden="true"><use href="#i-triangle-alert"/></svg>Trocar agora</span><b>Pastilhas de freio dianteiras</b><small>Abaixo da espessura mínima recomendada.</small></li>
+            <li class="prioridade--agora"><span class="tag"><svg width="14" height="14" aria-hidden="true"><use href="#i-triangle-alert"/></svg>Trocar agora</span><b>Fluido de freio</b><small>Fora do prazo de troca indicado no manual.</small></li>
+            <li class="prioridade--programar"><span class="tag"><svg width="14" height="14" aria-hidden="true"><use href="#i-clock"/></svg>Programar</span><b>Pneus traseiros</b><small>Desgaste irregular: medir de novo na próxima revisão.</small></li>
+            <li class="prioridade--ok"><span class="tag"><svg width="14" height="14" aria-hidden="true"><use href="#i-circle-check"/></svg>Em ordem</span><b>Discos de freio</b><small>Dentro da medida.</small></li>
+          </ul>
+          <figcaption class="exemplo-orc__rodape" id="exemplo-orc-legenda">Você aprova item por item. Exemplo sem valores: os preços dependem da avaliação de cada veículo.</figcaption>
+        </figure>
+        <p class="nota-ficticia porque__nota">Diferenciais propostos para a marca fictícia, não resultados comprovados.</p>
+      </div>
+    </section>
+
+    <!-- ===================== COMO FUNCIONA ===================== -->
+    <section class="secao" id="processo" aria-labelledby="processo-titulo">
+      <div class="container">
+        <header class="secao__cabeca" data-reveal>
+          <p class="sobretitulo">Como funciona</p>
+          <h2 class="secao__titulo" id="processo-titulo">Do pedido ao orçamento, em quatro etapas</h2>
+        </header>
+        <ol class="etapas">
+          <li class="etapa" data-reveal><span class="etapa__num" aria-hidden="true">01</span><h3><svg width="22" height="22" aria-hidden="true"><use href="#i-pencil-line"/></svg>Solicitação</h3><p>Você descreve o serviço ou o problema pelo formulário ou pelos canais de atendimento.</p></li>
+          <li class="etapa" data-reveal><span class="etapa__num" aria-hidden="true">02</span><h3><svg width="22" height="22" aria-hidden="true"><use href="#i-phone"/></svg>Contato</h3><p>A equipe recebe a solicitação e entra em contato para entender melhor e combinar a avaliação.</p></li>
+          <li class="etapa" data-reveal><span class="etapa__num" aria-hidden="true">03</span><h3><svg width="22" height="22" aria-hidden="true"><use href="#i-scan-search"/></svg>Avaliação</h3><p>O veículo e a necessidade são avaliados na oficina.</p></li>
+          <li class="etapa" data-reveal><span class="etapa__num" aria-hidden="true">04</span><h3><svg width="22" height="22" aria-hidden="true"><use href="#i-receipt-text"/></svg>Orçamento</h3><p>Você recebe uma estimativa para analisar antes de autorizar qualquer serviço.</p></li>
+        </ol>
+        <p class="aviso-linha" data-reveal><svg width="20" height="20" aria-hidden="true"><use href="#i-info"/></svg><span>Enviar o formulário <strong>não aprova um orçamento nem confirma um serviço</strong>: é só o primeiro contato.</span></p>
+      </div>
+    </section>
+
+    <!-- ===================== GALERIA ===================== -->
+    <section class="secao secao--alt" id="galeria" aria-labelledby="galeria-titulo">
+      <div class="container">
+        <header class="secao__cabeca secao__cabeca--linha" data-reveal>
+          <div>
+            <p class="sobretitulo">Galeria</p>
+            <h2 class="secao__titulo" id="galeria-titulo">Oficina, equipamentos e detalhes</h2>
+          </div>
+          <p class="secao__lead">Toque em uma imagem para ampliar. Nesta demonstração as imagens são ilustrações; um site real mostra fotos do próprio centro automotivo.</p>
+        </header>
+        <ul class="galeria" data-galeria>
+          <li class="galeria__item galeria__item--largo" data-reveal><button class="galeria__botao" type="button" data-legenda="Sedã em estúdio"><img src="img/galeria-estudio.svg" data-slot="galeria-1" width="1200" height="500" loading="lazy" decoding="async" alt="Ilustração de um sedã grafite em um estúdio escuro, desenhado pela luz de recorte"><span class="galeria__legenda">Sedã em estúdio</span></button></li>
+          <li class="galeria__item" data-reveal><button class="galeria__botao" type="button" data-legenda="Motor em detalhe"><img src="img/galeria-motor.svg" data-slot="galeria-2" width="600" height="450" loading="lazy" decoding="async" alt="Ilustração de um motor visto de cima, com bobinas, coletor e tampa de óleo laranja"><span class="galeria__legenda">Motor em detalhe</span></button></li>
+          <li class="galeria__item" data-reveal><button class="galeria__botao" type="button" data-legenda="Scanner de diagnóstico"><img src="img/galeria-scanner.svg" data-slot="galeria-3" width="600" height="450" loading="lazy" decoding="async" alt="Ilustração de um scanner de diagnóstico mostrando gráficos de leitura do motor"><span class="galeria__legenda">Scanner de diagnóstico</span></button></li>
+          <li class="galeria__item galeria__item--largo" data-reveal><button class="galeria__botao" type="button" data-legenda="Box de manutenção"><img src="img/galeria-box.svg" data-slot="galeria-4" width="1200" height="500" loading="lazy" decoding="async" alt="Ilustração de um box de manutenção com o carro no elevador e um mecânico trabalhando embaixo"><span class="galeria__legenda">Box de manutenção</span></button></li>
+          <li class="galeria__item" data-reveal><button class="galeria__botao" type="button" data-legenda="Ferramentas organizadas"><img src="img/galeria-ferramentas.svg" data-slot="galeria-5" width="600" height="450" loading="lazy" decoding="async" alt="Ilustração de um painel de ferramentas com chaves organizadas por tamanho, alicate e soquetes"><span class="galeria__legenda">Ferramentas organizadas</span></button></li>
+          <li class="galeria__item" data-reveal><button class="galeria__botao" type="button" data-legenda="Farol de LED"><img src="img/galeria-farol.svg" data-slot="galeria-6" width="600" height="450" loading="lazy" decoding="async" alt="Ilustração do farol de LED de um carro moderno, aceso"><span class="galeria__legenda">Farol de LED</span></button></li>
+          <li class="galeria__item" data-reveal><button class="galeria__botao" type="button" data-legenda="Roda e pinça de freio"><img src="img/galeria-roda.svg" data-slot="galeria-7" width="600" height="450" loading="lazy" decoding="async" alt="Ilustração de uma roda de liga leve com a pinça de freio laranja aparente"><span class="galeria__legenda">Roda e pinça de freio</span></button></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== AVALIAÇÕES =====================
+         Depoimentos ilustrativos. Para um cliente real: troque pelos depoimentos verdadeiros,
+         publicados com autorização de quem escreveu, e só então apague o aviso. -->
+    <section class="secao" id="avaliacoes" aria-labelledby="avaliacoes-titulo">
+      <div class="container">
+        <header class="secao__cabeca" data-reveal>
+          <p class="sobretitulo">Avaliações</p>
+          <h2 class="secao__titulo" id="avaliacoes-titulo">Depoimentos de clientes</h2>
+          <p class="aviso-ficticio"><svg width="18" height="18" aria-hidden="true"><use href="#i-info"/></svg><span>Depoimentos ilustrativos — conteúdo fictício utilizado exclusivamente para demonstração do projeto.</span></p>
+        </header>
+        <ul class="depoimentos">
+          <li class="depoimento depoimento--destaque" data-reveal>
+            <blockquote><p>Recebi o orçamento separado entre o que precisava trocar agora e o que podia esperar. Consegui decidir sem pressão.</p></blockquote>
+            <p class="depoimento__autor"><span class="depoimento__selo">Exemplo ilustrativo</span>Cliente fictício · revisão preventiva</p>
+          </li>
+          <li class="depoimento" data-reveal>
+            <blockquote><p>Descrevi o barulho pelo formulário e me ligaram para entender melhor antes de eu levar o carro.</p></blockquote>
+            <p class="depoimento__autor"><span class="depoimento__selo">Exemplo ilustrativo</span>Cliente fictício · freios e suspensão</p>
+          </li>
+          <li class="depoimento" data-reveal>
+            <blockquote><p>Mostraram a peça trocada e explicaram o desgaste. Foi a primeira vez que entendi o que estava pagando.</p></blockquote>
+            <p class="depoimento__autor"><span class="depoimento__selo">Exemplo ilustrativo</span>Cliente fictício · diagnóstico</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== PERGUNTAS FREQUENTES ===================== -->
+    <section class="secao secao--alt" id="duvidas" aria-labelledby="duvidas-titulo">
+      <div class="container duvidas">
+        <header class="duvidas__cabeca" data-reveal>
+          <p class="sobretitulo">Dúvidas</p>
+          <h2 class="secao__titulo" id="duvidas-titulo">Perguntas frequentes</h2>
+          <p class="secao__lead">Não encontrou a sua? Pergunte no campo de descrição do <a href="#orcamento">pedido de orçamento</a>.</p>
+        </header>
+        <div class="faq" data-reveal>
+          <details class="faq__item">
+            <summary>Como solicitar um orçamento?</summary>
+            <div class="faq__resposta"><p>Preencha o <a href="#orcamento">formulário de orçamento</a> com seus dados, o veículo e o que ele precisa. Na etapa seguinte você revisa as informações e envia a mensagem pelo WhatsApp. Se preferir, use os canais de atendimento da seção de contato.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary>Preciso informar os dados do meu veículo?</summary>
+            <div class="faq__resposta"><p>Sim. Marca e modelo são obrigatórios, porque peças, fluidos e procedimentos mudam de um carro para outro. O ano é opcional, mas ajuda a equipe a entender a necessidade antes do contato.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary>O envio do formulário confirma um serviço?</summary>
+            <div class="faq__resposta"><p>Não. O pedido é o primeiro contato: ele não agenda horário, não aprova orçamento e não autoriza nenhum serviço. Nada é feito no veículo sem a sua aprovação do orçamento.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary>Como funciona a avaliação inicial?</summary>
+            <div class="faq__resposta"><p>Depois do contato, a equipe combina com você a avaliação do veículo. É nela que o problema é identificado e o orçamento é montado. Prazos e condições da avaliação são informados nesse contato.</p></div>
+          </details>
+          <details class="faq__item">
+            <summary>Posso entrar em contato pelo WhatsApp?</summary>
+            <div class="faq__resposta"><p>Pode. O formulário monta a mensagem com os seus dados e abre o WhatsApp para você revisar e enviar: o site não envia nada sozinho.<span data-so-demo> Nesta demonstração não há número configurado, então o WhatsApp não é aberto.</span></p></div>
+          </details>
+          <details class="faq__item">
+            <summary>Como saber quais serviços meu veículo precisa?</summary>
+            <div class="faq__resposta"><p>O manual do proprietário indica as revisões por quilometragem e tempo de uso. Se o carro dá algum sinal, como barulho, vibração ou luz de alerta, veja <a href="#sintomas">o que você percebeu no carro</a> ou escolha “Não sei, preciso de uma avaliação” no formulário.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTATO E ORÇAMENTO ===================== -->
+    <section class="secao contato" id="contato" aria-labelledby="contato-titulo">
+      <div class="container contato__grade">
+        <header class="contato__cabeca" data-reveal>
+          <p class="sobretitulo">Contato</p>
+          <h2 class="secao__titulo" id="contato-titulo">Peça seu orçamento</h2>
+          <p class="secao__lead">Preencha os dados, revise e envie pelo WhatsApp. A equipe responde pelo telefone que você informar.</p>
+        </header>
+
+        <div class="orcamento" id="orcamento" tabindex="-1">
+          <ol class="passos" aria-label="Etapas do pedido">
+            <li class="passos__item is-atual" data-passo="1" aria-current="step"><span>1</span>Seus dados</li>
+            <li class="passos__item" data-passo="2"><span>2</span>Revisão e envio</li>
+          </ol>
+
+          <noscript><p class="status status--alerta">O formulário precisa de JavaScript ativado no navegador. Use os canais de atendimento ao lado.</p></noscript>
+
+          <form class="form" id="form-orcamento" action="#orcamento" novalidate>
+            <p class="form__ajuda">Campos marcados com <span class="obrig" aria-hidden="true">*</span> são obrigatórios.</p>
+            <div class="status status--erro" id="form-resumo" role="alert" hidden></div>
+
+            <fieldset class="form__grupo">
+              <legend>Seus dados</legend>
+              <div class="campo">
+                <label for="f-nome">Nome <span class="obrig" aria-hidden="true">*</span></label>
+                <input id="f-nome" name="nome" type="text" autocomplete="name" maxlength="80" required aria-describedby="f-nome-erro">
+                <p class="campo__erro" id="f-nome-erro" hidden></p>
+              </div>
+              <div class="campo-linha">
+                <div class="campo">
+                  <label for="f-telefone">Telefone ou WhatsApp <span class="obrig" aria-hidden="true">*</span></label>
+                  <input id="f-telefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" required aria-describedby="f-telefone-dica f-telefone-erro">
+                  <p class="campo__dica" id="f-telefone-dica">Com DDD. Ex.: (11) 9XXXX-XXXX</p>
+                  <p class="campo__erro" id="f-telefone-erro" hidden></p>
+                </div>
+                <div class="campo">
+                  <label for="f-email">E-mail <span class="opcional">(opcional)</span></label>
+                  <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" aria-describedby="f-email-erro">
+                  <p class="campo__erro" id="f-email-erro" hidden></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form__grupo">
+              <legend>Veículo</legend>
+              <div class="campo-linha campo-linha--3">
+                <div class="campo">
+                  <label for="f-marca">Marca <span class="obrig" aria-hidden="true">*</span></label>
+                  <input id="f-marca" name="marca" type="text" list="lista-marcas" autocomplete="off" maxlength="40" required aria-describedby="f-marca-erro">
+                  <datalist id="lista-marcas">
+                    <option value="Audi"></option><option value="BMW"></option><option value="BYD"></option><option value="Caoa Chery"></option>
+                    <option value="Chevrolet"></option><option value="Citroën"></option><option value="Fiat"></option><option value="Ford"></option>
+                    <option value="Honda"></option><option value="Hyundai"></option><option value="Jeep"></option><option value="Kia"></option>
+                    <option value="Mercedes-Benz"></option><option value="Mitsubishi"></option><option value="Nissan"></option><option value="Peugeot"></option>
+                    <option value="Renault"></option><option value="Toyota"></option><option value="Volkswagen"></option><option value="Volvo"></option>
+                  </datalist>
+                  <p class="campo__erro" id="f-marca-erro" hidden></p>
+                </div>
+                <div class="campo">
+                  <label for="f-modelo">Modelo <span class="obrig" aria-hidden="true">*</span></label>
+                  <input id="f-modelo" name="modelo" type="text" autocomplete="off" maxlength="60" required aria-describedby="f-modelo-erro">
+                  <p class="campo__erro" id="f-modelo-erro" hidden></p>
+                </div>
+                <div class="campo">
+                  <label for="f-ano">Ano <span class="opcional">(opcional)</span></label>
+                  <input id="f-ano" name="ano" type="text" inputmode="numeric" autocomplete="off" maxlength="4" aria-describedby="f-ano-erro">
+                  <p class="campo__erro" id="f-ano-erro" hidden></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form__grupo">
+              <legend>O que o carro precisa</legend>
+              <div class="campo-linha">
+                <div class="campo">
+                  <label for="f-servico">Serviço desejado <span class="obrig" aria-hidden="true">*</span></label>
+                  <select id="f-servico" name="servico" required aria-describedby="f-servico-erro">
+                    <option value="">Escolha um serviço</option>
+                  </select>
+                  <p class="campo__erro" id="f-servico-erro" hidden></p>
+                </div>
+                <div class="campo">
+                  <label for="f-periodo">Melhor período para contato <span class="opcional">(opcional)</span></label>
+                  <select id="f-periodo" name="periodo">
+                    <option value="">Sem preferência</option>
+                    <option>Manhã</option>
+                    <option>Tarde</option>
+                    <option>Início da noite</option>
+                  </select>
+                </div>
+              </div>
+              <div class="campo">
+                <label for="f-descricao">Descreva o problema ou a necessidade <span class="obrig" aria-hidden="true">*</span></label>
+                <textarea id="f-descricao" name="descricao" rows="4" maxlength="600" required aria-describedby="f-descricao-dica f-descricao-erro" placeholder="Ex.: barulho ao frear em velocidade baixa, começou há uma semana."></textarea>
+                <p class="campo__dica" id="f-descricao-dica"><span data-contador>0</span> de 600 caracteres</p>
+                <p class="campo__erro" id="f-descricao-erro" hidden></p>
+              </div>
+            </fieldset>
+
+            <div class="campo campo--check">
+              <input id="f-consentimento" name="consentimento" type="checkbox" required aria-describedby="f-consentimento-erro">
+              <label for="f-consentimento">Autorizo o uso destes dados para a AutoPrime responder a esta solicitação, conforme a <a href="privacidade.html">política de privacidade</a>. <span class="obrig" aria-hidden="true">*</span></label>
+              <p class="campo__erro" id="f-consentimento-erro" hidden></p>
+            </div>
+
+            <div class="form__acoes">
+              <button class="btn btn--principal btn--grande" type="submit">Revisar solicitação <svg width="20" height="20" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              <p class="form__nota">Nada do que você digita é salvo neste site.</p>
+            </div>
+          </form>
+
+          <!-- Etapa 2: revisão (preenchida pelo js/site.js) -->
+          <section class="revisao" id="revisao" aria-labelledby="revisao-titulo" tabindex="-1" hidden>
+            <h3 class="revisao__titulo" id="revisao-titulo">Confira antes de enviar</h3>
+            <dl class="revisao__dados" data-resumo></dl>
+            <div class="revisao__mensagem">
+              <p class="revisao__rotulo" id="msg-rotulo">Mensagem que será enviada</p>
+              <pre class="revisao__texto" data-mensagem aria-labelledby="msg-rotulo" tabindex="0"></pre>
+            </div>
+            <p class="aviso-linha aviso-linha--compacto"><svg width="20" height="20" aria-hidden="true"><use href="#i-info"/></svg><span>Este pedido <strong>não aprova orçamento nem confirma serviço</strong>. A AutoPrime entra em contato pelo telefone informado.</span></p>
+            <div class="revisao__acoes">
+              <button class="btn btn--principal btn--grande" type="button" data-enviar-whats><svg width="20" height="20" aria-hidden="true"><use href="#i-message-circle"/></svg><span data-rotulo>Enviar pelo WhatsApp</span></button>
+              <button class="btn btn--linha" type="button" data-copiar><svg width="18" height="18" aria-hidden="true"><use href="#i-copy"/></svg>Copiar mensagem</button>
+              <a class="btn btn--linha" href="#orcamento" data-enviar-email hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-mail"/></svg>Enviar por e-mail</a>
+              <button class="btn btn--texto" type="button" data-editar><svg width="18" height="18" aria-hidden="true"><use href="#i-arrow-left"/></svg>Editar dados</button>
+            </div>
+            <div class="status" data-status role="status" aria-live="polite" hidden></div>
+            <button class="btn btn--texto revisao__novo" type="button" data-novo hidden><svg width="18" height="18" aria-hidden="true"><use href="#i-rotate-ccw"/></svg>Limpar e fazer outro pedido</button>
+          </section>
+        </div>
+
+        <aside class="canais" aria-labelledby="canais-titulo" data-reveal>
+          <h3 class="canais__titulo" id="canais-titulo">Canais de atendimento</h3>
+          <!-- Preenchido a partir de js/config.js. Sem JavaScript, fica esta mensagem: -->
+          <ul class="canais__lista" data-canais>
+            <li class="canal canal--vazio"><p>Os contatos aparecem aqui quando estiverem configurados.</p></li>
+          </ul>
+          <div class="canais__bloco">
+            <h4 class="canais__subtitulo"><svg width="18" height="18" aria-hidden="true"><use href="#i-clock"/></svg>Horário de atendimento</h4>
+            <div data-horarios><p class="canal__vazio">Horário a configurar.</p></div>
+          </div>
+          <div class="local" data-local>
+            <div class="local__vazio">
+              <svg width="28" height="28" aria-hidden="true"><use href="#i-map-pin"/></svg>
+              <p class="local__titulo">Mapa desativado</p>
+              <p>A AutoPrime é uma marca fictícia, então não há endereço nem mapa. Com um endereço real confirmado, o mapa e o botão “Como chegar” aparecem aqui.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== RODAPÉ ===================== -->
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <div class="rodape__marca">
+        <a class="marca" href="#inicio" aria-label="AutoPrime Centro Automotivo, voltar ao início">
+          <svg class="marca__simbolo" width="34" height="34" aria-hidden="true"><use href="#marca"/></svg>
+          <span class="marca__texto" aria-hidden="true"><span class="marca__nome">AUTOPRIME</span><span class="marca__sub">Centro Automotivo</span></span>
+        </a>
+        <p>Manutenção, diagnóstico e serviços mecânicos com orçamento explicado antes de qualquer serviço.</p>
+      </div>
+      <nav class="rodape__col" aria-labelledby="rod-nav">
+        <h2 class="rodape__titulo" id="rod-nav">Navegação</h2>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#sobre">Sobre nós</a></li>
+          <li><a href="#diferenciais">Diferenciais</a></li>
+          <li><a href="#avaliacoes">Avaliações</a></li>
+          <li><a href="#duvidas">Perguntas frequentes</a></li>
+        </ul>
+      </nav>
+      <nav class="rodape__col" aria-labelledby="rod-serv">
+        <h2 class="rodape__titulo" id="rod-serv">Serviços</h2>
+        <ul>
+          <li><a href="#orcamento" data-pedir="preventiva">Manutenção preventiva</a></li>
+          <li><a href="#orcamento" data-pedir="diagnostico">Diagnóstico automotivo</a></li>
+          <li><a href="#orcamento" data-pedir="freios-suspensao">Freios e suspensão</a></li>
+          <li><a href="#orcamento" data-pedir="oleo-filtros">Troca de óleo e filtros</a></li>
+          <li><a href="#orcamento" data-pedir="arrefecimento">Sistema de arrefecimento</a></li>
+          <li><a href="#orcamento" data-pedir="mecanica-geral">Serviços mecânicos gerais</a></li>
+        </ul>
+      </nav>
+      <div class="rodape__col">
+        <h2 class="rodape__titulo">Contato</h2>
+        <ul data-rodape-contatos>
+          <li><a href="#orcamento">Pedido de orçamento</a></li>
+        </ul>
+        <ul class="rodape__redes" data-redes hidden></ul>
+      </div>
+    </div>
+    <div class="container rodape__base">
+      <div class="rodape__aviso" id="aviso">
+        <p><strong>Projeto demonstrativo de portfólio.</strong> Marca, informações comerciais, imagens de apresentação e conteúdo ilustrativo não representam necessariamente uma empresa real.</p>
+        <p>Nenhum dado é enviado a servidor: o formulário só prepara a mensagem, que a própria pessoa decide enviar pelo WhatsApp.</p>
+      </div>
+      <p class="rodape__fim"><a href="privacidade.html">Política de privacidade</a> · © <span data-ano>2026</span> AutoPrime · demonstração criada por <a href="../../index.html">Martins | Criação de Sites</a></p>
+    </div>
+  </footer>
+
+  <a class="whats-flutuante" href="#orcamento" data-whats-flutuante hidden aria-label="Conversar no WhatsApp">
+    <svg width="26" height="26" aria-hidden="true"><use href="#i-message-circle"/></svg>
+  </a>
+
+  <!-- Galeria ampliada -->
+  <dialog class="lightbox" id="lightbox" aria-labelledby="lightbox-legenda">
+    <div class="lightbox__caixa">
+      <figure class="lightbox__figura">
+        <img class="lightbox__img" data-lb-img src="img/galeria-estudio.svg" width="1200" height="500" loading="lazy" decoding="async" alt="">
+        <figcaption class="lightbox__legenda"><span id="lightbox-legenda" data-lb-legenda></span><span class="lightbox__contador" data-lb-contador></span></figcaption>
+      </figure>
+      <button class="lightbox__nav lightbox__nav--ant" type="button" data-lb="-1" aria-label="Imagem anterior"><svg width="24" height="24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+      <button class="lightbox__nav lightbox__nav--prox" type="button" data-lb="1" aria-label="Próxima imagem"><svg width="24" height="24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      <button class="lightbox__fechar" type="button" data-fechar aria-label="Fechar imagem ampliada"><svg width="22" height="22" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+  </dialog>
+
+  <script src="js/config.js" defer></script>
+  <script src="js/orcamento.js" defer></script>
+  <script src="js/site.js" defer></script>
+</body>
+</html>

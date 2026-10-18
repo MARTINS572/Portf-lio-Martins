@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Depois de definir o endereço final, adicione a linha abaixo com o domínio correto
+# e crie o sitemap.xml (instruções no README):
+# Sitemap: https://SEU-DOMINIO/sitemap.xml

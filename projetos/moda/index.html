@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AVESSO · Projeto demonstrativo</title>
+  <meta name="description" content="Projeto demonstrativo de catálogo de moda urbana com filtros, cores, tamanhos e sacola. A AVESSO e seus produtos são fictícios. Criado por Martins | Criação de Sites.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta property="og:title" content="AVESSO · Projeto demonstrativo">
+  <meta property="og:description" content="Exemplo de catálogo de marca de roupas independente. Marca e preços fictícios.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Cpath d='M9 24 16 7l7 17' fill='none' stroke='%23D9CBB4' stroke-width='3'/%3E%3Cpath d='M11 18h10' stroke='%232B4ACB' stroke-width='3'/%3E%3C/svg%3E">
+
+  <!-- Instrument Serif (títulos) e Hanken Grotesk (textos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/comum.js"></script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <div class="faixa-demo" role="note">
+    <span>Catálogo demonstrativo · marca, peças e preços fictícios · sem vendas</span>
+    <a href="../../index.html#projetos">← Voltar ao portfólio</a>
+  </div>
+
+  <!-- Desenhos das peças. Cor da peça: --peca; contorno: --contorno -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="peca-camiseta" viewBox="0 0 220 200">
+      <path d="M70 18l26-8c4 10 10 14 14 14s10-4 14-14l26 8 40 30-18 28-20-10v116H68V66L48 76 30 48z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M68 172h84M150 66v-4M70 66v-4" stroke="var(--contorno, #141414)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".5"/>
+      <rect x="104" y="30" width="12" height="7" fill="#2B4ACB"/>
+    </symbol>
+    <symbol id="peca-moletom" viewBox="0 0 220 210">
+      <path d="M78 26c6-16 58-16 64 0l30 10 32 124-24 8-14-84v114H54V84l-14 84-24-8L48 36z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M20 145l23 7M200 145l-23 7M54 186h112" stroke="var(--contorno, #141414)" stroke-width="1.6"/>
+      <g style="opacity:var(--capuz, 1)">
+        <path d="M78 26c4 22 18 32 32 32s28-10 32-32" fill="none" stroke="var(--contorno, #141414)" stroke-width="2"/>
+        <path d="M100 58v26M120 58v26" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <path d="M110 28v46" stroke="var(--contorno, #141414)" stroke-width="2" style="opacity:var(--ziper, 0)"/>
+      <rect x="106" y="70" width="8" height="10" fill="#2B4ACB" style="opacity:var(--ziper, 0)"/>
+      <path d="M76 140h68v40H76z" fill="none" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+          </symbol>
+    <symbol id="peca-calca" viewBox="0 0 200 260">
+      <path d="M52 8h96l14 244h-48l-14-170-14 170H38z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M52 26h96" stroke="var(--contorno, #141414)" stroke-width="1.6"/>
+      <path d="M58 26q14 8 20 28M142 26q-14 8-20 28" fill="none" stroke="var(--contorno, #141414)" stroke-width="1.4"/>
+      <path d="M100 26v56" stroke="var(--contorno, #141414)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".6"/>
+      <rect x="44" y="120" width="26" height="30" fill="none" stroke="var(--contorno, #141414)" stroke-width="1.4" style="opacity:var(--cargo, 1)"/>
+    </symbol>
+    <symbol id="peca-bermuda" viewBox="0 0 200 170">
+      <path d="M50 8h100l12 150h-50l-12-80-12 80H38z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M50 26h100" stroke="var(--contorno, #141414)" stroke-width="1.6"/>
+      <path d="M56 26q14 8 20 28M144 26q-14 8-20 28" fill="none" stroke="var(--contorno, #141414)" stroke-width="1.4"/>
+      <path d="M40 146h48M112 146h48" stroke="var(--contorno, #141414)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".5"/>
+    </symbol>
+    <symbol id="peca-bone" viewBox="0 0 200 140">
+      <path d="M32 100q0-72 68-72t68 72z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M100 28v72M66 38q-12 30-10 62M134 38q12 30 10 62" fill="none" stroke="var(--contorno, #141414)" stroke-width="1.2" opacity=".6"/>
+      <path d="M24 100h124q34 0 44 16H34q-16 0-10-16z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="100" cy="27" r="5" fill="var(--contorno, #141414)"/>
+    </symbol>
+    <symbol id="peca-bolsa" viewBox="0 0 200 230">
+      <path d="M72 76V44q0-26 28-26t28 26v32" fill="none" stroke="var(--contorno, #141414)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M30 76h140l-10 144H40z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="84" y="120" width="32" height="18" fill="#2B4ACB"/>
+      <path d="M36 92h128" stroke="var(--contorno, #141414)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".5"/>
+    </symbol>
+    <symbol id="peca-meia" viewBox="0 0 140 230">
+      <path d="M44 8h48v124q0 20 20 34l8 6q14 12 0 24-12 10-28 0L52 176q-12-8-12-26V8z" fill="var(--peca)" stroke="var(--contorno, #141414)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M44 30h48M44 42h48" stroke="#2B4ACB" stroke-width="5"/>
+      <path d="M44 20h48" stroke="var(--contorno, #141414)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".5"/>
+    </symbol>
+  </svg>
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <header class="cabecalho" data-header>
+    <div class="container cabecalho__linha">
+      <a class="logo" href="#/" aria-label="AVESSO, ir para o início">Avesso</a>
+      <nav class="nav" id="menu" aria-label="Menu principal">
+        <ul class="nav__lista">
+          <li><a class="nav__link" href="#/categoria/Camisetas">Camisetas</a></li>
+          <li><a class="nav__link" href="#/categoria/Calças">Calças</a></li>
+          <li><a class="nav__link" href="#/categoria/Moletons">Moletons</a></li>
+          <li><a class="nav__link" href="#/categoria/Acessórios">Acessórios</a></li>
+        </ul>
+      </nav>
+      <div class="cabecalho__acoes">
+        <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema escuro">
+          <svg class="icone-sol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg class="icone-lua" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="sacola-link" href="#/sacola" id="link-sacola" aria-label="Sacola, 0 itens">Sacola <span class="sacola-link__n" id="contador-sacola">0</span></a>
+        <button class="icone-btn menu-btn" type="button" data-menu-toggle="900" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+          <span class="menu-btn__barras" aria-hidden="true"><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ===================== VISTA: CATÁLOGO ===================== -->
+    <div class="vista" id="vista-catalogo">
+      <section class="hero" aria-labelledby="hero-titulo">
+        <div class="container hero__grade">
+          <div class="hero__texto">
+            <p class="rotulo">Coleção 01 · Concreto</p>
+            <h1 class="hero__titulo" id="hero-titulo">O lado de dentro também <i>importa.</i></h1>
+            <p class="hero__lead">Básicos urbanos com tecido pesado, costura reforçada e acabamento por dentro. Coleção fictícia, criada para a demonstração.</p>
+            <a class="btn btn--escuro btn--grande" href="#catalogo">Ver o catálogo</a>
+          </div>
+
+          <!-- Composição de peças sobre tecido (flat lay) -->
+          <figure class="flatlay" data-foto="moda/hero.jpg" data-alt="Camiseta preta, calça cinza, boné e meia dobrados sobre um tecido cru" data-foto-prioridade>
+            <div class="arte flatlay__arte" aria-hidden="true">
+              <svg class="flatlay__peca flatlay__peca--calca" style="--peca:#8A8A85"><use href="#peca-calca"/></svg>
+              <svg class="flatlay__peca flatlay__peca--camiseta" style="--peca:#141414;--contorno:#000"><use href="#peca-camiseta"/></svg>
+              <svg class="flatlay__peca flatlay__peca--bone" style="--peca:#D9CBB4"><use href="#peca-bone"/></svg>
+              <svg class="flatlay__peca flatlay__peca--meia" style="--peca:#EFEBE3"><use href="#peca-meia"/></svg>
+              <span class="flatlay__etiqueta">AV-01 · 100% algodão · 240 g/m²</span>
+            </div>
+            <figcaption>Ilustração · peças fictícias</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Categorias -->
+      <section class="secao" aria-labelledby="categorias-titulo">
+        <div class="container">
+          <h2 class="titulo-secao" id="categorias-titulo" data-reveal>Categorias</h2>
+          <div class="categorias" id="categorias"></div>
+        </div>
+      </section>
+
+      <!-- Catálogo com filtros -->
+      <section class="secao secao--catalogo" id="catalogo" aria-labelledby="catalogo-titulo">
+        <div class="container">
+          <div class="catalogo__topo">
+            <h2 class="titulo-secao" id="catalogo-titulo" tabindex="-1">Catálogo</h2>
+            <p class="rotulo" id="contagem" aria-live="polite"></p>
+          </div>
+
+          <div class="barra-filtros" role="group" aria-label="Filtros do catálogo">
+            <div class="abas" role="group" aria-label="Categoria" id="abas-categoria"></div>
+            <div class="barra-filtros__linha">
+              <fieldset class="filtro-tamanho">
+                <legend class="rotulo">Tamanho</legend>
+                <div class="tamanhos" id="filtro-tamanhos"></div>
+              </fieldset>
+              <div class="filtro-preco">
+                <label class="rotulo" for="preco-max">Preço até <output id="preco-valor" for="preco-max"></output></label>
+                <input type="range" id="preco-max" min="40" max="400" step="10" value="400">
+              </div>
+              <button class="link-botao" type="button" id="limpar">Limpar filtros</button>
+            </div>
+          </div>
+
+          <ul class="grade" id="grade"></ul>
+          <div class="vazio" id="vazio" hidden>
+            <p>Nenhuma peça com esses filtros.</p>
+            <button class="btn btn--linha" type="button" id="limpar-vazio">Limpar filtros</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== VISTA: PRODUTO ===================== -->
+    <div class="vista" id="vista-produto" hidden>
+      <div class="container produto">
+        <a class="voltar" href="#/" data-voltar>← Catálogo</a>
+        <div class="produto__grade">
+          <div class="produto__fotos">
+            <div class="produto__foto" id="produto-foto"></div>
+            <div class="produto__miniaturas" id="produto-miniaturas" aria-hidden="true"></div>
+          </div>
+          <div class="produto__info">
+            <p class="rotulo" id="produto-ref"></p>
+            <h1 class="produto__nome" id="produto-nome" tabindex="-1"></h1>
+            <p class="produto__preco" id="produto-preco"></p>
+            <p class="produto__descricao" id="produto-descricao"></p>
+
+            <fieldset class="opcoes-produto">
+              <legend class="rotulo">Cor · <span id="produto-cor-nome"></span></legend>
+              <div class="cores" id="produto-cores"></div>
+            </fieldset>
+            <fieldset class="opcoes-produto">
+              <legend class="rotulo">Tamanho</legend>
+              <div class="tamanhos tamanhos--produto" id="produto-tamanhos"></div>
+            </fieldset>
+
+            <div class="produto__compra">
+              <label class="rotulo" for="produto-qtd">Quantidade</label>
+              <select id="produto-qtd"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+              <button class="btn btn--escuro btn--grande" type="button" id="adicionar">Adicionar à sacola</button>
+            </div>
+            <p class="produto__erro" id="produto-erro" role="alert"></p>
+
+            <dl class="produto__ficha" id="produto-ficha"></dl>
+          </div>
+        </div>
+
+        <section class="relacionados" aria-labelledby="relacionados-titulo">
+          <h2 class="titulo-secao" id="relacionados-titulo">Combina com</h2>
+          <ul class="grade grade--3" id="relacionados"></ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===================== VISTA: SACOLA ===================== -->
+    <div class="vista" id="vista-sacola" hidden>
+      <div class="container sacola">
+        <a class="voltar" href="#/" data-voltar>← Continuar vendo</a>
+        <h1 class="sacola__titulo" id="sacola-titulo" tabindex="-1">Sacola</h1>
+        <div class="sacola__grade">
+          <ul class="sacola__lista" id="sacola-lista"></ul>
+          <p class="sacola__vazia" id="sacola-vazia">Sua sacola está vazia. <a href="#catalogo">Ver o catálogo</a></p>
+          <aside class="resumo" id="resumo" aria-labelledby="resumo-titulo">
+            <h2 id="resumo-titulo">Resumo</h2>
+            <dl>
+              <div><dt>Peças</dt><dd id="resumo-pecas">0</dd></div>
+              <div><dt>Subtotal</dt><dd id="resumo-subtotal">R$ 0,00</dd></div>
+              <div><dt>Frete</dt><dd>Não calculado</dd></div>
+            </dl>
+            <button class="btn btn--escuro btn--grande" type="button" id="finalizar">Finalizar pedido</button>
+            <p class="resumo__nota">Demonstração sem pagamento. Os preços são fictícios.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <p class="logo logo--rodape">Avesso</p>
+      <p class="rodape__frase">Roupa feita para durar, com o acabamento à mostra.</p>
+    </div>
+    <div class="container rodape__base">
+      <p><b>Catálogo demonstrativo.</b> A AVESSO é uma marca fictícia; peças, cores e preços foram criados para mostrar o projeto. Nenhuma venda é realizada.</p>
+      <p>© <span data-ano>2026</span> · Desenvolvido por <a href="../../index.html">Martins | Criação de Sites</a></p>
+    </div>
+  </footer>
+
+  <dialog class="janela" id="janela-pedido" aria-labelledby="janela-pedido-titulo">
+    <p class="rotulo">Demonstração</p>
+    <h2 id="janela-pedido-titulo">Pedido não enviado</h2>
+    <p>Este catálogo não processa pagamentos. Em uma loja real, o resumo abaixo seguiria para o WhatsApp da marca ou para um checkout:</p>
+    <pre class="janela__resumo" id="janela-pedido-resumo"></pre>
+    <div class="janela__botoes">
+      <a class="btn btn--escuro" href="../../index.html#contato">Quero um catálogo assim</a>
+      <button class="btn btn--linha" type="button" data-fechar>Fechar</button>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

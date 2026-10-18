@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AgendaPro · Sistema de agendamento demonstrativo</title>
+  <meta name="description" content="Demonstração funcional de um sistema de agendamento: painel, agenda diária e semanal, reservas com filtros, página de reserva do cliente, serviços, expediente e bloqueios. Dados salvos só no navegador. Criado por Martins | Criação de Sites.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0B1210">
+  <meta property="og:title" content="AgendaPro · Sistema de agendamento demonstrativo">
+  <meta property="og:description" content="Sistema de reservas funcionando no navegador, com regras reais de conflito de horário. Estabelecimento e reservas de exemplo são fictícios.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230F766E'/%3E%3Crect x='8' y='9' width='16' height='15' rx='2' fill='none' stroke='white' stroke-width='2.4'/%3E%3Cpath d='M8 14h16' stroke='white' stroke-width='2.4'/%3E%3C/svg%3E">
+
+  <!-- Schibsted Grotesk (interface) e Spline Sans Mono (horários e números) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/comum.js"></script>
+</head>
+<body>
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="ic-painel" viewBox="0 0 24 24"><path d="M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-agenda" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M7.5 14h3v3h-3z" fill="currentColor"/></symbol>
+    <symbol id="ic-reservas" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="5" cy="6" r="1.4" fill="currentColor"/><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="5" cy="18" r="1.4" fill="currentColor"/></symbol>
+    <symbol id="ic-cliente" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m9.5 16 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-servicos" viewBox="0 0 24 24"><path d="M3.5 12.5 12 4h7.5v7.5L11 20z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="15.5" cy="8" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="ic-expediente" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="ic-bloqueio" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="ic-mais" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="ic-seta-esq" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-seta-dir" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <div class="app">
+
+    <!-- ===================== MENU LATERAL ===================== -->
+    <aside class="lateral" aria-label="AgendaPro">
+      <div class="lateral__topo">
+        <a class="marca" href="#/painel" aria-label="AgendaPro, ir para o painel">
+          <span class="marca__icone" aria-hidden="true"><svg width="18" height="18"><use href="#ic-agenda"/></svg></span>
+          <span class="marca__nome">AgendaPro</span>
+        </a>
+        <span class="selo-demo">Demo</span>
+      </div>
+      <div class="negocio">
+        <span class="negocio__avatar" aria-hidden="true">SÂ</span>
+        <span><b>Studio Âmbar</b><small>salão fictício · exemplo</small></span>
+      </div>
+
+      <nav class="menu" aria-label="Seções do sistema">
+        <ul>
+          <li><a class="menu__link" href="#/painel" data-rota="painel"><svg width="20" height="20" aria-hidden="true"><use href="#ic-painel"/></svg><span>Painel</span></a></li>
+          <li><a class="menu__link" href="#/agenda" data-rota="agenda"><svg width="20" height="20" aria-hidden="true"><use href="#ic-agenda"/></svg><span>Agenda</span></a></li>
+          <li><a class="menu__link" href="#/reservas" data-rota="reservas"><svg width="20" height="20" aria-hidden="true"><use href="#ic-reservas"/></svg><span>Reservas</span></a></li>
+          <li><a class="menu__link" href="#/reservar" data-rota="reservar"><svg width="20" height="20" aria-hidden="true"><use href="#ic-cliente"/></svg><span>Página do cliente</span></a></li>
+          <li class="menu__grupo" aria-hidden="true">Configurações</li>
+          <li><a class="menu__link" href="#/servicos" data-rota="servicos"><svg width="20" height="20" aria-hidden="true"><use href="#ic-servicos"/></svg><span>Serviços</span></a></li>
+          <li><a class="menu__link" href="#/expediente" data-rota="expediente"><svg width="20" height="20" aria-hidden="true"><use href="#ic-expediente"/></svg><span>Expediente</span></a></li>
+          <li><a class="menu__link" href="#/bloqueios" data-rota="bloqueios"><svg width="20" height="20" aria-hidden="true"><use href="#ic-bloqueio"/></svg><span>Bloqueios</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="lateral__rodape">
+        <div class="aviso-local">
+          <p><b>Demonstração local.</b> Tudo fica salvo só neste navegador. Não há sincronização entre aparelhos nem envio de notificações.</p>
+        </div>
+        <button class="btn btn--fantasma btn--pequeno" type="button" data-restaurar>Restaurar dados de exemplo</button>
+        <a class="lateral__voltar" href="../../index.html#projetos">← Voltar ao portfólio</a>
+      </div>
+    </aside>
+
+    <!-- ===================== ÁREA PRINCIPAL ===================== -->
+    <div class="area">
+      <header class="topo" data-header>
+        <div class="topo__titulos">
+          <h1 class="topo__titulo" id="titulo-pagina" tabindex="-1">Painel</h1>
+          <p class="topo__sub" id="subtitulo-pagina"></p>
+        </div>
+        <div class="topo__acoes">
+          <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema claro">
+            <svg class="icone-sol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <svg class="icone-lua" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="btn btn--primario" type="button" data-novo><svg width="18" height="18" aria-hidden="true"><use href="#ic-mais"/></svg><span>Novo agendamento</span></button>
+        </div>
+      </header>
+
+      <main id="principal" class="principal" tabindex="-1">
+
+        <!-- ========== PAINEL ========== -->
+        <section class="vista" id="vista-painel" data-vista="painel" aria-labelledby="titulo-pagina">
+          <div class="metricas">
+            <article class="metrica">
+              <p class="metrica__rotulo">Reservas hoje</p>
+              <p class="metrica__valor" id="m-hoje">0</p>
+              <p class="metrica__nota" id="m-hoje-nota"></p>
+            </article>
+            <article class="metrica">
+              <p class="metrica__rotulo">Próximos 7 dias</p>
+              <p class="metrica__valor" id="m-semana">0</p>
+              <p class="metrica__nota" id="m-semana-nota"></p>
+            </article>
+            <article class="metrica metrica--pendente">
+              <p class="metrica__rotulo">Pendentes</p>
+              <p class="metrica__valor" id="m-pendentes">0</p>
+              <p class="metrica__nota"><a href="#/reservas" data-filtro-status="pendente">Ver pendentes</a></p>
+            </article>
+            <article class="metrica">
+              <p class="metrica__rotulo">Horários livres</p>
+              <p class="metrica__valor" id="m-livres">0</p>
+              <p class="metrica__nota" id="m-livres-nota"></p>
+            </article>
+          </div>
+
+          <div class="painel__grade">
+            <section class="bloco" aria-labelledby="proximos-titulo">
+              <div class="bloco__cabeca">
+                <h2 class="bloco__titulo" id="proximos-titulo">Próximos agendamentos</h2>
+                <a class="link" href="#/reservas">Ver todos</a>
+              </div>
+              <ol class="proximos" id="proximos"></ol>
+              <p class="vazio" id="proximos-vazio" hidden>Nenhum agendamento futuro.</p>
+            </section>
+
+            <section class="bloco" aria-labelledby="livres-titulo">
+              <div class="bloco__cabeca">
+                <h2 class="bloco__titulo" id="livres-titulo">Horários livres</h2>
+                <a class="link" href="#/agenda">Abrir agenda</a>
+              </div>
+              <p class="bloco__sub" id="livres-data"></p>
+              <div class="livres" id="livres"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ========== AGENDA ========== -->
+        <section class="vista" id="vista-agenda" data-vista="agenda" aria-labelledby="titulo-pagina" hidden>
+          <div class="barra">
+            <div class="barra__navegar">
+              <button class="icone-btn" type="button" id="ag-anterior" aria-label="Período anterior"><svg width="18" height="18" aria-hidden="true"><use href="#ic-seta-esq"/></svg></button>
+              <button class="btn btn--linha btn--pequeno" type="button" id="ag-hoje">Hoje</button>
+              <button class="icone-btn" type="button" id="ag-proximo" aria-label="Próximo período"><svg width="18" height="18" aria-hidden="true"><use href="#ic-seta-dir"/></svg></button>
+              <h2 class="barra__titulo" id="ag-titulo" aria-live="polite"></h2>
+            </div>
+            <div class="barra__opcoes">
+              <div class="segmentado" role="group" aria-label="Visualização da agenda">
+                <button type="button" data-modo="dia" aria-pressed="true">Dia</button>
+                <button type="button" data-modo="semana" aria-pressed="false">Semana</button>
+              </div>
+              <label class="campo-inline">
+                <span>Profissional</span>
+                <select id="ag-profissional"><option value="">Todos</option></select>
+              </label>
+              <label class="check mostrar-canceladas"><input type="checkbox" id="ag-canceladas"> Mostrar canceladas</label>
+            </div>
+          </div>
+          <ul class="legenda" aria-label="Legenda">
+            <li><i class="leg leg--confirmado"></i>Confirmado</li>
+            <li><i class="leg leg--pendente"></i>Pendente</li>
+            <li><i class="leg leg--cancelado"></i>Cancelado</li>
+            <li><i class="leg leg--bloqueio"></i>Bloqueado</li>
+            <li><i class="leg leg--fechado"></i>Fora do expediente</li>
+          </ul>
+          <p class="dica">Clique em um espaço livre para agendar naquele horário, ou em uma reserva para ver e editar.</p>
+          <div class="calendario" id="calendario"></div>
+        </section>
+
+        <!-- ========== RESERVAS ========== -->
+        <section class="vista" id="vista-reservas" data-vista="reservas" aria-labelledby="titulo-pagina" hidden>
+          <form class="filtros" id="filtros" role="search" aria-label="Filtrar reservas">
+            <label class="campo"><span>Data</span><input type="date" id="fl-data"></label>
+            <label class="campo"><span>Período</span>
+              <select id="fl-periodo">
+                <option value="futuras">Hoje em diante</option>
+                <option value="passadas">Anteriores</option>
+                <option value="todas">Todas</option>
+              </select>
+            </label>
+            <label class="campo"><span>Serviço</span><select id="fl-servico"><option value="">Todos</option></select></label>
+            <label class="campo"><span>Profissional</span><select id="fl-profissional"><option value="">Todos</option></select></label>
+            <label class="campo"><span>Status</span>
+              <select id="fl-status">
+                <option value="">Todos</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="pendente">Pendente</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </label>
+            <button class="btn btn--linha btn--pequeno" type="reset" id="fl-limpar">Limpar filtros</button>
+          </form>
+          <p class="contagem" id="fl-contagem" aria-live="polite"></p>
+          <div class="tabela-caixa">
+            <table class="tabela">
+              <caption class="vh">Reservas filtradas</caption>
+              <thead>
+                <tr><th scope="col">Data</th><th scope="col">Horário</th><th scope="col">Cliente</th><th scope="col">Serviço</th><th scope="col">Profissional</th><th scope="col">Status</th><th scope="col"><span class="vh">Ações</span></th></tr>
+              </thead>
+              <tbody id="lista-reservas"></tbody>
+            </table>
+          </div>
+          <p class="vazio" id="lista-vazia" hidden>Nenhuma reserva com esses filtros.</p>
+        </section>
+
+        <!-- ========== PÁGINA DO CLIENTE ========== -->
+        <section class="vista" id="vista-reservar" data-vista="reservar" aria-labelledby="titulo-pagina" hidden>
+          <p class="aviso-cliente">Esta é a tela que o cliente do estabelecimento veria no site. A reserva feita aqui entra no painel como <b>pendente</b>, até o estabelecimento confirmar.</p>
+
+          <div class="cliente">
+            <div class="cliente__fluxo" id="assistente">
+              <ol class="etapas" id="etapas" aria-label="Etapas da reserva">
+                <li>Serviço</li><li>Profissional</li><li>Data</li><li>Horário</li><li>Seus dados</li><li>Revisão</li>
+              </ol>
+
+              <form id="form-cliente" novalidate>
+                <fieldset class="etapa" data-etapa="1">
+                  <legend class="etapa__titulo">Qual serviço você quer?</legend>
+                  <div class="opcoes opcoes--servico" id="cl-servicos"></div>
+                </fieldset>
+
+                <fieldset class="etapa" data-etapa="2" hidden>
+                  <legend class="etapa__titulo">Com quem?</legend>
+                  <p class="etapa__dica" id="cl-dica-profissional"></p>
+                  <div class="opcoes opcoes--profissional" id="cl-profissionais"></div>
+                </fieldset>
+
+                <fieldset class="etapa" data-etapa="3" hidden>
+                  <legend class="etapa__titulo">Escolha o dia</legend>
+                  <div class="mes">
+                    <div class="mes__topo">
+                      <button class="icone-btn" type="button" id="mes-anterior" aria-label="Mês anterior"><svg width="18" height="18" aria-hidden="true"><use href="#ic-seta-esq"/></svg></button>
+                      <p class="mes__titulo" id="mes-titulo" aria-live="polite"></p>
+                      <button class="icone-btn" type="button" id="mes-proximo" aria-label="Próximo mês"><svg width="18" height="18" aria-hidden="true"><use href="#ic-seta-dir"/></svg></button>
+                    </div>
+                    <div class="mes__semana" aria-hidden="true"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+                    <div class="mes__dias" id="mes-dias"></div>
+                    <p class="mes__legenda"><i class="ponto-livre" aria-hidden="true"></i> dias com horários livres</p>
+                  </div>
+                </fieldset>
+
+                <fieldset class="etapa" data-etapa="4" hidden>
+                  <legend class="etapa__titulo">Horários disponíveis</legend>
+                  <p class="etapa__dica" id="cl-dica-horario"></p>
+                  <div id="cl-horarios"></div>
+                </fieldset>
+
+                <fieldset class="etapa" data-etapa="5" hidden>
+                  <legend class="etapa__titulo">Seus dados</legend>
+                  <div class="campos">
+                    <label class="campo"><span>Nome</span><input type="text" id="cl-nome" autocomplete="name" required></label>
+                    <label class="campo"><span>WhatsApp ou telefone</span><input type="tel" id="cl-telefone" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" required></label>
+                    <label class="campo campo--largo"><span>Observação <small>(opcional)</small></span><textarea id="cl-obs" rows="2" maxlength="200"></textarea></label>
+                  </div>
+                  <p class="etapa__dica">Nesta demonstração, os dados ficam só no seu navegador.</p>
+                </fieldset>
+
+                <div class="etapa" data-etapa="6" hidden>
+                  <h2 class="etapa__titulo" tabindex="-1">Confira antes de confirmar</h2>
+                  <dl class="revisao" id="cl-revisao"></dl>
+                </div>
+
+                <p class="erro" id="cl-erro" role="alert"></p>
+                <div class="etapa-nav">
+                  <button class="btn btn--linha" type="button" id="cl-voltar" hidden>Voltar</button>
+                  <button class="btn btn--primario" type="submit" id="cl-avancar">Continuar</button>
+                </div>
+              </form>
+            </div>
+
+            <section class="confirmado" id="cl-confirmado" tabindex="-1" aria-labelledby="confirmado-titulo" hidden>
+              <div class="confirmado__selo" aria-hidden="true">✓</div>
+              <p class="rotulo" id="confirmado-codigo"></p>
+              <h2 class="confirmado__titulo" id="confirmado-titulo">Reserva registrada</h2>
+              <p class="confirmado__texto">Status: <b class="status status--pendente">pendente</b>. O estabelecimento confirma pelo painel. Nesta demonstração, nenhuma mensagem foi enviada.</p>
+              <dl class="revisao" id="cl-confirmado-dados"></dl>
+              <div class="confirmado__botoes">
+                <button class="btn btn--primario" type="button" id="cl-recomecar">Fazer outra reserva</button>
+                <a class="btn btn--linha" href="#/reservas" data-filtro-status="pendente">Ver no painel</a>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ========== SERVIÇOS ========== -->
+        <section class="vista" id="vista-servicos" data-vista="servicos" aria-labelledby="titulo-pagina" hidden>
+          <div class="barra barra--simples">
+            <p class="barra__texto">Serviços inativos não aparecem na página do cliente. As reservas já feitas continuam na agenda.</p>
+            <button class="btn btn--primario" type="button" id="novo-servico"><svg width="18" height="18" aria-hidden="true"><use href="#ic-mais"/></svg>Novo serviço</button>
+          </div>
+          <div class="tabela-caixa">
+            <table class="tabela tabela--servicos">
+              <caption class="vh">Serviços cadastrados</caption>
+              <thead><tr><th scope="col">Serviço</th><th scope="col">Duração</th><th scope="col">Preço</th><th scope="col">Profissionais</th><th scope="col">Situação</th><th scope="col"><span class="vh">Ações</span></th></tr></thead>
+              <tbody id="lista-servicos"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ========== EXPEDIENTE ========== -->
+        <section class="vista" id="vista-expediente" data-vista="expediente" aria-labelledby="titulo-pagina" hidden>
+          <p class="barra__texto">Defina os dias e horários de funcionamento. Horários fora do expediente não aparecem para o cliente. Mudanças não apagam reservas já feitas.</p>
+          <div class="expediente" id="expediente"></div>
+        </section>
+
+        <!-- ========== BLOQUEIOS ========== -->
+        <section class="vista" id="vista-bloqueios" data-vista="bloqueios" aria-labelledby="titulo-pagina" hidden>
+          <div class="bloqueios">
+            <form class="bloco form-bloqueio" id="form-bloqueio" novalidate aria-labelledby="bloqueio-titulo">
+              <h2 class="bloco__titulo" id="bloqueio-titulo">Bloquear horário</h2>
+              <p class="bloco__sub">Use para folgas, cursos, manutenção ou compromissos. O período some da página do cliente.</p>
+              <label class="campo"><span>Profissional</span><select id="bl-profissional"><option value="">Todos (o estabelecimento inteiro)</option></select></label>
+              <label class="campo"><span>Data</span><input type="date" id="bl-data" required></label>
+              <div class="campos-lado">
+                <label class="campo"><span>Início</span><input type="time" id="bl-inicio" step="900" required></label>
+                <label class="campo"><span>Fim</span><input type="time" id="bl-fim" step="900" required></label>
+              </div>
+              <label class="campo"><span>Motivo <small>(opcional)</small></span><input type="text" id="bl-motivo" maxlength="60" placeholder="Ex.: curso, consulta médica"></label>
+              <p class="erro" id="bl-erro" role="alert"></p>
+              <button class="btn btn--primario" type="submit">Bloquear</button>
+            </form>
+            <section class="bloco" aria-labelledby="bloqueios-lista-titulo">
+              <h2 class="bloco__titulo" id="bloqueios-lista-titulo">Bloqueios de hoje em diante</h2>
+              <ul class="lista-bloqueios" id="lista-bloqueios"></ul>
+              <p class="vazio" id="bloqueios-vazio" hidden>Nenhum bloqueio programado.</p>
+            </section>
+          </div>
+        </section>
+
+        <!-- Rodapé visível no celular (no computador, fica no menu lateral) -->
+        <footer class="rodape-celular">
+          <p><b>Demonstração local.</b> Tudo fica salvo só neste navegador. Não há sincronização entre aparelhos nem envio de notificações.</p>
+          <div class="rodape-celular__acoes">
+            <button class="btn btn--linha btn--pequeno" type="button" data-restaurar>Restaurar dados de exemplo</button>
+            <a class="link" href="../../index.html#projetos">← Voltar ao portfólio</a>
+          </div>
+          <p class="rodape-celular__credito">AgendaPro é uma demonstração criada por <a href="../../index.html">Martins | Criação de Sites</a>.</p>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== JANELAS ===================== -->
+
+  <!-- Novo agendamento / editar -->
+  <dialog class="janela" id="janela-reserva" aria-labelledby="jr-titulo">
+    <form id="form-reserva" novalidate>
+      <div class="janela__cabeca">
+        <h2 id="jr-titulo">Novo agendamento</h2>
+        <button class="icone-btn" type="button" data-fechar aria-label="Fechar">×</button>
+      </div>
+      <p class="janela__exemplo" id="jr-exemplo" hidden>Reserva de exemplo, criada para a demonstração.</p>
+      <div class="campos">
+        <label class="campo"><span>Serviço</span><select id="jr-servico" required></select></label>
+        <label class="campo"><span>Profissional</span><select id="jr-profissional"></select></label>
+        <label class="campo"><span>Data</span><input type="date" id="jr-data" required></label>
+        <label class="campo"><span>Horário</span><select id="jr-horario" required></select></label>
+        <label class="campo"><span>Cliente</span><input type="text" id="jr-nome" autocomplete="off" required></label>
+        <label class="campo"><span>Telefone</span><input type="tel" id="jr-telefone" inputmode="tel" placeholder="(00) 00000-0000" required></label>
+        <label class="campo"><span>Status</span>
+          <select id="jr-status">
+            <option value="confirmado">Confirmado</option>
+            <option value="pendente">Pendente</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </label>
+        <label class="campo campo--largo"><span>Observação <small>(opcional)</small></span><textarea id="jr-obs" rows="2" maxlength="200"></textarea></label>
+      </div>
+      <p class="janela__info" id="jr-info"></p>
+      <p class="erro" id="jr-erro" role="alert"></p>
+      <div class="janela__botoes">
+        <button class="btn btn--perigo" type="button" id="jr-cancelar-reserva" hidden>Cancelar reserva</button>
+        <span class="janela__espaco"></span>
+        <button class="btn btn--linha" type="button" data-fechar>Fechar</button>
+        <button class="btn btn--primario" type="submit" id="jr-salvar">Agendar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Serviço -->
+  <dialog class="janela" id="janela-servico" aria-labelledby="js-titulo">
+    <form id="form-servico" novalidate>
+      <div class="janela__cabeca">
+        <h2 id="js-titulo">Novo serviço</h2>
+        <button class="icone-btn" type="button" data-fechar aria-label="Fechar">×</button>
+      </div>
+      <div class="campos">
+        <label class="campo campo--largo"><span>Nome do serviço</span><input type="text" id="js-nome" maxlength="40" required></label>
+        <label class="campo"><span>Duração (minutos)</span><input type="number" id="js-duracao" min="10" max="480" step="5" inputmode="numeric" required></label>
+        <label class="campo"><span>Preço (R$)</span><input type="number" id="js-preco" min="0" step="0.01" inputmode="decimal" required></label>
+        <fieldset class="campo campo--largo campo--grupo">
+          <legend>Quem faz este serviço</legend>
+          <div class="checks" id="js-profissionais"></div>
+        </fieldset>
+        <label class="check campo--largo"><input type="checkbox" id="js-ativo" checked> Ativo (aparece para o cliente)</label>
+      </div>
+      <p class="erro" id="js-erro" role="alert"></p>
+      <div class="janela__botoes">
+        <span class="janela__espaco"></span>
+        <button class="btn btn--linha" type="button" data-fechar>Fechar</button>
+        <button class="btn btn--primario" type="submit">Salvar serviço</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmação de ações -->
+  <dialog class="janela janela--pequena" id="janela-confirmar" aria-labelledby="jc-titulo">
+    <h2 id="jc-titulo">Tem certeza?</h2>
+    <p id="jc-texto"></p>
+    <div class="janela__botoes">
+      <span class="janela__espaco"></span>
+      <button class="btn btn--linha" type="button" data-fechar>Voltar</button>
+      <button class="btn btn--perigo" type="button" id="jc-ok">Confirmar</button>
+    </div>
+  </dialog>
+
+  <script src="../../assets/js/agenda-motor.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

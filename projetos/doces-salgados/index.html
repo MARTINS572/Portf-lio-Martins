@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ponto Doces &amp; Salgados · Projeto demonstrativo</title>
+  <meta name="description" content="Projeto demonstrativo de confeitaria com cardápio de doces, salgados e caixas para eventos, montagem de encomenda com data desejada e envio pelo WhatsApp. A Ponto é fictícia. Criado por Martins | Criação de Sites.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F6EEE3">
+  <meta property="og:title" content="Ponto Doces &amp; Salgados · Projeto demonstrativo">
+  <meta property="og:description" content="Exemplo de site de encomendas para confeitaria. Marca, produtos e preços fictícios.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233B2418'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23D9A066'/%3E%3C/svg%3E">
+
+  <!-- Fraunces (títulos) e DM Sans (textos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/comum.js"></script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <div class="faixa-demo" role="note">
+    <span>Projeto demonstrativo · confeitaria, produtos e preços fictícios · nenhum pedido é enviado sem você confirmar</span>
+    <a href="../../index.html#projetos">← Voltar ao portfólio</a>
+  </div>
+
+  <!-- Ilustrações vistas de cima (viewBox 100 × 100) -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-brigadeiro" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="43" fill="#7A4326"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#5E321C" stroke-width="10" stroke-dasharray="2.6 3.4"/>
+      <circle cx="50" cy="50" r="30" fill="#3B2418"/>
+      <path d="M38 35l4 2M52 28l4-1M63 36l1 4M33 50l1 4M46 43l4 1M58 50l3 3M42 61l4 1M55 64l3-3M66 53l1-4M48 54l2 3M40 47l-2 3M57 41l3-1" stroke="#77503C" stroke-width="2.6" stroke-linecap="round"/>
+      <ellipse cx="41" cy="38" rx="10" ry="6" fill="#FFFFFF" opacity=".1"/>
+    </symbol>
+    <symbol id="i-beijinho" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="43" fill="#E2CDB0"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#CDB28D" stroke-width="10" stroke-dasharray="2.6 3.4"/>
+      <circle cx="50" cy="50" r="30" fill="#F4ECDF"/>
+      <path d="M36 38l5 1M54 30l4 2M64 42l2 4M34 54l3 3M44 64l5-1M58 60l4-2M42 46l3-2M60 50l2 3" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M38 42l3 2M56 36l3 1M48 60l3 1M62 56l2-2" stroke="#D8C6AC" stroke-width="2" stroke-linecap="round"/>
+      <path d="M50 50v-8" stroke="#4A2C1E" stroke-width="2.6" stroke-linecap="round"/><circle cx="50" cy="51" r="3" fill="#4A2C1E"/>
+    </symbol>
+    <symbol id="i-pistache" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="43" fill="#7A4326"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#5E321C" stroke-width="10" stroke-dasharray="2.6 3.4"/>
+      <circle cx="50" cy="50" r="30" fill="#A4B26E"/>
+      <path d="M40 36l4 1 1 3-4 0zM56 32l4 1-1 3-3-1zM62 48l3 2-2 3-2-2zM36 54l4 0 0 3-3 0zM48 62l4 1-1 3-4-1zM50 46l3 1-1 3-3-1z" fill="#6F8440"/>
+      <path d="M45 42l3 0 0 2-3 0zM58 58l3 0 0 2-3 0zM40 47l2 1-1 2-2-1z" fill="#DCE2B4"/>
+      <ellipse cx="41" cy="38" rx="10" ry="6" fill="#FFFFFF" opacity=".14"/>
+    </symbol>
+    <symbol id="i-brownie" viewBox="0 0 100 100">
+      <rect x="16" y="18" width="68" height="64" rx="5" fill="#4A2C1E" stroke="#6B4433" stroke-width="1.5"/>
+      <rect x="16" y="74" width="68" height="8" rx="3" fill="#3B2418"/>
+      <path d="M24 34c8-4 14 3 22-1s14-6 22 0M22 50c10 3 16-4 26-1s14 5 24 1M26 64c8-3 16 2 24 0s14-4 20-1" fill="none" stroke="#6B4433" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M30 28l-3 6M56 44l4 4M42 58l-2 5" stroke="#7E5640" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-cupcake" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44" fill="#B23A55"/>
+      <circle cx="50" cy="50" r="39" fill="none" stroke="#8E2B42" stroke-width="9" stroke-dasharray="3 3.4"/>
+      <circle cx="50" cy="50" r="32" fill="#F3E3CC"/>
+      <path d="M50 22a28 28 0 1 1-27 33M50 30a20 20 0 1 1-19 24M50 38a12 12 0 1 1-11 15" fill="none" stroke="#DCC4A4" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="6.5" fill="#B23A55"/><circle cx="48" cy="48" r="2" fill="#FFFFFF" opacity=".5"/>
+    </symbol>
+    <symbol id="i-bolo" viewBox="0 0 100 100">
+      <circle cx="47" cy="50" r="45" fill="#FFFFFF" opacity=".55"/>
+      <path d="M47 50 82.7 63A38 38 0 1 1 81.4 33.9z" fill="#4A2C1E"/>
+      <path d="M47 50 82.7 63M47 50 81.4 33.9" stroke="#E08A3C" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="47" cy="50" r="30" fill="none" stroke="#6B4433" stroke-width="1.8" stroke-dasharray="5 4"/>
+      <ellipse cx="34" cy="35" rx="12" ry="6" fill="#FFFFFF" opacity=".1"/>
+      <path d="M55 49 89 32.6A38 38 0 0 1 90.4 62z" fill="#4A2C1E" stroke="#E08A3C" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-coxinha" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="88" rx="26" ry="5" fill="#000000" opacity=".12"/>
+      <path d="M50 12c8 14 28 34 28 52 0 16-12 24-28 24S22 80 22 64c0-18 20-38 28-52z" fill="#C9782F"/>
+      <path d="M50 12c8 14 28 34 28 52 0 16-12 24-28 24" fill="none" stroke="#A85E22" stroke-width="3" opacity=".6"/>
+      <g fill="#A85E22"><circle cx="40" cy="52" r="1.8"/><circle cx="56" cy="44" r="1.6"/><circle cx="62" cy="62" r="1.8"/><circle cx="46" cy="70" r="1.6"/><circle cx="34" cy="66" r="1.5"/><circle cx="54" cy="78" r="1.6"/><circle cx="50" cy="32" r="1.5"/></g>
+      <g fill="#E8AE69"><circle cx="46" cy="44" r="1.5"/><circle cx="60" cy="54" r="1.4"/><circle cx="40" cy="60" r="1.4"/><circle cx="52" cy="66" r="1.5"/><circle cx="66" cy="72" r="1.3"/></g>
+      <ellipse cx="40" cy="50" rx="5" ry="12" fill="#FFFFFF" opacity=".14" transform="rotate(20 40 50)"/>
+    </symbol>
+    <symbol id="i-bolinha" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="84" rx="28" ry="5" fill="#000000" opacity=".12"/>
+      <circle cx="50" cy="52" r="31" fill="#D48A3A"/>
+      <g fill="#B06A26"><circle cx="38" cy="44" r="1.7"/><circle cx="58" cy="38" r="1.6"/><circle cx="66" cy="56" r="1.8"/><circle cx="44" cy="66" r="1.6"/><circle cx="54" cy="58" r="1.5"/><circle cx="32" cy="56" r="1.4"/></g>
+      <g fill="#ECB56F"><circle cx="48" cy="40" r="1.4"/><circle cx="62" cy="68" r="1.4"/><circle cx="40" cy="54" r="1.3"/></g>
+      <ellipse cx="40" cy="40" rx="9" ry="6" fill="#FFFFFF" opacity=".15"/>
+    </symbol>
+    <symbol id="i-kibe" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="78" rx="34" ry="5" fill="#000000" opacity=".12"/>
+      <path d="M12 52c14-24 62-24 76 0-14 24-62 24-76 0z" fill="#8A4B2A"/>
+      <path d="M26 44c4 6 4 10 0 16M40 38c5 8 5 20 0 28M56 38c-5 8-5 20 0 28M72 44c-4 6-4 10 0 16" fill="none" stroke="#6E3A1F" stroke-width="2.2" stroke-linecap="round"/>
+      <ellipse cx="42" cy="44" rx="14" ry="4" fill="#FFFFFF" opacity=".12"/>
+    </symbol>
+    <symbol id="i-empada" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="41" fill="#E3A35C"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#C9782F" stroke-width="7" stroke-dasharray="4 3"/>
+      <circle cx="50" cy="50" r="28" fill="#EDB66E"/>
+      <path d="M50 30v40M30 50h40M36 36l28 28M64 36 36 64" stroke="#D18F44" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <ellipse cx="42" cy="40" rx="12" ry="7" fill="#FFFFFF" opacity=".18"/>
+    </symbol>
+    <symbol id="i-paodequeijo" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="84" rx="30" ry="5" fill="#000000" opacity=".1"/>
+      <path d="M18 56c0-20 14-34 32-34s32 14 32 34c0 14-14 24-32 24S18 70 18 56z" fill="#E9C27A"/>
+      <path d="M32 40c6 4 10 2 16 6M54 34c4 6 10 6 12 12M30 62c8-2 12 4 20 2M60 60c4-4 8-4 12 0" fill="none" stroke="#D3A256" stroke-width="2.4" stroke-linecap="round"/>
+      <ellipse cx="40" cy="38" rx="10" ry="5" fill="#FFFFFF" opacity=".2"/>
+    </symbol>
+    <symbol id="i-esfiha" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="41" fill="#E7B46A"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="#CF9448" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="#9A3F25"/>
+      <g fill="#6E2A18"><circle cx="40" cy="42" r="2.4"/><circle cx="56" cy="38" r="2"/><circle cx="62" cy="54" r="2.4"/><circle cx="46" cy="60" r="2.2"/><circle cx="52" cy="50" r="1.8"/><circle cx="36" cy="54" r="1.8"/></g>
+      <g fill="#6F8440"><circle cx="46" cy="46" r="1.6"/><circle cx="58" cy="62" r="1.5"/><circle cx="60" cy="44" r="1.4"/><circle cx="40" cy="62" r="1.3"/></g>
+    </symbol>
+    <symbol id="i-caixa" viewBox="0 0 100 100">
+      <rect x="6" y="14" width="88" height="72" rx="3" fill="#D9B98E"/>
+      <rect x="12" y="20" width="76" height="60" fill="#C9A577"/>
+      <g fill="var(--a, #3B2418)">
+        <circle cx="21" cy="30" r="4.6"/><circle cx="44.2" cy="30" r="4.6"/><circle cx="67.4" cy="30" r="4.6"/>
+        <circle cx="32.6" cy="43" r="4.6"/><circle cx="55.8" cy="43" r="4.6"/><circle cx="79" cy="43" r="4.6"/>
+        <circle cx="21" cy="56" r="4.6"/><circle cx="44.2" cy="56" r="4.6"/><circle cx="67.4" cy="56" r="4.6"/>
+        <circle cx="32.6" cy="69" r="4.6"/><circle cx="55.8" cy="69" r="4.6"/><circle cx="79" cy="69" r="4.6"/>
+      </g>
+      <g fill="var(--b, #F1E7D6)">
+        <circle cx="32.6" cy="30" r="4.6"/><circle cx="55.8" cy="30" r="4.6"/><circle cx="79" cy="30" r="4.6"/>
+        <circle cx="21" cy="43" r="4.6"/><circle cx="44.2" cy="43" r="4.6"/><circle cx="67.4" cy="43" r="4.6"/>
+        <circle cx="32.6" cy="56" r="4.6"/><circle cx="55.8" cy="56" r="4.6"/><circle cx="79" cy="56" r="4.6"/>
+        <circle cx="21" cy="69" r="4.6"/><circle cx="44.2" cy="69" r="4.6"/><circle cx="67.4" cy="69" r="4.6"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <header class="cabecalho" data-header>
+    <div class="container cabecalho__linha">
+      <a class="logo" href="#inicio" aria-label="Ponto Doces e Salgados, ir para o início">
+        <span class="logo__nome">Ponto</span>
+        <span class="logo__sub">doces &amp; salgados</span>
+      </a>
+      <nav class="nav" id="menu" aria-label="Menu principal">
+        <ul class="nav__lista">
+          <li><a class="nav__link" href="#destaques">Destaques</a></li>
+          <li><a class="nav__link" href="#cardapio">Cardápio</a></li>
+          <li><a class="nav__link" href="#como-funciona">Como funciona</a></li>
+          <li><a class="nav__link" href="#duvidas">Dúvidas</a></li>
+        </ul>
+      </nav>
+      <div class="cabecalho__acoes">
+        <button class="icone-btn" type="button" data-theme-toggle aria-label="Mudar para o tema escuro">
+          <svg class="icone-sol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg class="icone-lua" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="btn btn--escuro btn--pequeno cabecalho__pedido" href="#encomenda" aria-label="Encomenda, 0 produtos"><svg class="cabecalho__pedido-icone" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.5 11h-13z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg><span class="cabecalho__pedido-texto">Encomenda</span> <span class="contador" id="contador-cabecalho">0</span></a>
+        <button class="icone-btn menu-btn" type="button" data-menu-toggle="960" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+          <span class="menu-btn__barras" aria-hidden="true"><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="inicio" aria-labelledby="hero-titulo">
+      <div class="container hero__grade">
+        <div class="hero__texto">
+          <p class="rotulo">Confeitaria e salgaderia · sob encomenda</p>
+          <h1 class="hero__titulo" id="hero-titulo">Tudo feito no <em>ponto</em> certo.</h1>
+          <p class="hero__lead">Docinhos, bolos, salgados de festa e caixas prontas para eventos. Monte a encomenda, escolha a data e envie o pedido pelo WhatsApp.</p>
+          <div class="hero__botoes">
+            <a class="btn btn--escuro btn--grande" href="#cardapio">Montar encomenda</a>
+            <a class="btn btn--linha btn--grande" href="#como-funciona">Como funciona</a>
+          </div>
+          <p class="hero__nota">Encomendas com no mínimo <b>2 dias</b> de antecedência.</p>
+        </div>
+
+        <!-- Composição: caixa aberta sobre a mesa, vista de cima -->
+        <figure class="mesa" data-foto="doces/hero.jpg" data-alt="Caixa de papel kraft com brigadeiros, beijinhos e docinhos de pistache, vista de cima" data-foto-prioridade>
+          <div class="arte mesa__arte" aria-hidden="true">
+            <div class="mesa__caixa">
+              <svg><use href="#i-brigadeiro"/></svg><svg><use href="#i-beijinho"/></svg><svg><use href="#i-pistache"/></svg><svg><use href="#i-brigadeiro"/></svg>
+              <svg><use href="#i-beijinho"/></svg><svg><use href="#i-pistache"/></svg><svg><use href="#i-brigadeiro"/></svg><svg><use href="#i-beijinho"/></svg>
+              <svg><use href="#i-pistache"/></svg><svg><use href="#i-brigadeiro"/></svg><svg><use href="#i-beijinho"/></svg><svg><use href="#i-brigadeiro"/></svg>
+            </div>
+            <svg class="mesa__bolo"><use href="#i-bolo"/></svg>
+            <svg class="mesa__solto mesa__solto--1"><use href="#i-brigadeiro"/></svg>
+            <svg class="mesa__solto mesa__solto--2"><use href="#i-beijinho"/></svg>
+            <span class="mesa__etiqueta">Caixa Doce 50<br><b>R$ 119,00</b></span>
+          </div>
+          <figcaption>Ilustração · produtos fictícios</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== DESTAQUES ===================== -->
+    <section class="secao destaques" id="destaques" aria-labelledby="destaques-titulo">
+      <div class="container">
+        <div class="cabeca-secao">
+          <p class="rotulo" data-reveal>Os mais pedidos</p>
+          <h2 class="titulo-secao" id="destaques-titulo" data-reveal>Destaques da semana</h2>
+        </div>
+
+        <div class="destaques__grade">
+          <article class="destaque destaque--grande" data-reveal>
+            <div class="destaque__arte" aria-hidden="true"><svg><use href="#i-bolo"/></svg></div>
+            <div class="destaque__info">
+              <p class="rotulo">Bolos</p>
+              <h3 class="destaque__nome">Bolo de cenoura com cobertura de chocolate</h3>
+              <p class="destaque__texto">Massa fofinha e cobertura de chocolate meio amargo que endurece por cima. Serve cerca de 15 fatias.</p>
+              <p class="destaque__preco">R$ 85,00 <span>o bolo (1,5 kg)</span></p>
+              <div class="destaque__botoes">
+                <button class="btn btn--escuro" type="button" data-adicionar="bolo-cenoura">Adicionar à encomenda</button>
+                <button class="link-botao" type="button" data-detalhes="bolo-cenoura">Ver detalhes</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="destaque destaque--caixa" data-reveal>
+            <div class="destaque__arte" aria-hidden="true"><svg style="--a:#3B2418;--b:#C9782F"><use href="#i-caixa"/></svg></div>
+            <div class="destaque__info">
+              <p class="rotulo">Caixas para eventos</p>
+              <h3 class="destaque__nome">Caixa Festa 200</h3>
+              <p class="destaque__texto">100 docinhos e 100 salgados sortidos, separados em bandejas.</p>
+              <p class="destaque__preco">R$ 239,00 <span>a caixa</span></p>
+              <div class="destaque__botoes">
+                <button class="btn btn--escuro" type="button" data-adicionar="caixa-festa">Adicionar</button>
+                <button class="link-botao" type="button" data-detalhes="caixa-festa">Ver detalhes</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="destaque destaque--brownie" data-reveal>
+            <div class="destaque__arte" aria-hidden="true"><svg><use href="#i-brownie"/></svg></div>
+            <div class="destaque__info">
+              <p class="rotulo">Doces</p>
+              <h3 class="destaque__nome">Brownie de chocolate</h3>
+              <p class="destaque__texto">Casquinha crocante e miolo úmido. Vendido em caixas de 6.</p>
+              <p class="destaque__preco">R$ 8,00 <span>a unidade</span></p>
+              <div class="destaque__botoes">
+                <button class="btn btn--escuro" type="button" data-adicionar="brownie">Adicionar</button>
+                <button class="link-botao" type="button" data-detalhes="brownie">Ver detalhes</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMO FUNCIONA ===================== -->
+    <section class="secao faixa" id="como-funciona" aria-labelledby="como-titulo">
+      <div class="container">
+        <h2 class="titulo-secao" id="como-titulo" data-reveal>Como funciona a encomenda</h2>
+        <ol class="passos">
+          <li data-reveal><span class="passos__n">1</span><h3>Escolha os itens</h3><p>Docinhos e salgados de festa saem em múltiplos de 25. Bolos e caixas, por unidade.</p></li>
+          <li data-reveal><span class="passos__n">2</span><h3>Informe a data</h3><p>Pedimos pelo menos 2 dias de antecedência. Produzimos de terça a sábado.</p></li>
+          <li data-reveal><span class="passos__n">3</span><h3>Envie pelo WhatsApp</h3><p>O resumo vai pronto para a conversa. A encomenda só fica confirmada quando a Ponto responder.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== CARDÁPIO + ENCOMENDA ===================== -->
+    <section class="secao pedido" aria-labelledby="cardapio-titulo">
+      <div class="container pedido__grade">
+
+        <div class="cardapio" id="cardapio">
+          <div class="cabeca-secao">
+            <p class="rotulo">Preços demonstrativos</p>
+            <h2 class="titulo-secao" id="cardapio-titulo" tabindex="-1">Cardápio</h2>
+          </div>
+
+          <div class="abas" role="tablist" aria-label="Partes do cardápio">
+            <button class="aba" type="button" role="tab" id="aba-doces" aria-controls="painel-doces" aria-selected="true">Doces</button>
+            <button class="aba" type="button" role="tab" id="aba-salgados" aria-controls="painel-salgados" aria-selected="false" tabindex="-1">Salgados</button>
+            <button class="aba" type="button" role="tab" id="aba-caixas" aria-controls="painel-caixas" aria-selected="false" tabindex="-1">Caixas<span class="aba__extra"> para eventos</span></button>
+          </div>
+
+          <div class="painel" role="tabpanel" id="painel-doces" aria-labelledby="aba-doces" tabindex="0"><ul class="itens" data-categoria="doces"></ul></div>
+          <div class="painel" role="tabpanel" id="painel-salgados" aria-labelledby="aba-salgados" tabindex="0" hidden><ul class="itens" data-categoria="salgados"></ul></div>
+          <div class="painel" role="tabpanel" id="painel-caixas" aria-labelledby="aba-caixas" tabindex="0" hidden><ul class="itens" data-categoria="caixas"></ul></div>
+        </div>
+
+        <!-- Comanda: resumo + dados da encomenda -->
+        <aside class="comanda" id="encomenda" aria-labelledby="comanda-titulo">
+          <form class="comanda__papel" id="form-encomenda" novalidate>
+            <div class="comanda__topo">
+              <p class="comanda__marca">Ponto</p>
+              <h2 class="comanda__titulo" id="comanda-titulo" tabindex="-1">Sua encomenda</h2>
+            </div>
+
+            <p class="comanda__vazia" id="comanda-vazia">Nenhum item ainda. Use os botões <b>+</b> no cardápio para montar o pedido.</p>
+            <ul class="comanda__lista" id="comanda-lista" aria-live="polite"></ul>
+            <dl class="comanda__totais" id="comanda-totais" hidden>
+              <div><dt>Itens</dt><dd id="total-itens">0</dd></div>
+              <div class="comanda__total"><dt>Total estimado</dt><dd id="total-valor">R$ 0,00</dd></div>
+            </dl>
+            <p class="erro-campo" id="erro-itens" role="alert"></p>
+
+            <fieldset class="comanda__campos">
+              <legend class="rotulo">Dados da encomenda</legend>
+
+              <div class="campo">
+                <label for="f-data">Data desejada</label>
+                <input type="date" id="f-data" name="data" required aria-describedby="f-data-ajuda f-data-erro">
+                <p class="campo__ajuda" id="f-data-ajuda">Mínimo de 2 dias. De terça a sábado.</p>
+                <p class="erro-campo" id="f-data-erro"></p>
+              </div>
+
+              <div class="campo">
+                <label for="f-periodo">Período</label>
+                <select id="f-periodo" name="periodo">
+                  <option value="manhã">Manhã (9h às 12h)</option>
+                  <option value="tarde">Tarde (13h às 18h)</option>
+                </select>
+              </div>
+
+              <div class="campo campo--opcoes" role="radiogroup" aria-labelledby="f-entrega-rotulo">
+                <span class="campo__rotulo" id="f-entrega-rotulo">Como prefere receber</span>
+                <label class="opcao"><input type="radio" name="entrega" value="retirada" checked> Retirar no local</label>
+                <label class="opcao"><input type="radio" name="entrega" value="entrega"> Entrega (taxa combinada no WhatsApp)</label>
+              </div>
+
+              <div class="campo" id="campo-endereco" hidden>
+                <label for="f-endereco">Bairro e endereço</label>
+                <input type="text" id="f-endereco" name="endereco" autocomplete="street-address" aria-describedby="f-endereco-erro">
+                <p class="erro-campo" id="f-endereco-erro"></p>
+              </div>
+
+              <div class="campo">
+                <label for="f-nome">Seu nome</label>
+                <input type="text" id="f-nome" name="nome" autocomplete="name" required aria-describedby="f-nome-erro">
+                <p class="erro-campo" id="f-nome-erro"></p>
+              </div>
+
+              <div class="campo">
+                <label for="f-obs">Observações <span class="opcional">(opcional)</span></label>
+                <textarea id="f-obs" name="obs" rows="3" maxlength="300" placeholder="Ex.: forminhas douradas, sem coco, festa de aniversário"></textarea>
+              </div>
+            </fieldset>
+
+            <button class="btn btn--whats btn--grande comanda__enviar" type="submit">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z" fill="currentColor"/></svg>
+              Solicitar pelo WhatsApp
+            </button>
+            <p class="comanda__aviso" id="comanda-status" role="status"><b>A encomenda só fica confirmada depois que a Ponto responder</b> com a disponibilidade e o valor final.</p>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===================== DÚVIDAS ===================== -->
+    <section class="secao duvidas" id="duvidas" aria-labelledby="duvidas-titulo">
+      <div class="container duvidas__grade">
+        <div>
+          <p class="rotulo">Pedidos, prazos e personalização</p>
+          <h2 class="titulo-secao" id="duvidas-titulo">Dúvidas frequentes</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Com quanto tempo de antecedência preciso pedir?</summary>
+            <p>Pelo menos 2 dias antes da data desejada. Para festas grandes (acima de 300 itens), o ideal é pedir com uma semana.</p>
+          </details>
+          <details>
+            <summary>Qual a quantidade mínima de docinhos e salgados?</summary>
+            <p>Docinhos e salgados de festa saem em múltiplos de 25 unidades por sabor. Brownies, cupcakes e empadas, em caixas de 6 ou 12. Bolos e caixas, por unidade.</p>
+          </details>
+          <details>
+            <summary>A encomenda já fica garantida quando envio pelo WhatsApp?</summary>
+            <p>Não. O WhatsApp recebe o seu pedido, e a Ponto responde confirmando a data, o valor final e a forma de pagamento. Só depois dessa resposta a encomenda está confirmada.</p>
+          </details>
+          <details>
+            <summary>Dá para personalizar forminhas, sabores ou cores?</summary>
+            <p>Sim. Escreva no campo de observações (cores das forminhas, tema da festa, troca de sabores) e combinamos os detalhes na conversa.</p>
+          </details>
+          <details>
+            <summary>Vocês fazem entrega?</summary>
+            <p>Você pode retirar no local ou pedir entrega. A taxa depende do bairro e é informada na resposta pelo WhatsApp.</p>
+          </details>
+          <details>
+            <summary>Como saber se um produto tem leite, glúten ou castanhas?</summary>
+            <p>Cada item do cardápio tem um botão de detalhes com o que ele contém. Em caso de alergia, avise nas observações para conversarmos antes da produção.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Barra fixa no celular: atalho para a encomenda -->
+  <a class="barra-pedido" id="barra-pedido" href="#encomenda" hidden>
+    <span id="barra-pedido-itens">0 itens</span>
+    <b id="barra-pedido-total">R$ 0,00</b>
+    <span class="barra-pedido__ir">Ver encomenda →</span>
+  </a>
+
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <div>
+        <p class="logo logo--rodape"><span class="logo__nome">Ponto</span><span class="logo__sub">doces &amp; salgados</span></p>
+        <p class="rodape__texto">Encomendas de terça a sábado, com retirada ou entrega combinada.</p>
+      </div>
+      <ul class="rodape__links">
+        <li><a href="#cardapio">Cardápio</a></li>
+        <li><a href="#encomenda">Encomenda</a></li>
+        <li><a href="#duvidas">Dúvidas</a></li>
+      </ul>
+    </div>
+    <div class="container rodape__base">
+      <p><b>Projeto demonstrativo.</b> A Ponto é uma confeitaria fictícia; produtos, preços e prazos foram criados para mostrar o projeto. Sem endereço ou telefone reais.</p>
+      <p>© <span data-ano>2026</span> · Desenvolvido por <a href="../../index.html">Martins | Criação de Sites</a></p>
+    </div>
+  </footer>
+
+  <!-- Detalhes do produto -->
+  <dialog class="janela janela--produto" id="janela-produto" aria-labelledby="produto-nome">
+    <button class="janela__fechar" type="button" data-fechar aria-label="Fechar detalhes">×</button>
+    <div class="produto">
+      <div class="produto__arte" id="produto-arte" aria-hidden="true"></div>
+      <div class="produto__info">
+        <p class="rotulo" id="produto-categoria"></p>
+        <h2 class="produto__nome" id="produto-nome"></h2>
+        <p class="produto__texto" id="produto-texto"></p>
+        <dl class="produto__ficha" id="produto-ficha"></dl>
+        <p class="produto__preco" id="produto-preco"></p>
+        <div class="produto__compra" id="produto-compra"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Demonstração do envio -->
+  <dialog class="janela" id="janela-demo" aria-labelledby="janela-demo-titulo">
+    <p class="rotulo">Demonstração</p>
+    <h2 id="janela-demo-titulo">Este pedido iria para o WhatsApp</h2>
+    <p>Como a Ponto é fictícia, nenhum número foi configurado e nada foi enviado. Em um site real, a conversa abriria com esta mensagem pronta:</p>
+    <pre class="janela__mensagem" id="janela-demo-mensagem"></pre>
+    <div class="janela__botoes">
+      <a class="btn btn--escuro" href="../../index.html#contato">Quero um site assim</a>
+      <button class="btn btn--linha" type="button" data-fechar>Fechar</button>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

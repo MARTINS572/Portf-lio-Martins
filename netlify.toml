@@ -1,0 +1,34 @@
+# Site estático: não há etapa de build. O Netlify publica a pasta raiz como está.
+[build]
+  publish = "."
+
+# Cabeçalhos de segurança para todas as páginas (inclusive as demonstrações em /projetos/).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+# Política de conteúdo rígida só na página do portfólio: scripts, estilos e fontes
+# apenas do próprio site. As demonstrações em /projetos/ têm fontes e estilos
+# próprios, por isso não recebem esta regra.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+
+# CSS, JS e imagens: cache curto com revalidação, para que mudanças apareçam logo após o deploy.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Não há redirecionamentos: o Netlify serve o 404.html automaticamente para
+# endereços inexistentes.
